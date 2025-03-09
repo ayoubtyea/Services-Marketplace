@@ -1,16 +1,18 @@
-// src/App.jsx
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Services from './pages/Services';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 
-const App = () => {
+function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <Router>
-      <Home />
-    </Router>
-  );
-};
+    <>
+     <h1 class="text-3xl font-bold underline bg-sky-950">
+    Hello world!
+  </h1>
+    </>
+  )
+}
 
-export default App;
+export default App
