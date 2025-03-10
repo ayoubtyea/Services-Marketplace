@@ -26,11 +26,11 @@ const Navbar = () => {
 
 
         <div className="hidden md:flex items-center space-x-4">
-          <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white">
+          <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-black rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-black-900 hover:text-[#076870]">
             Become a Tasker
           </button>
 
-          <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white">
+          <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-[#076870]">
             Sign Up / Log in
           </button>
         </div>
@@ -48,13 +48,13 @@ const Navbar = () => {
 
       {isOpen && (
         <div className="md:hidden bg-white shadow-lg font-poppins rounded-lg mx-4">
-          <a href="/" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white">Home</a>
-          <a href="/services" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white">Services</a>
-          <a href="/about" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white">About Us</a>
-          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white">
+          <a href="/" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-[#076870]">Home</a>
+          <a href="/services" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-[#076870]">Services</a>
+          <a href="/about" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-[#076870]">About Us</a>
+          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-[#076870]">
             Become a Tasker
           </button>
-          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white">
+          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-[#076870]">
             Contact Us
           </button>
         </div>
