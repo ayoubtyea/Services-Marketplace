@@ -102,15 +102,15 @@ export default function HeroSection() {
                     className="rounded-xl shadow-lg w-full md:w-80 max-w-full"
                     whileHover={{ scale: 1.05 }}
                   />
-                  <div className="bg-gray-300 -ml-[130px] p-[25px] rounded-lg text-white mt-4">
+                  <div className="bg-[#076870] -ml-[130px] p-[25px] rounded-lg text-white mt-4">
                     <span className="p-2 flex">
-                       <a className="text-5xl font-bold">12 + Years</a>
+                       <a className="text-5xl font-bold">12+ Years</a>
                         </span>
                         <div className="flex">
                              <a className="max-w-[170px]">We are growing with happy clients</a>  
                     <img src="https://i.postimg.cc/s2VFXCY6/66408e2a50f24b34f7114882-avatar-3.jpg" className="border-2 border-white rounded-full" />
-                    <img src="https://i.postimg.cc/s2VFXCY6/66408e2a50f24b34f7114882-avatar-3.jpg" className="border-2 border-white rounded-full" />
-                    <img src="https://i.postimg.cc/s2VFXCY6/66408e2a50f24b34f7114882-avatar-3.jpg" className="border-2 border-white rounded-full" />
+                    <img src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/66408e2a0bd1803c9a5f812b_avatar-2.jpg" className="border-2 border-white rounded-full" />
+                    <img src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/66408ed4725564404bc621c8_avatar-1.jpg" className="border-2 border-white rounded-full" />
                         </div>
                     
                   </div>
