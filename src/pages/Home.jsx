@@ -124,7 +124,7 @@ export default function HeroSection() {
                   <span className="p-2">
                     <img
                       src="https://i.postimg.cc/bwVQWzF1/icon.png"
-                      className="w-12 h-9 px-2 rounded-full text-white bg-[#076870] flex justify-center items-center"
+                      className="w-12 h-9 px-2 rounded-full text-white bg-[#076870] inline-flex justify-center items-center"
                       alt="Icon"
                     />
                   </span>
@@ -132,7 +132,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* Image Div */}
-                <div className="w-full md:w-auto flex justify-center mt-20">
+                <div className="w-full md:w-auto flex justify-center mt-56">
                   <motion.img
                     src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664083dca0f5e2e460f7281d_hero-secondary-image.jpg"
                     alt="Client"
