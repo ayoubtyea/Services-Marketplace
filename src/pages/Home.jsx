@@ -42,7 +42,7 @@ export default function HeroSection() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Book a Service →
+                Book a Service  <span className="rotate-[-50deg]"> →</span>
               </motion.a>
 
               {/* Stats Section */}
@@ -102,15 +102,23 @@ export default function HeroSection() {
                     className="rounded-xl shadow-lg w-full md:w-80 max-w-full"
                     whileHover={{ scale: 1.05 }}
                   />
-                  <div className="bg-[#076870] -ml-[130px] p-[25px] rounded-lg text-white mt-4">
+                  <div className="bg-[#076870] -ml-[60px] p-[25px] rounded-lg text-white mt-4 w-full">
+                   
                     <span className="p-2 flex">
                        <a className="text-5xl font-bold">12+ Years</a>
                         </span>
-                        <div className="flex">
-                             <a className="max-w-[170px]">We are growing with happy clients</a>  
-                    <img src="https://i.postimg.cc/s2VFXCY6/66408e2a50f24b34f7114882-avatar-3.jpg" className="border-2 border-white rounded-full" />
-                    <img src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/66408e2a0bd1803c9a5f812b_avatar-2.jpg" className="border-2 border-white rounded-full" />
-                    <img src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/66408ed4725564404bc621c8_avatar-1.jpg" className="border-2 border-white rounded-full" />
+                        <div className="flex ">
+                        <div className="flex justify-around">
+<div className="w-1/2">
+<a className="max-w-[170px]">We are growing with happy clients</a>  
+</div>                            <div className="flex">
+                            <img src="https://i.postimg.cc/s2VFXCY6/66408e2a50f24b34f7114882-avatar-3.jpg" className="border-2 border-white rounded-full" />
+                                <img src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/66408e2a0bd1803c9a5f812b_avatar-2.jpg" className="border-2 border-white rounded-full" />
+                                <img src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/66408ed4725564404bc621c8_avatar-1.jpg" className="border-2 border-white rounded-full" />
+                            </div>
+                            
+                            </div>
+                    
                         </div>
                     
                   </div>
@@ -118,9 +126,9 @@ export default function HeroSection() {
               </motion.div>
 
               {/* Secondary Image */}
-              <div className="relative">
+              <div className="static">
                 {/* Text Div (Above the Image) */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-[#076870] text-white text-center flex-row rounded-[41px] p-4 z-10">
+                <div className="absolute top-0 left-2/3 transform -translate-x-1/5 bg-[#076870] text-white text-center flex-row rounded-[41px] p-4 z-10">
                   <span className="p-2">
                     <img
                       src="https://i.postimg.cc/bwVQWzF1/icon.png"
@@ -132,7 +140,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* Image Div */}
-                <div className="w-full md:w-auto flex justify-center mt-56">
+                <div className="max-w-full md:w-auto flex justify-center mt-40">
                   <motion.img
                     src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664083dca0f5e2e460f7281d_hero-secondary-image.jpg"
                     alt="Client"
