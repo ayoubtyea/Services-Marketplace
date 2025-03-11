@@ -99,10 +99,10 @@ export default function HeroSection() {
                   <motion.img
                     src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664083dd413035af4451737f_hero-primary-image.jpg"
                     alt="Workers"
-                    className="rounded-xl shadow-lg w-full md:w-80 max-w-full"
+                    className="rounded-xl shadow-lg w-auto md:w-80 max-w-full"
                     whileHover={{ scale: 1.05 }}
                   />
-                  <div className="bg-[#076870] -ml-[60px] p-[25px] rounded-lg text-white mt-4 w-full">
+                  <div className="bg-[#076870] md:-ml-[60px] p-[25px] rounded-lg text-white mt-4 w-auto">
                    
                     <span className="p-2 flex">
                        <a className="text-5xl font-bold">12+ Years</a>
@@ -140,11 +140,11 @@ export default function HeroSection() {
                 </div>
 
                 {/* Image Div */}
-                <div className="max-w-full md:w-auto flex justify-center mt-40">
+                <div className="max-w-full md:w-auto flex justify-center md:mt-40">
                   <motion.img
                     src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664083dca0f5e2e460f7281d_hero-secondary-image.jpg"
                     alt="Client"
-                    className="rounded-xl shadow-lg w-40 md:w-48"
+                    className="rounded-xl shadow-lg w-full md:w-80 max-w-full"
                     whileHover={{ scale: 1.05 }}
                   />
                 </div>
