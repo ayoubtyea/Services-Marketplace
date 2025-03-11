@@ -128,7 +128,7 @@ export default function HeroSection() {
               {/* Secondary Image */}
               <div className="static">
                 {/* Text Div (Above the Image) */}
-                <div className="absolute top-0 left-2/3 transform -translate-x-1/5 bg-[#076870] text-white text-center flex-row rounded-[41px] p-4 z-10">
+                <div className="md:absolute top-0 left-2/3 transform md:-translate-x-1/5 bg-[#076870] text-white text-center flex-row rounded-[41px] p-4 z-10 mb-2 md:mb-0">
                   <span className="p-2">
                     <img
                       src="https://i.postimg.cc/bwVQWzF1/icon.png"
@@ -140,7 +140,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* Image Div */}
-                <div className="max-w-full md:w-auto flex justify-center md:mt-40">
+                <div className="max-w-full md:w-auto flex justify-center md:mt-40 mt-8">
                   <motion.img
                     src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664083dca0f5e2e460f7281d_hero-secondary-image.jpg"
                     alt="Client"
@@ -153,6 +153,47 @@ export default function HeroSection() {
           </div>
         </div>
       </section>
+   
+   
+      <section className="bg-white py-12 sm:py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          {/* Left Side: About Us Heading */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }} // Start off-screen to the left
+            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
+            transition={{ duration: 0.6, delay: 0.2 }} // Smooth transition
+            viewport={{ once: true }} // Animate only once
+          >
+            <div className="text-center md:text-left">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-light text-gray-900">
+                About Us
+              </h2>
+              <p className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-semibold text-black">
+                Your Trusted <span className="text-[#076870]">Home</span> <br />
+                 <span className="text-[#076870]">Solutions </span>Partner
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Right Side: Description */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }} // Start off-screen to the right
+            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
+            transition={{ duration: 0.6, delay: 0.4 }} // Smooth transition
+            viewport={{ once: true }} // Animate only once
+          >
+            <div className="text-center md:text-left">
+              <p className="text-lg font-light sm:text-xl lg:text-xl text-gray-600">
+                At HandyHome, we understand the importance of home—a sanctuary
+                where comfort, functionality, and peace of mind converge.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
     </>
   );
 }
