@@ -417,42 +417,157 @@ export default function HeroSection() {
       </div>
 
       
-
-<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-    <a href="#">
-        <img class="rounded-t-lg" src="https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b50e3a30a5d77c8578a8_electrical-problems.jpg" alt="" />
-    </a>
-    <div class="p-5 text-center">
-        <a href="#">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Electirical Problems</h5>
-        </a>
-        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-        From simple repairs to complete rewiring projects, our electrical solutions are designed to keep your home safe.            </p>
-        <div className="button-wrapper mt-12 text-center">
-            <a
-              href="/about"
-              className="button-default outline inline-flex items-center px-6 py-3 border border-[#076870] text-[#076870] rounded-full hover:bg-[#076870] hover:text-white transition-colors"
-            >
-              <div className="button-text">More Details</div>
-              <div className="button-icon-block ml-2">
-                <div className="button-icon w-6 h-6">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="100%"
-                    height="100%"
-                    viewBox="0 0 12 12"
-                    fill="currentColor"
-                  >
-                    <path d="M6.80182 8.45459C6.67915 8.46603 6.55599 8.43835 6.45 8.37549C6.37256 8.29599 6.33544 8.18563 6.3491 8.07549C6.35196 7.98381 6.36291 7.89254 6.38182 7.80277C6.40013 7.69979 6.42377 7.59784 6.45272 7.49731L6.77454 6.39003C6.80773 6.28074 6.82966 6.16834 6.84 6.05457C6.84 5.93185 6.85636 5.84729 6.85636 5.79821C6.8632 5.57947 6.76981 5.36956 6.60272 5.22821C6.3972 5.07043 6.14126 4.99288 5.88272 5.01003C5.69745 5.01282 5.5136 5.04315 5.33726 5.10003C5.14453 5.16003 4.9418 5.23184 4.72908 5.31549L4.63636 5.67549C4.69908 5.65367 4.77546 5.62913 4.86272 5.60185C4.94597 5.5772 5.03227 5.56433 5.11908 5.56367C5.24086 5.55048 5.36344 5.58038 5.46544 5.64821C5.53472 5.73088 5.56723 5.83827 5.55544 5.94549C5.55513 6.0372 5.54508 6.12863 5.52544 6.21821C5.50634 6.31367 5.4818 6.41457 5.4518 6.52093L5.12726 7.63365C5.1011 7.73708 5.08017 7.84175 5.06454 7.94729C5.05179 8.03764 5.04542 8.12877 5.04544 8.22001C5.0441 8.44025 5.14481 8.6487 5.31816 8.78455C5.52684 8.94479 5.78644 9.02422 6.04906 9.00819C6.23398 9.01198 6.41827 8.98527 6.59452 8.92909C6.74906 8.87635 6.95543 8.80091 7.21362 8.70273L7.3009 8.35909C7.23096 8.3881 7.15894 8.4118 7.08544 8.42999C6.99249 8.45122 6.89705 8.45947 6.80182 8.45459Z" />
-                    <path d="M7.14271 3.20455C6.99428 3.06823 6.79872 2.9949 6.59725 3.00001C6.3959 2.99546 6.20052 3.06872 6.05179 3.20455C5.77917 3.43962 5.74872 3.85121 5.98382 4.12386C6.00477 4.14816 6.02749 4.17087 6.05179 4.19183C6.36238 4.46963 6.83212 4.46963 7.14269 4.19183C7.41531 3.95443 7.44388 3.54099 7.20649 3.26837C7.18675 3.24565 7.16542 3.22433 7.14271 3.20455Z" />
-                    <path d="M6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0ZM6 11.4545C2.98753 11.4545 0.545461 9.01247 0.545461 6C0.545461 2.98753 2.98753 0.545461 6 0.545461C9.01247 0.545461 11.4545 2.98753 11.4545 6C11.4545 9.01247 9.01247 11.4545 6 11.4545Z" />
-                  </svg>
-                </div>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 z-10 text-center">
+        {/* Card 1 */}
+        <motion.div
+          className="bg-white border border-gray-200 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:bg-black hover:text-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <a href="#">
+            <img
+              className="rounded-t-lg w-full h-56 object-cover"
+              src="https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b50e3a30a5d77c8578a8_electrical-problems.jpg"
+              alt="Electrical Problems"
+            />
+          </a>
+          <div className="p-5">
+            <a href="#">
+              <h5 className="mb-2 text-2xl font-bold text-gray-900 hover:text-white">Electrical Problems</h5>
             </a>
+            <p className="mb-3 text-gray-700">
+              From simple repairs to complete rewiring projects, our electrical solutions are designed to keep your home safe.
+            </p>
+            <div className="mt-4 text-center">
+              <a
+                href="/about"
+                className="inline-flex items-center px-6 py-3 border border-[#076870] text-[#076870] rounded-full hover:bg-[#076870] hover:text-white transition-colors"
+              >
+                More Details
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6 ml-2"
+                  fill="currentColor"
+                  viewBox="0 0 12 12"
+                >
+                  <path d="M6.80182 8.45459C6.67915 8.46603 6.55599 8.43835 6.45 8.37549C6.37256 8.29599 6.33544 8.18563 6.3491 8.07549C6.35196 7.98381 6.36291 7.89254 6.38182 7.80277C6.40013 7.69979 6.42377 7.59784 6.45272 7.49731L6.77454 6.39003C6.80773 6.28074 6.82966 6.16834 6.84 6.05457C6.84 5.93185 6.85636 5.84729 6.85636 5.79821C6.8632 5.57947 6.76981 5.36956 6.60272 5.22821C6.3972 5.07043 6.14126 4.99288 5.88272 5.01003C5.69745 5.01282 5.5136 5.04315 5.33726 5.10003C5.14453 5.16003 4.9418 5.23184 4.72908 5.31549L4.63636 5.67549C4.69908 5.65367 4.77546 5.62913 4.86272 5.60185C4.94597 5.5772 5.03227 5.56433 5.11908 5.56367C5.24086 5.55048 5.36344 5.58038 5.46544 5.64821C5.53472 5.73088 5.56723 5.83827 5.55544 5.94549C5.55513 6.0372 5.54508 6.12863 5.52544 6.21821C5.50634 6.31367 5.4818 6.41457 5.4518 6.52093L5.12726 7.63365C5.1011 7.73708 5.08017 7.84175 5.06454 7.94729C5.05179 8.03764 5.04542 8.12877 5.04544 8.22001C5.0441 8.44025 5.14481 8.6487 5.31816 8.78455C5.52684 8.94479 5.78644 9.02422 6.04906 9.00819C6.23398 9.01198 6.41827 8.98527 6.59452 8.92909C6.74906 8.87635 6.95543 8.80091 7.21362 8.70273L7.3009 8.35909C7.23096 8.3881 7.15894 8.4118 7.08544 8.42999C6.99249 8.45122 6.89705 8.45947 6.80182 8.45459Z" />
+                </svg>
+              </a>
+            </div>
           </div>
+        </motion.div>
+
+        {/* Card 2 */}
+        <motion.div
+          className="bg-white border border-gray-200 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:bg-black hover:text-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <a href="#">
+            <img
+              className="rounded-t-lg w-full h-56 object-cover"
+              src="https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4ed7288e84197d4a6b7_plumbing-solutions.jpg"
+              alt="Plumbing Solutions"
+            />
+          </a>
+          <div className="p-5">
+            <a href="#">
+              <h5 className="mb-2 text-2xl font-bold text-gray-900 hover:text-white">Plumbing Solutions</h5>
+            </a>
+            <p className="mb-3 text-gray-700">
+              Don’t let plumbing issues disrupt your daily routine. Our plumbing solutions cover everything from leaky faucets.
+            </p>
+            <div className="mt-4 text-center">
+              <a
+                href="/about"
+                className="inline-flex items-center px-6 py-3 border border-[#076870] text-[#076870] rounded-full hover:bg-[#076870] hover:text-white transition-colors"
+              >
+                More Details
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6 ml-2"
+                  fill="currentColor"
+                  viewBox="0 0 12 12"
+                >
+                  <path d="M6.80182 8.45459C6.67915 8.46603 6.55599 8.43835 6.45 8.37549C6.37256 8.29599 6.33544 8.18563 6.3491 8.07549C6.35196 7.98381 6.36291 7.89254 6.38182 7.80277C6.40013 7.69979 6.42377 7.59784 6.45272 7.49731L6.77454 6.39003C6.80773 6.28074 6.82966 6.16834 6.84 6.05457C6.84 5.93185 6.85636 5.84729 6.85636 5.79821C6.8632 5.57947 6.76981 5.36956 6.60272 5.22821C6.3972 5.07043 6.14126 4.99288 5.88272 5.01003C5.69745 5.01282 5.5136 5.04315 5.33726 5.10003C5.14453 5.16003 4.9418 5.23184 4.72908 5.31549L4.63636 5.67549C4.69908 5.65367 4.77546 5.62913 4.86272 5.60185C4.94597 5.5772 5.03227 5.56433 5.11908 5.56367C5.24086 5.55048 5.36344 5.58038 5.46544 5.64821C5.53472 5.73088 5.56723 5.83827 5.55544 5.94549C5.55513 6.0372 5.54508 6.12863 5.52544 6.21821C5.50634 6.31367 5.4818 6.41457 5.4518 6.52093L5.12726 7.63365C5.1011 7.73708 5.08017 7.84175 5.06454 7.94729C5.05179 8.03764 5.04542 8.12877 5.04544 8.22001C5.0441 8.44025 5.14481 8.6487 5.31816 8.78455C5.52684 8.94479 5.78644 9.02422 6.04906 9.00819C6.23398 9.01198 6.41827 8.98527 6.59452 8.92909C6.74906 8.87635 6.95543 8.80091 7.21362 8.70273L7.3009 8.35909C7.23096 8.3881 7.15894 8.4118 7.08544 8.42999C6.99249 8.45122 6.89705 8.45947 6.80182 8.45459Z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </motion.div>
+     {/* Card 3 */}
+     <motion.div
+          className="bg-white border border-gray-200 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:bg-black hover:text-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <a href="#">
+            <img
+              className="rounded-t-lg w-full h-56 object-cover"
+              src="https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4c384a3010ab6bf5e72_carpentry-services.jpg"
+              alt="Plumbing Solutions"
+            />
+          </a>
+          <div className="p-5">
+            <a href="#">
+              <h5 className="mb-2 text-2xl font-bold text-gray-900 hover:text-white">Carpentry Services</h5>
+            </a>
+            <p className="mb-3 text-gray-700">
+            Whether you're looking to add custom built-ins, repair damaged furniture, or install new cabinetry, our carpentry.            </p>
+            <div className="mt-4 text-center">
+              <a
+                href="/about"
+                className="inline-flex items-center px-6 py-3 border border-[#076870] text-[#076870] rounded-full hover:bg-[#076870] hover:text-white transition-colors"
+              >
+                More Details
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6 ml-2"
+                  fill="currentColor"
+                  viewBox="0 0 12 12"
+                >
+                  <path d="M6.80182 8.45459C6.67915 8.46603 6.55599 8.43835 6.45 8.37549C6.37256 8.29599 6.33544 8.18563 6.3491 8.07549C6.35196 7.98381 6.36291 7.89254 6.38182 7.80277C6.40013 7.69979 6.42377 7.59784 6.45272 7.49731L6.77454 6.39003C6.80773 6.28074 6.82966 6.16834 6.84 6.05457C6.84 5.93185 6.85636 5.84729 6.85636 5.79821C6.8632 5.57947 6.76981 5.36956 6.60272 5.22821C6.3972 5.07043 6.14126 4.99288 5.88272 5.01003C5.69745 5.01282 5.5136 5.04315 5.33726 5.10003C5.14453 5.16003 4.9418 5.23184 4.72908 5.31549L4.63636 5.67549C4.69908 5.65367 4.77546 5.62913 4.86272 5.60185C4.94597 5.5772 5.03227 5.56433 5.11908 5.56367C5.24086 5.55048 5.36344 5.58038 5.46544 5.64821C5.53472 5.73088 5.56723 5.83827 5.55544 5.94549C5.55513 6.0372 5.54508 6.12863 5.52544 6.21821C5.50634 6.31367 5.4818 6.41457 5.4518 6.52093L5.12726 7.63365C5.1011 7.73708 5.08017 7.84175 5.06454 7.94729C5.05179 8.03764 5.04542 8.12877 5.04544 8.22001C5.0441 8.44025 5.14481 8.6487 5.31816 8.78455C5.52684 8.94479 5.78644 9.02422 6.04906 9.00819C6.23398 9.01198 6.41827 8.98527 6.59452 8.92909C6.74906 8.87635 6.95543 8.80091 7.21362 8.70273L7.3009 8.35909C7.23096 8.3881 7.15894 8.4118 7.08544 8.42999C6.99249 8.45122 6.89705 8.45947 6.80182 8.45459Z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </motion.div>
+        
+      </div>
+      <div className="flex items-center justify-center mt-12">
+      <motion.div
+        className="button-wrapper justify-center gap-top group"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <a
+          href="/service"
+          className="button-default outline w-inline-block relative flex items-center justify-center px-8 py-3 border-2 border-[#076870] text-[#076870] rounded-full transition-all duration-300 hover:bg-[#076870] hover:text-white"
+        >
+          <div className="button-bg absolute top-0 left-0 h-full w-0 bg-[#076870] transition-all duration-300 ease-out"></div>
+          <div className="button-text z-10">View All Services</div>
+
+          <div className="button-icon-block with-secondary-bg z-10 ml-2">
+            <div className="button-icon w-6 h-6 text-black group-hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 12 12" fill="none">
+                <g clipPath="url(#clip0_68_669)">
+                  <path d="M8.46653 6.47802L7.7402 5.75169L9.65975 3.83215L9.90835 4.08072C10.0693 4.24169 10.3402 4.20998 10.4584 4.01301L11.9499 1.52717C12.0329 1.38884 12.0111 1.21177 11.897 1.09773L10.9027 0.103395C10.7886 -0.010675 10.6115 -0.0324484 10.4732 0.05052L7.98737 1.54203C7.7912 1.65973 7.75823 1.93062 7.91966 2.09206L8.16826 2.34064L6.24869 4.26018L5.52237 3.53386C5.77802 2.5786 5.51726 1.53994 4.79414 0.816806C3.88962 -0.0876903 2.53557 -0.230846 1.47665 0.33955C1.37882 0.392261 1.31167 0.488096 1.29552 0.598041C1.2794 0.707986 1.3162 0.81908 1.39478 0.897665L2.71412 2.217C2.85121 2.35409 2.85121 2.57712 2.71412 2.71416C2.57703 2.85124 2.35403 2.85127 2.21694 2.71416L0.897604 1.3948C0.819018 1.31621 0.707902 1.27939 0.59798 1.29554C0.488035 1.31166 0.3922 1.37884 0.339489 1.47666C-0.228751 2.53163 -0.0907983 3.88657 0.816792 4.79413C1.53831 5.51566 2.57643 5.77862 3.53384 5.52238L3.76292 5.75144L0.515645 8.99878C-0.171681 9.68611 -0.172103 10.797 0.515645 11.4847C1.20102 12.1701 2.3162 12.1701 3.0016 11.4847L6.24886 8.23739L6.47798 8.46652C6.22232 9.42178 6.48309 10.4604 7.2062 11.1836C8.11072 12.0881 9.46477 12.2312 10.5237 11.6608C10.6215 11.6081 10.6887 11.5123 10.7048 11.4024C10.7209 11.2924 10.6842 11.1813 10.6056 11.1027L9.28623 9.7834C9.14914 9.64631 9.14914 9.42328 9.28623 9.28624C9.42331 9.14916 9.64634 9.14918 9.7834 9.28624L11.1027 10.6056C11.1813 10.6842 11.2924 10.7209 11.4024 10.7048C11.5123 10.6887 11.6081 10.6215 11.6609 10.5237C12.2291 9.46875 12.0912 8.11381 11.1836 7.20624C10.4621 6.48475 9.42394 6.22178 8.46653 6.47802ZM10.5996 0.794658L11.2057 1.4008L10.0871 3.26515L8.73521 1.91328L10.5996 0.794658ZM8.66542 2.83781L9.16257 3.33497L7.24302 5.25452L6.74585 4.75736L8.66542 2.83781ZM2.50443 10.9876C2.09319 11.3988 1.42406 11.3988 1.0128 10.9876C0.600183 10.575 0.599926 9.90886 1.0128 9.49598L4.26005 6.24864L5.75168 7.74026L2.50443 10.9876ZM11.2249 9.7334L10.2806 8.78909C9.8694 8.37793 9.20031 8.3779 8.78907 8.78909C8.37789 9.20027 8.37789 9.86936 8.78907 10.2806L9.73339 11.2249C9.01592 11.4208 8.24476 11.2278 7.7034 10.6864C7.13043 10.1135 6.93588 9.24968 7.20777 8.48583C7.25329 8.35796 7.22113 8.21532 7.12516 8.11936L3.88102 4.87523C3.78526 4.77946 3.64271 4.747 3.51455 4.79261C2.75068 5.06451 1.88692 4.86993 1.31395 4.29698C0.772589 3.75562 0.579582 2.98449 0.775472 2.26702L1.71979 3.21134C2.13097 3.62252 2.80007 3.6225 3.2113 3.21134C3.62248 2.80015 3.62248 2.13106 3.2113 1.71983L2.26698 0.775509C2.98442 0.579573 3.75561 0.772627 4.29697 1.31398C4.86994 1.88696 5.06449 2.75074 4.7926 3.51459C4.74708 3.64247 4.77924 3.78511 4.87521 3.88106L8.11932 7.12517C8.2153 7.22115 8.35794 7.25328 8.48579 7.20779C9.24962 6.93589 10.1134 7.13047 10.6864 7.70342C11.2278 8.24482 11.4208 9.01594 11.2249 9.7334Z" fill="currentColor"></path>
+                </g>
+                <defs>
+                  <clipPath id="clip0_68_669">
+                    <rect width="12" height="12" fill="currentColor"></rect>
+                  </clipPath>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </a>
+      </motion.div>
     </div>
-</div>
 
     </section>
 
