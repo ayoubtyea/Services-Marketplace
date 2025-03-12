@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 
+
 import "../index.css";
 
 export default function HeroSection() {
@@ -384,7 +385,76 @@ export default function HeroSection() {
       </div>
     </div>
     </section>
-    <div className="hidden md:block w-[80%] h-px bg-gray-500 mx-auto"></div>
+
+    <section
+      className="services relative py-16 px-6 md:px-16 bg-cover bg-center"
+      style={{
+        backgroundImage:
+          'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
+      }}
+    >
+      <div className="text-center mt-8">
+        <motion.h2
+          className="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl"
+          initial={{ opacity: 0, y: 70 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Our Services
+        </motion.h2>
+        <motion.p
+          className="text-2xl font-bold mt-4 text-gray-900 sm:text-3xl md:text-4xl"
+          initial={{ opacity: 0, y: 70 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Get Comprehensive{' '}
+          <span className="text-[#076870] font-light">
+            Home <br /> Solutions
+          </span>{' '}
+          Services
+        </motion.p>
+      </div>
+
+      
+
+<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <a href="#">
+        <img class="rounded-t-lg" src="https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b50e3a30a5d77c8578a8_electrical-problems.jpg" alt="" />
+    </a>
+    <div class="p-5 text-center">
+        <a href="#">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Electirical Problems</h5>
+        </a>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+        From simple repairs to complete rewiring projects, our electrical solutions are designed to keep your home safe.            </p>
+        <div className="button-wrapper mt-12 text-center">
+            <a
+              href="/about"
+              className="button-default outline inline-flex items-center px-6 py-3 border border-[#076870] text-[#076870] rounded-full hover:bg-[#076870] hover:text-white transition-colors"
+            >
+              <div className="button-text">More Details</div>
+              <div className="button-icon-block ml-2">
+                <div className="button-icon w-6 h-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="100%"
+                    height="100%"
+                    viewBox="0 0 12 12"
+                    fill="currentColor"
+                  >
+                    <path d="M6.80182 8.45459C6.67915 8.46603 6.55599 8.43835 6.45 8.37549C6.37256 8.29599 6.33544 8.18563 6.3491 8.07549C6.35196 7.98381 6.36291 7.89254 6.38182 7.80277C6.40013 7.69979 6.42377 7.59784 6.45272 7.49731L6.77454 6.39003C6.80773 6.28074 6.82966 6.16834 6.84 6.05457C6.84 5.93185 6.85636 5.84729 6.85636 5.79821C6.8632 5.57947 6.76981 5.36956 6.60272 5.22821C6.3972 5.07043 6.14126 4.99288 5.88272 5.01003C5.69745 5.01282 5.5136 5.04315 5.33726 5.10003C5.14453 5.16003 4.9418 5.23184 4.72908 5.31549L4.63636 5.67549C4.69908 5.65367 4.77546 5.62913 4.86272 5.60185C4.94597 5.5772 5.03227 5.56433 5.11908 5.56367C5.24086 5.55048 5.36344 5.58038 5.46544 5.64821C5.53472 5.73088 5.56723 5.83827 5.55544 5.94549C5.55513 6.0372 5.54508 6.12863 5.52544 6.21821C5.50634 6.31367 5.4818 6.41457 5.4518 6.52093L5.12726 7.63365C5.1011 7.73708 5.08017 7.84175 5.06454 7.94729C5.05179 8.03764 5.04542 8.12877 5.04544 8.22001C5.0441 8.44025 5.14481 8.6487 5.31816 8.78455C5.52684 8.94479 5.78644 9.02422 6.04906 9.00819C6.23398 9.01198 6.41827 8.98527 6.59452 8.92909C6.74906 8.87635 6.95543 8.80091 7.21362 8.70273L7.3009 8.35909C7.23096 8.3881 7.15894 8.4118 7.08544 8.42999C6.99249 8.45122 6.89705 8.45947 6.80182 8.45459Z" />
+                    <path d="M7.14271 3.20455C6.99428 3.06823 6.79872 2.9949 6.59725 3.00001C6.3959 2.99546 6.20052 3.06872 6.05179 3.20455C5.77917 3.43962 5.74872 3.85121 5.98382 4.12386C6.00477 4.14816 6.02749 4.17087 6.05179 4.19183C6.36238 4.46963 6.83212 4.46963 7.14269 4.19183C7.41531 3.95443 7.44388 3.54099 7.20649 3.26837C7.18675 3.24565 7.16542 3.22433 7.14271 3.20455Z" />
+                    <path d="M6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0ZM6 11.4545C2.98753 11.4545 0.545461 9.01247 0.545461 6C0.545461 2.98753 2.98753 0.545461 6 0.545461C9.01247 0.545461 11.4545 2.98753 11.4545 6C11.4545 9.01247 9.01247 11.4545 6 11.4545Z" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </div>
+    </div>
+</div>
+
+    </section>
 
     </>
   );
