@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Testimonial from "../components/Testimonial";
 
 
 import "../index.css";
@@ -9,6 +10,7 @@ export default function HeroSection() {
   return (
     <>
       <Navbar />
+  
       <section
         className="hero-section py-16 mt-7 bg-cover bg-center"
         style={{
@@ -157,8 +159,8 @@ export default function HeroSection() {
       </section>
    
    
-      <section className="About us bg-white py-12 sm:py-16 lg:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="About us bg-white py-12 sm:py-16 lg:py-20">
+      <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Grid Container */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left Side: About Us Heading */}
@@ -386,15 +388,16 @@ export default function HeroSection() {
         </div>
       </div>
     </div>
-    </section>
+        </section>
 
     <section
-      className="services relative py-16 px-6 sm:px-8 md:px-16 bg-cover bg-center"
+      className=""
       style={{
         backgroundImage:
           'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
       }}
     >
+        <div className="max-w-6xl lg:max-w-7xl mx-auto px-4 py-12">
       <div className="text-center mt-8">
   <motion.div
     className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer"
@@ -587,8 +590,11 @@ export default function HeroSection() {
         </a>
       </motion.div>
     </div>
+    </div>
   </section>
-
+    
+  
+      < Testimonial />
   < Footer />
 
     </>

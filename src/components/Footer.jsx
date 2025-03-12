@@ -82,7 +82,7 @@ const Footer = () => {
             {/* Social Links */}
             <a
               title="X"
-              href="https://twitter.com/"
+              href=""
               target="_blank"
               className="text-gray-400 hover:text-[#076870]"
             >
@@ -90,7 +90,7 @@ const Footer = () => {
             </a>
             <a
               title="Instagram"
-              href="https://www.instagram.com/"
+              href=""
               target="_blank"
               className="text-gray-400 hover:text-[#076870]"
             >
@@ -98,7 +98,7 @@ const Footer = () => {
             </a>
             <a
               title="Facebook"
-              href="https://www.facebook.com/"
+              href=""
               target="_blank"
               className="text-gray-400 hover:text-[#076870]"
             >
@@ -106,7 +106,7 @@ const Footer = () => {
             </a>
             <a
               title="LinkedIn"
-              href="https://linkedin.com/"
+              href=""
               target="_blank"
               className="text-gray-400 hover:text-[#076870]"
             >
