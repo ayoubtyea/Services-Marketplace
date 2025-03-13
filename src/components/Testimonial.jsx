@@ -108,9 +108,9 @@ export default function Testimonial() {
           <div className="bg-white  rounded-xl overflow-hidden mt-2">
           <div className="max-w-7xl mx-auto">
   {/* Left Quote Icon */}
-  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 text-[#076870] text-4xl">
-    <i className="fas fa-quote-left"></i>
-  </div>
+        <div className="absolute  transform -translate-y-1/2 text-[#076870] text-4xl">
+            <i className="fas fa-quote-left"></i>
+        </div>
 
   {/* Testimonial Content */}
   <div className="flex justify-center px-4">
@@ -140,7 +140,7 @@ export default function Testimonial() {
   </div>
 
   {/* Right Quote Icon */}
-  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 text-[#076870] text-4xl">
+  <div className="absolute right-13 transform -translate-y-1/2 text-[#076870] text-4xl">
     <i className="fas fa-quote-right"></i>
   </div>
 </div>

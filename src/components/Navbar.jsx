@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../index.css";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,10 +37,13 @@ const Navbar = () => {
           <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
             Become a Tasker
           </button>
-
-          <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
-            Sign Up / Log in
-          </button>
+          
+          {/* Correcting the link tag to React Router's Link */}
+          <Link to="/auth">
+            <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
+              Sign Up / Log in
+            </button>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -99,9 +102,13 @@ const Navbar = () => {
           <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             Become a Tasker
           </button>
-          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
-            Sign Up / Log in
-          </button>
+          
+          {/* Correcting the link tag to React Router's Link */}
+          <Link to="/auth">
+            <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
+              Sign Up / Log in
+            </button>
+          </Link>
         </div>
       )}
     </nav>

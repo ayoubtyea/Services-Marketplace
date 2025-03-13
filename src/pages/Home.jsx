@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Testimonial from "../components/Testimonial";
+import AuthPage from "../pages/AuthPage";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 
 import "../index.css";
@@ -9,7 +11,7 @@ import "../index.css";
 export default function HeroSection() {
   return (
     <>
-      <Navbar />
+      
   
       <section
         className="hero-section py-16 mt-7 bg-cover bg-center"
