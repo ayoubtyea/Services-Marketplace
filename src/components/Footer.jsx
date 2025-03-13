@@ -2,13 +2,13 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <footer className="bg-black bg-cover bg-center py-16 px-6 md:px-16" 
+    <footer className="bg-white bg-cover bg-center py-16 px-6 md:px-16" 
     style={{ backgroundImage: 'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/665bf81b5bc17a6b8ecdea5f_footer-bg.png")' }}>
     <div className="container mx-auto">
       {/* Footer Top Block */}
       <div className="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 gap-10">
         {/* Footer Logo and Newsletter */}
-        <div className="footer-widget text-white">
+        <div className="footer-widget text-black">
           <div className="footer-logo-block mb-6">
             <img
               src="https://i.postimg.cc/C5dQgh9H/MAIN-1.png"
@@ -24,7 +24,7 @@ const Footer = () => {
 
               <button
   type="submit"
-  className="text-white rounded-3xl border border-[#076870] px-4 py-2 mb-2 w-full md:w-auto flex items-center justify-center space-x-2"
+  className="text-black rounded-3xl border border-[#076870] px-4 py-2 mb-2 w-full md:w-auto flex items-center justify-center space-x-2"
 >
   <span className='text-sm'>Your Email Address</span>
   <span className="transform rotate-[-50deg] text-sm bg-[#076870] rounded-full">→</span>
@@ -35,7 +35,7 @@ const Footer = () => {
         </div>
 
         {/* Quick Links */}
-        <div className="footer-widget text-white">
+        <div className="footer-widget text-black">
           <h2 className="footer-widget-title text-xl font-semibold mb-4">Company</h2>
           <ul className="space-y-2">
             <li><a href="/home" className="hover:text-[#076870]">Home</a></li>
@@ -47,7 +47,7 @@ const Footer = () => {
 
 
         {/* Utility Pages */}
-        <div className="footer-widget text-white">
+        <div className="footer-widget text-black">
           <h2 className="footer-widget-title text-xl font-semibold mb-4">Discover</h2>
           <ul className="space-y-2">
             <li><a href="https://sapruin.webflow.io/401" className="hover:text-[#076870]">Become A Tasker</a></li>
@@ -59,7 +59,7 @@ const Footer = () => {
         </div>
 
         {/* Contact Block */}
-        <div className="footer-widget contact-block text-white">
+        <div className="footer-widget contact-block text-black">
           <h2 className="footer-widget-title text-xl font-semibold mb-4">Contact</h2>
           <a href="mailto:contact@sapruin.com" className="block mb-2 hover:text-[#076870]">
             contact@HandyHome.com
@@ -72,7 +72,7 @@ const Footer = () => {
       </div>
 
       {/* Footer Bottom Block */}
-      <div className="footer-bottom-wrapper mt-12 border-t border-gray-600 pt-4">
+      <div className="footer-bottom-wrapper mt-12 border-t border-gray-800 pt-4">
         <div className="flex justify-between items-center">
           <div className="footer-copyright text-sm text-white">
             Copyright © <a href="/" className="text-[#076870]">HandyHome</a> | 2025
