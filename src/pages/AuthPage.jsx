@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../index.css"
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true); // Toggle between Login/SignUp
@@ -12,13 +13,13 @@ const AuthPage = () => {
       }}
     >
       <div className="bg-white bg-opacity-80 p-8 rounded-xl shadow-lg text-center space-y-6 w-full max-w-md">
-        <h1 className="text-3xl font-semibold mb-4">{isLogin ? "Log In" : "Sign Up"}</h1>
+        <h1 className="text-3xl font-light mb-4">{isLogin ? "Log In" : "Sign Up"}</h1>
 
         {/* Toggle between Login/SignUp */}
         <div className="space-x-4 mb-6">
           <button
             onClick={() => setIsLogin(true)}
-            className={`px-6 py-2 rounded-lg ${
+            className={`px-6 py-2 rounded-lg cursor-pointer ${
               isLogin
                 ? "bg-blue-500 text-white"
                 : "bg-transparent text-blue-500 border border-blue-500"
@@ -28,7 +29,7 @@ const AuthPage = () => {
           </button>
           <button
             onClick={() => setIsLogin(false)}
-            className={`px-6 py-2 rounded-lg ${
+            className={`px-6 py-2 rounded-lg cursor-pointer ${
               !isLogin
                 ? "bg-blue-500 text-white"
                 : "bg-transparent text-blue-500 border border-blue-500"
@@ -55,7 +56,7 @@ const AuthPage = () => {
             />
             <button
               type="submit"
-              className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+              className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 cursor-pointer"
             >
               Log In
             </button>
@@ -82,7 +83,7 @@ const AuthPage = () => {
             />
             <button
               type="submit"
-              className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+              className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 cursor-pointer"
             >
               Sign Up
             </button>

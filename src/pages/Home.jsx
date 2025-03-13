@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Testimonial from "../components/Testimonial";
 import AuthPage from "../pages/AuthPage";
+import Contact from "../components/Contact";
 import { Link } from "react-router-dom"; // Import Link for navigation
 
 
@@ -597,6 +598,7 @@ export default function HeroSection() {
     
   
       < Testimonial />
+      < Contact />
   < Footer />
 
     </>
