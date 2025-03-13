@@ -163,7 +163,7 @@ export default function HeroSection() {
    
    
         <section className="About us bg-white py-12 sm:py-16 lg:py-20">
-      <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Grid Container */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left Side: About Us Heading */}
@@ -201,16 +201,16 @@ export default function HeroSection() {
           </motion.div>
         </div>
       </div>
-      <div className="hidden md:block h-1 w-[80%] mt-8 bg-gray-300 mx-auto"></div>
+      <div className="hidden md:block h-1 w-[85%] mt-8 bg-gray-200 mx-auto"></div>
 
-      <div className="about-wrapper bg-white py-12 sm:py-16 lg:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex">
+      <div>
+      <div className="gap-10 items-center py-8 px-4 mx-auto max-w-6xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
         {/* About Group Wrapper */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left Side: Support CTA Block */}
           <div className="about-group-block">
             {/* Support CTA Block */}
-            <div className="support-cta-block bg-gray-100 p-6 rounded-lg">
+            <div className="support-cta-block bg-gradient-to-r from-indigo-400 to-sky-200 p-6 rounded-lg">
                 <h3 className="support-cta-title text-xl sm:text-2xl font-bold text-gray-900">
                 24/7 Support
                 </h3>
@@ -220,7 +220,7 @@ export default function HeroSection() {
                 </p>
                 <a
                     href="/contact"
-                    className="our-link-block mt-4 inline-flex items-center text-[#076870] hover:text-[#0f7780] transition-colors"
+                    className="our-link-block mt-4 inline-flex items-center text-blue-100 hover:text-[#0f7780] transition-colors"
                 >
                     <div className="our-link-icon w-6 h-6">
                     <svg
@@ -264,11 +264,11 @@ export default function HeroSection() {
         </div>
 
         {/* Our Identity Wrapper */}
-        <div className="our-identity-main-wrapper mt-12">
-          <div className="our-identity-wrapper grid grid-cols-1 md:grid-cols-1 gap-8">
+        <div className="">
+          <div className="grid grid-cols-1 md:grid-cols-1">
             {/* Our Story */}
-            <div className="our-identity-block p-6 rounded-lg flex">
-              <div className="our-identity-icon w-12 h-12 mx-auto">
+            <div className="p-6 rounded-lg flex">
+              <div className="w-12 h-12 mx-auto">
               <div class="our-identity-icon w-embed">
     <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="26" cy="26" r="25.5" stroke="#076870"/>
@@ -289,8 +289,8 @@ export default function HeroSection() {
 </div>
 
               </div>
-              <div className="our-identity-content mt-4 text-left ml-2">
-                <h3 className="our-identity-title text-xl font-bold text-gray-900">
+              <div className="text-left ml-2">
+                <h3 className=" text-xl font-bold text-gray-900">
                   Our Story
                 </h3>
                 <p className="our-identity-summary text-gray-600 mt-2">
@@ -299,7 +299,7 @@ export default function HeroSection() {
                 </p>
               </div>
             </div>
-            <div className="our-identity-block p-6 rounded-lg flex">
+            <div className="p-6 rounded-lg flex">
               <div className="our-identity-icon w-12 h-12 mx-auto">
               <svg
                 width="52"
@@ -323,8 +323,8 @@ export default function HeroSection() {
                 />
                 </svg>
               </div>
-              <div className="our-identity-content mt-4 text-left ml-2">
-                <h3 className="our-identity-title text-xl font-bold text-gray-900">
+              <div className=" text-left ml-2">
+                <h3 className="text-xl font-bold text-gray-900">
                   Our Mission
                 </h3>
                 <p className="our-identity-summary text-gray-600 mt-2">
@@ -334,8 +334,8 @@ export default function HeroSection() {
                 </p>
               </div>
             </div>
-            <div className="our-identity-block p-6 rounded-lg flex">
-            <div className="our-identity-icon w-12 h-12 mx-auto">
+            <div className="p-6 rounded-lg flex">
+            <div className="w-12 h-12 mx-auto">
                 <svg
                 width="52"
                 height="52"
@@ -351,8 +351,8 @@ export default function HeroSection() {
                 />
                 </svg>
             </div>
-              <div className="our-identity-content mt-4  text-left ml-2">
-                <h3 className="our-identity-title text-xl font-bold text-gray-900">
+              <div className="text-left ml-2">
+                <h3 className=" text-xl font-bold text-gray-900">
                 What Sets Us Apart
                 </h3>
                 <p className="our-identity-summary text-gray-600 mt-2">
@@ -364,8 +364,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Button Wrapper */}
-          <div className="button-wrapper mt-12 text-center">
+          {/* Button Wrapper */}          <div className="text-left">
             <a
               href="/about"
               className="button-default outline inline-flex items-center px-6 py-3 border border-[#076870] text-[#076870] rounded-full hover:bg-[#076870] hover:text-white transition-colors"
