@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+
 
 // Example data for taskers
 const taskersData = [
@@ -347,23 +349,26 @@ const ServiceDetailsPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredTaskers.length > 0 ? (
                   filteredTaskers.map((tasker) => (
-                    <div key={tasker.id} className="bg-white p-4 rounded-lg shadow-lg">
+                    <div key={tasker.id} className="bg-white p-4 rounded-lg shadow-lg text-center">
                       <img
                         src={tasker.image}
                         alt={tasker.name}
                         className="w-full h-48 object-cover rounded-lg"
                       />
                       <h5 className="text-lg font-semibold mt-4">{tasker.name}</h5>
-                      <p className="text-sm text-gray-600">{tasker.taskType}</p>
+                      <p className="text-2xl text-black font-bold">{tasker.taskType}</p>
                       <p className="text-sm text-gray-600">⭐ {tasker.rating} ({tasker.reviews} reviews)</p>
                       <p className="text-sm text-gray-600">📍 {tasker.location}</p>
                       <p className="text-sm text-gray-600">
-                        {tasker.availableThisWeekend ? 'Available this weekend' : 'Not available this weekend'}
+                      🕒 {tasker.availableThisWeekend ? 'Available this weekend' : 'Not available this weekend'}
                       </p>
                       <p className="text-sm text-gray-600">${tasker.price} / hour</p>
-                      <button className="mt-4 w-full px-4 py-2 bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300">
-                        View Profile
-                      </button>
+                      <Link
+      to={`/taskers/${tasker.id}`} // Navigate to the Tasker Details Page
+      className="mt-4 w-full px-4 py-2 bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300 block"
+    >
+      View Profile
+    </Link>
                     </div>
                   ))
                 ) : (

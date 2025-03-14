@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import AuthPage from './pages/AuthPage';
 import Services from './pages/Services';
 import ServiceDetailsPage from './pages/ServiceDetailsPage';
+import TaskerDetailsPage from './pages/TaskerDetailsPage';
+
 
 const App = () => {
   return (
@@ -21,6 +23,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
         <Route path="/service-details/:id" element={<ServiceDetailsPage />} />
+        <Route path="/taskers/:id" element={<TaskerDetailsPage />} /> {/* New route */}
         </Routes>
 
       <Footer />
