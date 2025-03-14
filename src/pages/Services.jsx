@@ -60,21 +60,43 @@ const ServicesPage = () => {
 
       {/* Search Bar with Sort and Filter */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-left">
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-center">
+          {/* Left Side: About Us Heading */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            initial={{ opacity: 0, x: -50 }} // Start off-screen to the left
+            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
+            transition={{ duration: 0.6, delay: 0.2 }} // Smooth transition
+            viewport={{ once: true }} // Animate only once
           >
-            <p className="text-3xl sm:text-4xl font-semibold text-gray-900">
-              Browse <span className="text-[#076870] font-light">Service <br /> Categories</span>
-            </p>
-            <p className="mt-4 text-lg sm:text-xl text-gray-600">
-              At HandyHome, we offer a variety of services to meet all your home
-              improvement needs, ensuring comfort and efficiency.
-            </p>
+            <div className="text-center md:text-left">
+             
+              <p className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-semibold text-black">
+                Your Trusted <span className="text-[#076870]">Home</span> <br />
+                 <span className="text-[#076870]">Solutions </span>Partner
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Right Side: Description */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }} // Start off-screen to the right
+            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
+            transition={{ duration: 0.6, delay: 0.4 }} // Smooth transition
+            viewport={{ once: true }} // Animate only once
+          >
+            <div className="text-center md:text-left">
+              <p className="text-sm font-light sm:text-sm lg:text-base text-gray-600">
+              At HandyHome, we provide all service categories with high quality, ensuring your home remains a place of comfort,
+               efficiency, and reliability.
+              </p>
+            </div>
           </motion.div>
         </div>
+      </div>
+      <div className="hidden md:block h-1 w-[100%] mt-8 bg-gray-200 mx-auto"></div>
+
 
         {/* Search Bar with Icon */}
         <div className="mt-12 flex justify-center items-center gap-4">
