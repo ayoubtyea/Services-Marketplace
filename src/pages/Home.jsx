@@ -568,11 +568,13 @@ export default function HeroSection() {
               transition={{ duration: 0.5 }}
             >
               <a
-                href="/service"
+                href="/services"
                 className="button-default outline w-inline-block relative flex items-center justify-center px-8 py-3 border-2 border-[#076870] text-[#076870] rounded-full transition-all duration-300 hover:bg-[#076870] hover:text-white"
               >
                 <div className="button-bg absolute top-0 left-0 h-full w-0 bg-[#076870] transition-all duration-300 ease-out"></div>
-                <div className="button-text z-10">View All Services</div>
+                <div 
+                
+                className="button-text z-10">View All Services</div>
 
                 <div className="button-icon-block with-secondary-bg z-10 ml-2">
                   <div className="button-icon w-6 h-6 text-black group-hover:text-white">
