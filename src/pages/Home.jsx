@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import Testimonial from "../components/Testimonial";
 import AuthPage from "../pages/AuthPage";
 import Contact from "../components/Contact";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom"; 
 
 
 import "../index.css";
@@ -641,7 +641,6 @@ export default function HeroSection() {
       </div>
         </section>
 
-  < Footer />
 
     </>
   );
