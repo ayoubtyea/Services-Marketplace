@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 
-// Icons for skills (you can use any icon library like FontAwesome or Heroicons)
+// Icons for skills
 const SkillIcons = {
   Wiring: '🔌',
   'Lighting Installation': '💡',
@@ -16,7 +16,7 @@ const SkillIcons = {
   'Custom Built-Ins': '🛠️',
 };
 
-// Example taskers data (you can import this from a shared file)
+// Example taskers data
 const taskersData = [
   {
     id: 1,
@@ -49,9 +49,9 @@ const taskersData = [
       { name: 'Circuit Repair', price: 200, description: 'Diagnosis and repair of electrical circuits.' },
     ],
     clientReviews: [
-      { name: 'Alice', rating: 5, comment: 'Great work, very professional!', date: '2023-10-01' },
-      { name: 'Bob', rating: 4, comment: 'Fixed my issue quickly.', date: '2023-09-25' },
-      { name: 'Charlie', rating: 4.5, comment: 'Highly recommended.', date: '2023-09-20' },
+      { name: 'Alice', rating: "", comment: 'Great work, very professional!', date: '2023-10-01' },
+      { name: 'Bob', rating: "", comment: 'Fixed my issue quickly.', date: '2023-09-25' },
+      { name: 'Charlie', rating: "", comment: 'Highly recommended.', date: '2023-09-20' },
     ],
   },
   // Add more taskers here...
@@ -77,13 +77,13 @@ const TaskerDetailsPage = () => {
       >
         <div className="text-center text-black pt-24">
           <motion.div
-            className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-gray-300"
+            className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-[#EAF4F4]"
             initial={{ opacity: 0, y: 70 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             <motion.h2
-              className="text-xl font-light sm:text-xl md:text-xl"
+              className="text-sm font-light sm:text-sm md:text-sm"
               initial={{ opacity: 0, y: 70 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -92,7 +92,7 @@ const TaskerDetailsPage = () => {
             </motion.h2>
           </motion.div>
           <motion.h2
-            className="text-xl md:text-5xl font-bold"
+            className="text-xl md:text-5xl font-bold mt-6"
             initial={{ opacity: 0, y: 70 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -110,10 +110,8 @@ const TaskerDetailsPage = () => {
         </div>
       </section>
 
-      <section className='bg-white p-8 rounded-lg shadow-lg'>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Main Card */}
-        <div className="">
+      <section className="bg-white p-8 rounded-lg shadow-lg">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* First Flex Section: Picture and Info */}
           <div className="flex flex-col md:flex-row gap-8">
             {/* Picture Section */}
@@ -126,8 +124,11 @@ const TaskerDetailsPage = () => {
             </div>
 
             {/* Info Section */}
-            <div className="w-full md:w-2/3 bg-gray-200 px-6 py-6 rounded">
-              <h1 className="text-3xl font-bold"><span className="font-light">Hello, I'm</span> <br />{tasker.name}</h1>
+            <div className="w-full md:w-1/2 bg-gray-200 px-6 py-6 rounded">
+              <h1 className="text-3xl font-bold">
+                <span className="font-light">Hello, I'm</span> <br />
+                {tasker.name}
+              </h1>
               <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
               <div className="hidden md:block h-1 w-[50%] mt-2 mb-2 bg-gray-300"></div>
               <p className="text-gray-600">Department: {tasker.department}</p>
@@ -172,11 +173,11 @@ const TaskerDetailsPage = () => {
           {/* Third Flex Section: Services and Availability */}
           <div className="mt-8 flex flex-col md:flex-row gap-8">
             {/* Services Section */}
-            <div className="w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">Services Offered</h2>
+            <div className="w-full md:w-1/2 bg-[#EAF4F4] py-6 px-6 rounded">
+              <h2 className="text-2xl font-light">Services Offered</h2>
               <div className="mt-4 space-y-4">
                 {tasker.services.map((service, index) => (
-                  <div key={index} className="bg-gray-100 p-4 rounded-lg">
+                  <div key={index} className="bg-white p-4 rounded-lg border-l-4 border-[#076870]">
                     <p className="font-semibold">{service.name}</p>
                     <p className="text-gray-700">${service.price}</p>
                     <p className="text-gray-600 text-sm mt-2">{service.description}</p>
@@ -186,59 +187,82 @@ const TaskerDetailsPage = () => {
             </div>
 
             {/* Availability Section */}
-            <div className="w-full md:w-1/2">
-              <h2 className="text-2xl font-bold">Availability</h2>
+            <div className="w-full md:w-1/2 bg-[#EAF4F4] py-6 px-6 rounded">
+              <h2 className="text-2xl font-light">Availability</h2>
               <div className="mt-4">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-gray-200">
-                      <th className="p-2 text-left">Day</th>
-                      <th className="p-2 text-left">Hours</th>
-                      <th className="p-2 text-left">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(tasker.availability).map(([day, time]) => (
-                      <tr key={day} className="border-b border-gray-200">
-                        <td className="p-2">{day}</td>
-                        <td className="p-2">
-                          {typeof time === 'string' ? '-' : `${time.start} - ${time.end}`}
-                        </td>
-                        <td className="p-2">
-                          <span
-                            className={`px-2 py-1 rounded-full text-sm ${
-                              time.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                            }`}
-                          >
-                            {time.status}
-                          </span>
-                        </td>
+                {/* Desktop Table */}
+                <div className="hidden md:block">
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        <th className="p-2 text-center">Day</th>
+                        <th className="p-2 text-center">Hours</th>
+                        <th className="p-2 text-center">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {Object.entries(tasker.availability).map(([day, time]) => (
+                        <tr key={day} className="border-b border-gray-200 text-center">
+                          <td className="p-2">{day}</td>
+                          <td className="p-2">
+                            {typeof time === 'string' ? '-' : `${time.start} - ${time.end}`}
+                          </td>
+                          <td className="p-2">
+                            <span
+                              className={`px-2 py-1 rounded-full text-sm ${
+                                time.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              }`}
+                            >
+                              {time.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Stacked Layout */}
+                <div className="md:hidden space-y-4">
+                  {Object.entries(tasker.availability).map(([day, time]) => (
+                    <div key={day} className="bg-white p-4 rounded-lg border-l-4 border-[#076870]">
+                      <p className="font-semibold">{day}</p>
+                      <p className="text-gray-700">
+                        {typeof time === 'string' ? '-' : `${time.start} - ${time.end}`}
+                      </p>
+                      <p className="text-gray-700">
+                        <span
+                          className={`px-2 py-1 rounded-full text-sm ${
+                            time.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {time.status}
+                        </span>
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Client Reviews Section */}
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold">Client Reviews</h2>
+          <div className="mt-8 bg-[#EAF4F4] px-6 py-6 rounded">
+            <h2 className="text-2xl font-light">Client Reviews</h2>
             <div className="mt-4 space-y-4">
               {tasker.clientReviews.map((review, index) => (
-                <div key={index} className="bg-gray-100 p-6 rounded-lg">
+                <div key={index} className="border-l-4 border-[#076870] bg-white p-6 rounded-lg">
                   <div className="flex justify-between items-center">
                     <p className="font-semibold">{review.name}</p>
-                    <p className="text-gray-700">⭐ {review.rating}</p>
+                    <p className="text-gray-600 text-sm">{review.date}</p>
                   </div>
-                  <p className="text-gray-600 text-sm mt-2">{review.date}</p>
+                  <p className="text-gray-700">⭐⭐⭐ {review.rating}</p>
                   <p className="text-gray-700 mt-2">{review.comment}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
       </section>
     </>
   );
