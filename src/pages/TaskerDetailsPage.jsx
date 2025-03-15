@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { motion } from 'framer-motion';
 
 // Example taskers data (you can import this from a shared file)
 const taskersData = [
@@ -60,7 +61,88 @@ const TaskerDetailsPage = () => {
   <>
   
     <Navbar />
+    <section
+        className="bg-cover bg-center h-96"
+        style={{
+          backgroundImage:
+            'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
+        }}
+      >
+        <div className="text-center text-black pt-24">
+          
+        <motion.div
+              className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-gray-300"
+              initial={{ opacity: 0, y: 70 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.h2
+                className="text-xl font-light sm:text-xl md:text-xl"
+                initial={{ opacity: 0, y: 70 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Team Details
+              </motion.h2>
+            </motion.div>
+          <motion.h2
+            className="text-xl md:text-5xl font-bold"
+            initial={{ opacity: 0, y: 70 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {tasker.name}
+            </motion.h2>
+          <motion.p
+            className="text-sm mt-4"
+            initial={{ opacity: 0, y: 70 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {tasker.bio}
+            </motion.p>
+        </div>
+      </section>
+    <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-center">
+          {/* Left Side: About Us Heading */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }} // Start off-screen to the left
+            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
+            transition={{ duration: 0.6, delay: 0.2 }} // Smooth transition
+            viewport={{ once: true }} // Animate only once
+          >
+            <div className="text-center md:text-left">
+             
+              <p className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-semibold text-black">
+                Your Trusted <span className="text-[#076870]">Home</span> <br />
+                 <span className="text-[#076870]">Solutions </span>Partner
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Right Side: Description */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }} // Start off-screen to the right
+            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
+            transition={{ duration: 0.6, delay: 0.4 }} // Smooth transition
+            viewport={{ once: true }} // Animate only once
+          >
+            <div className="text-center md:text-left">
+              <p className="text-sm font-light sm:text-sm lg:text-base text-gray-600">
+              At HandyHome, we provide all service categories with high quality, ensuring your home remains a place of comfort,
+               efficiency, and reliability.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+        <div className="hidden md:block h-1 w-[100%] mt-8 bg-gray-200 mx-auto"></div>
+     
+      </div>
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  
+  
       <div className="bg-white p-8 rounded-lg shadow-lg">
         <div className="text-center">
           <img
