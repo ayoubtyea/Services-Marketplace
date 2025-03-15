@@ -23,7 +23,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
         <Route path="/service-details/:id" element={<ServiceDetailsPage />} />
-        <Route path="/taskers/:id" element={<TaskerDetailsPage />} /> {/* New route */}
+        <Route path="/taskers/:id" element={<TaskerDetailsPage />} /> 
         </Routes>
 
       <Footer />
