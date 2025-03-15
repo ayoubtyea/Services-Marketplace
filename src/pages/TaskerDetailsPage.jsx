@@ -3,6 +3,19 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 
+// Icons for skills (you can use any icon library like FontAwesome or Heroicons)
+const SkillIcons = {
+  Wiring: '🔌',
+  'Lighting Installation': '💡',
+  'Circuit Repair': '⚡',
+  'Pipe Repair': '🚰',
+  'Drain Cleaning': '🚿',
+  'Water Heater Installation': '🔥',
+  'Furniture Repair': '🪑',
+  Cabinetry: '🔨',
+  'Custom Built-Ins': '🛠️',
+};
+
 // Example taskers data (you can import this from a shared file)
 const taskersData = [
   {
@@ -14,39 +27,34 @@ const taskersData = [
     available: true,
     image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b50e3a30a5d77c8578a8_electrical-problems.jpg',
     taskType: 'Electrician',
+    department: 'Electrical Engineering',
+    experience: '5+ years',
+    email: 'john.doe@example.com',
+    phone: '+1 (555) 123-4567',
     reviews: 120,
-    availableThisWeekend: true,
-    bio: 'Experienced electrician with over 10 years of experience in residential and commercial projects.',
+    availability: {
+      Monday: { start: '09:00', end: '17:00', status: 'Available' },
+      Tuesday: { start: '09:00', end: '17:00', status: 'Available' },
+      Wednesday: { start: '09:00', end: '17:00', status: 'Booked' },
+      Thursday: { start: '09:00', end: '17:00', status: 'Available' },
+      Friday: { start: '09:00', end: '17:00', status: 'Available' },
+      Saturday: { start: '10:00', end: '14:00', status: 'Available' },
+      Sunday: { status: 'Not Available' },
+    },
+    bio: 'Emily Watson brings a wealth of expertise and experience to her role as an electrician at HandyHome.',
     skills: ['Wiring', 'Lighting Installation', 'Circuit Repair'],
+    services: [
+      { name: 'Wiring Installation', price: 150, description: 'Professional wiring installation for homes and offices.' },
+      { name: 'Lighting Setup', price: 100, description: 'Installation of modern lighting solutions.' },
+      { name: 'Circuit Repair', price: 200, description: 'Diagnosis and repair of electrical circuits.' },
+    ],
+    clientReviews: [
+      { name: 'Alice', rating: 5, comment: 'Great work, very professional!', date: '2023-10-01' },
+      { name: 'Bob', rating: 4, comment: 'Fixed my issue quickly.', date: '2023-09-25' },
+      { name: 'Charlie', rating: 4.5, comment: 'Highly recommended.', date: '2023-09-20' },
+    ],
   },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    rating: 4.8,
-    location: 'California',
-    price: 200,
-    available: false,
-    image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4ed7288e84197d4a6b7_plumbing-solutions.jpg',
-    taskType: 'Plumber',
-    reviews: 95,
-    availableThisWeekend: false,
-    bio: 'Professional plumber specializing in leak repairs and pipe installations.',
-    skills: ['Pipe Repair', 'Drain Cleaning', 'Water Heater Installation'],
-  },
-  {
-    id: 3,
-    name: 'Bob Brown',
-    rating: 3.9,
-    location: 'Texas',
-    price: 50,
-    available: true,
-    image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4c384a3010ab6bf5e72_carpentry-services.jpg',
-    taskType: 'Carpenter',
-    reviews: 80,
-    availableThisWeekend: true,
-    bio: 'Skilled carpenter with expertise in custom furniture and home renovations.',
-    skills: ['Furniture Repair', 'Cabinetry', 'Custom Built-Ins'],
-  },
+  // Add more taskers here...
 ];
 
 const TaskerDetailsPage = () => {
@@ -58,10 +66,9 @@ const TaskerDetailsPage = () => {
   }
 
   return (
-  <>
-  
-    <Navbar />
-    <section
+    <>
+      <Navbar />
+      <section
         className="bg-cover bg-center h-96"
         style={{
           backgroundImage:
@@ -69,22 +76,21 @@ const TaskerDetailsPage = () => {
         }}
       >
         <div className="text-center text-black pt-24">
-          
-        <motion.div
-              className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-gray-300"
+          <motion.div
+            className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-gray-300"
+            initial={{ opacity: 0, y: 70 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.h2
+              className="text-xl font-light sm:text-xl md:text-xl"
               initial={{ opacity: 0, y: 70 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <motion.h2
-                className="text-xl font-light sm:text-xl md:text-xl"
-                initial={{ opacity: 0, y: 70 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Team Details
-              </motion.h2>
-            </motion.div>
+              Team Details
+            </motion.h2>
+          </motion.div>
           <motion.h2
             className="text-xl md:text-5xl font-bold"
             initial={{ opacity: 0, y: 70 }}
@@ -92,7 +98,7 @@ const TaskerDetailsPage = () => {
             transition={{ duration: 0.5 }}
           >
             {tasker.name}
-            </motion.h2>
+          </motion.h2>
           <motion.p
             className="text-sm mt-4"
             initial={{ opacity: 0, y: 70 }}
@@ -100,91 +106,142 @@ const TaskerDetailsPage = () => {
             transition={{ duration: 0.5 }}
           >
             {tasker.bio}
-            </motion.p>
+          </motion.p>
         </div>
       </section>
-    <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Grid Container */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-center">
-          {/* Left Side: About Us Heading */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }} // Start off-screen to the left
-            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
-            transition={{ duration: 0.6, delay: 0.2 }} // Smooth transition
-            viewport={{ once: true }} // Animate only once
-          >
-            <div className="text-center md:text-left">
-             
-              <p className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-semibold text-black">
-                Your Trusted <span className="text-[#076870]">Home</span> <br />
-                 <span className="text-[#076870]">Solutions </span>Partner
-              </p>
+
+      <section className='bg-white p-8 rounded-lg shadow-lg'>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Main Card */}
+        <div className="">
+          {/* First Flex Section: Picture and Info */}
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Picture Section */}
+            <div className="w-full md:w-1/2">
+              <img
+                src={tasker.image}
+                alt={tasker.name}
+                className="w-full h-auto rounded-lg"
+              />
             </div>
-          </motion.div>
 
-          {/* Right Side: Description */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }} // Start off-screen to the right
-            whileInView={{ opacity: 1, x: 0 }} // Animate to visible
-            transition={{ duration: 0.6, delay: 0.4 }} // Smooth transition
-            viewport={{ once: true }} // Animate only once
-          >
-            <div className="text-center md:text-left">
-              <p className="text-sm font-light sm:text-sm lg:text-base text-gray-600">
-              At HandyHome, we provide all service categories with high quality, ensuring your home remains a place of comfort,
-               efficiency, and reliability.
-              </p>
+            {/* Info Section */}
+            <div className="w-full md:w-2/3 bg-gray-200 px-6 py-6 rounded">
+              <h1 className="text-3xl font-bold"><span className="font-light">Hello, I'm</span> <br />{tasker.name}</h1>
+              <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
+              <div className="hidden md:block h-1 w-[50%] mt-2 mb-2 bg-gray-300"></div>
+              <p className="text-gray-600">Department: {tasker.department}</p>
+              <p className="text-gray-600">Experience: {tasker.experience}</p>
+              <p className="text-gray-600">Email: {tasker.email}</p>
+              <p className="text-gray-600">Phone: {tasker.phone}</p>
+
+              {/* Buttons */}
+              <div className="mt-6 flex gap-4">
+                <button className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300">
+                  Book a Service
+                </button>
+                <button className="px-6 py-3 cursor-pointer bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
+                  Message Provider
+                </button>
+              </div>
             </div>
-          </motion.div>
+          </div>
+
+          {/* Second Flex Section: Skills and Experience */}
+          <div className="mt-8 flex flex-col md:flex-row gap-8">
+            {/* Skills Section */}
+            <div className="w-full md:w-1/2">
+              <h2 className="text-2xl font-bold">Professional Skills</h2>
+              <div className="mt-4 space-y-2">
+                {tasker.skills.map((skill, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span>{SkillIcons[skill]}</span>
+                    <p className="text-gray-700">{skill}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Experience Section */}
+            <div className="w-full md:w-1/2">
+              <h2 className="text-2xl font-bold">Experience</h2>
+              <p className="text-gray-700 mt-4">{tasker.bio}</p>
+            </div>
+          </div>
+
+          {/* Third Flex Section: Services and Availability */}
+          <div className="mt-8 flex flex-col md:flex-row gap-8">
+            {/* Services Section */}
+            <div className="w-full md:w-1/2">
+              <h2 className="text-2xl font-bold">Services Offered</h2>
+              <div className="mt-4 space-y-4">
+                {tasker.services.map((service, index) => (
+                  <div key={index} className="bg-gray-100 p-4 rounded-lg">
+                    <p className="font-semibold">{service.name}</p>
+                    <p className="text-gray-700">${service.price}</p>
+                    <p className="text-gray-600 text-sm mt-2">{service.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Availability Section */}
+            <div className="w-full md:w-1/2">
+              <h2 className="text-2xl font-bold">Availability</h2>
+              <div className="mt-4">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="p-2 text-left">Day</th>
+                      <th className="p-2 text-left">Hours</th>
+                      <th className="p-2 text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(tasker.availability).map(([day, time]) => (
+                      <tr key={day} className="border-b border-gray-200">
+                        <td className="p-2">{day}</td>
+                        <td className="p-2">
+                          {typeof time === 'string' ? '-' : `${time.start} - ${time.end}`}
+                        </td>
+                        <td className="p-2">
+                          <span
+                            className={`px-2 py-1 rounded-full text-sm ${
+                              time.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {time.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Client Reviews Section */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold">Client Reviews</h2>
+            <div className="mt-4 space-y-4">
+              {tasker.clientReviews.map((review, index) => (
+                <div key={index} className="bg-gray-100 p-6 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <p className="font-semibold">{review.name}</p>
+                    <p className="text-gray-700">⭐ {review.rating}</p>
+                  </div>
+                  <p className="text-gray-600 text-sm mt-2">{review.date}</p>
+                  <p className="text-gray-700 mt-2">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="hidden md:block h-1 w-[100%] mt-8 bg-gray-200 mx-auto"></div>
-     
       </div>
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-  
-  
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <div className="text-center">
-          <img
-            src={tasker.image}
-            alt={tasker.name}
-            className="w-48 h-48 object-cover rounded-full mx-auto"
-          />
-          <h1 className="text-3xl font-bold mt-4">{tasker.name}</h1>
-          <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
-          <p className="text-gray-600 mt-2">⭐ {tasker.rating} ({tasker.reviews} reviews)</p>
-          <p className="text-gray-600">📍 {tasker.location}</p>
-          <p className="text-gray-600">
-            🕒 {tasker.availableThisWeekend ? 'Available this weekend' : 'Not available this weekend'}
-          </p>
-          <p className="text-gray-600">${tasker.price} / hour</p>
-        </div>
-
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold">About {tasker.name}</h2>
-          <p className="text-gray-700 mt-2">{tasker.bio}</p>
-        </div>
-
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold">Skills</h2>
-          <ul className="mt-2">
-            {tasker.skills.map((skill, index) => (
-              <li key={index} className="text-gray-700">
-                - {skill}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="mt-8 text-center">
-          <button className="px-6 py-3 bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300">
-            Contact {tasker.name}
-          </button>
-        </div>
-      </div>
-    </div>
-</>  
-);
+      </section>
+    </>
+  );
 };
 
 export default TaskerDetailsPage;
