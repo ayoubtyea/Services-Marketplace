@@ -68,6 +68,8 @@ const exampleTopRatedTaskers = [
     image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4ed7288e84197d4a6b7_plumbing-solutions.jpg',
     taskType: 'Electrician',
     reviews: 95,
+    milesAway: 5, // Example: 5 miles away
+    availableThisWeekend: true, // Example: Available this weekend
   },
   {
     id: 3,
@@ -78,6 +80,8 @@ const exampleTopRatedTaskers = [
     image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4c384a3010ab6bf5e72_carpentry-services.jpg',
     taskType: 'Electrician',
     reviews: 80,
+    milesAway: 10, // Example: 10 miles away
+    availableThisWeekend: false, // Example: Not available this weekend
   },
   {
     id: 4,
@@ -88,6 +92,8 @@ const exampleTopRatedTaskers = [
     image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4c384a3010ab6bf5e72_carpentry-services.jpg',
     taskType: 'Electrician',
     reviews: 110,
+    milesAway: 2, // Example: 2 miles away
+    availableThisWeekend: true, // Example: Available this weekend
   },
 ];
 
@@ -305,6 +311,7 @@ const TaskerDetailsPage = () => {
             <h2 className="text-3xl border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-[#EAF4F4] text-center max-auto">
               Top Rated Taskers in {tasker.taskType}
             </h2>
+
             {/* Top Rated Taskers Grid */}
             <div className="mt-8 bg-[#EAF4F4] px-6 py-6 rounded">
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
@@ -316,18 +323,31 @@ const TaskerDetailsPage = () => {
                       className="w-full h-32 object-cover rounded-lg"
                     />
                     <h3 className="text-xl font-semibold mt-2">{tasker.name}</h3>
-                    <p className="text-gray-600">{tasker.taskType}</p>
-                    <div className="mt-4 flex justify-center gap-4 mb-2">
-                    <button className="px-2 py-2 bg-green-300 text-white rounded-full font-semibold hover:bg-green-600 transition duration-300">
-                Verified
-              </button>
-              <button className="px-2 py-2 bg-yellow-100 text-black rounded-full font-semibold hover:bg-yellow-600 transition duration-300">
+                    <p className="text-[#076870]">{tasker.taskType}</p>
+                    { /* for Top Rated and Verified  */}
+                    <div className="mt-4 mb-4 flex justify-center gap-4">
+              <button className="px-2 py-2 text-orange-400 rounded-full font-light bg-orange-100 hover:bg-orange-200 transition duration-300 cursor-pointer">
                 Top Rated
               </button>
-
+              <button className="px-2 py-2 text-green-800 bg-green-100 rounded-full font-light hover:bg-green-200 cursor-pointer transition duration-300">
+                Verified
+              </button>
             </div>
                     <p className="text-gray-600">⭐ {tasker.rating} ({tasker.reviews} reviews)</p>
                     <p className="text-gray-600">${tasker.price} / hour</p>
+
+                    {/* Miles Away and Available This Weekend */}
+                    <div className="mt-4 space-y-2">
+                      <p className="text-gray-600">📍 {tasker.milesAway} miles away</p>
+                      <p className="text-gray-600">
+                        {tasker.availableThisWeekend ? '✅ Available this weekend' : '❌ Not available this weekend'}
+                      </p>
+                    </div>
+
+                    {/* View Profile Button */}
+                    <button className="mt-4 px-4 py-2 bg-[#076870] text-white rounded-full hover:bg-[#065f57] transition duration-300 cursor-pointer">
+                      View Profile
+                    </button>
                   </div>
                 ))}
               </div>
