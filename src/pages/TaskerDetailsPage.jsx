@@ -57,6 +57,40 @@ const taskersData = [
   // Add more taskers here...
 ];
 
+// Example top-rated taskers (hardcoded for now)
+const exampleTopRatedTaskers = [
+  {
+    id: 2,
+    name: 'Jane Smith',
+    rating: 4.8,
+    location: 'California',
+    price: 200,
+    image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4ed7288e84197d4a6b7_plumbing-solutions.jpg',
+    taskType: 'Electrician',
+    reviews: 95,
+  },
+  {
+    id: 3,
+    name: 'Bob Brown',
+    rating: 4.7,
+    location: 'Texas',
+    price: 150,
+    image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4c384a3010ab6bf5e72_carpentry-services.jpg',
+    taskType: 'Electrician',
+    reviews: 80,
+  },
+  {
+    id: 4,
+    name: 'Alice Johnson',
+    rating: 4.9,
+    location: 'Florida',
+    price: 180,
+    image: 'https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b4c384a3010ab6bf5e72_carpentry-services.jpg',
+    taskType: 'Electrician',
+    reviews: 110,
+  },
+];
+
 const TaskerDetailsPage = () => {
   const { id } = useParams(); // Get the tasker ID from the URL
   const tasker = taskersData.find((tasker) => tasker.id === parseInt(id));
@@ -64,6 +98,9 @@ const TaskerDetailsPage = () => {
   if (!tasker) {
     return <div>Tasker not found!</div>;
   }
+
+  // Use hardcoded example top-rated taskers for now
+  const topRatedTaskers = exampleTopRatedTaskers;
 
   return (
     <>
@@ -261,6 +298,77 @@ const TaskerDetailsPage = () => {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Top Rated Taskers in the Same Services Section */}
+          <div className="mt-8">
+            <h2 className="text-3xl border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-[#EAF4F4] text-center max-auto">
+              Top Rated Taskers in {tasker.taskType}
+            </h2>
+            {/* Top Rated Taskers Grid */}
+            <div className="mt-8 bg-[#EAF4F4] px-6 py-6 rounded">
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
+                {topRatedTaskers.map((tasker) => (
+                  <div key={tasker.id} className="bg-white p-4 rounded-lg shadow-md">
+                    <img
+                      src={tasker.image}
+                      alt={tasker.name}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <h3 className="text-xl font-semibold mt-2">{tasker.name}</h3>
+                    <p className="text-gray-600">{tasker.taskType}</p>
+                    <div className="mt-4 flex justify-center gap-4 mb-2">
+                    <button className="px-2 py-2 bg-green-300 text-white rounded-full font-semibold hover:bg-green-600 transition duration-300">
+                Verified
+              </button>
+              <button className="px-2 py-2 bg-yellow-100 text-black rounded-full font-semibold hover:bg-yellow-600 transition duration-300">
+                Top Rated
+              </button>
+
+            </div>
+                    <p className="text-gray-600">⭐ {tasker.rating} ({tasker.reviews} reviews)</p>
+                    <p className="text-gray-600">${tasker.price} / hour</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Join Us Section */}
+      <section className="joinU"
+        style={{
+          backgroundImage:
+            'url("https://i.postimg.cc/8C0MKPLN/Rectangle-40065.png")',
+        }}
+      >
+        <div className="text-center">
+          <motion.p
+            className="text-2xl font-light pt-20 text-white sm:text-3xl md:text-4xl"
+            initial={{ opacity: 0, y: 70 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Ready to Join Our Community <br /> Today?
+          </motion.p>
+
+          <motion.p>
+            <p className="text-center mt-2 text-gray-100 text-sm text-light">
+              Whether you're looking for quality services or want to offer your skills,
+              <br />
+              ServiceConnect makes it easy to connect and get things done.
+            </p>
+          </motion.p>
+          <div className="flex justify-center items-center space-x-4 py-8">
+            <button className="px-6 py-3 bg-[#076870] text-white rounded-full font-semibold hover:bg-[#065f57] transition duration-300 flex items-center space-x-2">
+              <span>Join Us As a Tasker</span>
+              <span className="transform rotate-[-50deg]">→</span>
+            </button>
+            <button className="px-6 py-3 bg-[#f3f4f6] text-[#076870] rounded-full font-semibold border border-[#076870] hover:bg-[#076870] hover:text-white transition duration-300 flex items-center space-x-2">
+              <span>Book A Service</span>
+              <span className="transform rotate-[-50deg]">→</span>
+            </button>
           </div>
         </div>
       </section>
