@@ -7,6 +7,8 @@ import AuthPage from './pages/AuthPage';
 import Services from './pages/Services';
 import ServiceDetailsPage from './pages/ServiceDetailsPage';
 import TaskerDetailsPage from './pages/TaskerDetailsPage';
+import BookingPage from './pages/BookingPage'; 
+
 
 
 const App = () => {
@@ -24,6 +26,8 @@ const App = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/service-details/:id" element={<ServiceDetailsPage />} />
         <Route path="/taskers/:id" element={<TaskerDetailsPage />} /> 
+        <Route path="/book/:id" element={<BookingPage />} /> {/* Add this route */}
+
         </Routes>
 
       <Footer />

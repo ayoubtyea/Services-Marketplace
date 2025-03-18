@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 
@@ -99,11 +99,19 @@ const exampleTopRatedTaskers = [
 
 const TaskerDetailsPage = () => {
   const { id } = useParams(); // Get the tasker ID from the URL
+  const navigate = useNavigate();
+  
   const tasker = taskersData.find((tasker) => tasker.id === parseInt(id));
+
 
   if (!tasker) {
     return <div>Tasker not found!</div>;
   }
+
+  const handleBookService = () => {
+    navigate(`/book/${id}`); // Navigate to the booking page with the tasker ID
+  };
+
 
   // Use hardcoded example top-rated taskers for now
   const topRatedTaskers = exampleTopRatedTaskers;
@@ -181,7 +189,10 @@ const TaskerDetailsPage = () => {
 
               {/* Buttons */}
               <div className="mt-6 flex gap-4">
-                <button className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300">
+              <button
+                  onClick={handleBookService} // Add onClick handler
+                  className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300"
+                >
                   Book a Service
                 </button>
                 <button className="px-6 py-3 cursor-pointer bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
