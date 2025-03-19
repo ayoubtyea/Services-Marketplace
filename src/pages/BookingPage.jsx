@@ -231,26 +231,20 @@ const BookingPage = () => {
               <div className="w-full md:w-1/2 bg-gray-100 px-6 py-6 rounded-lg">
                 <h1 className="text-3xl font-bold">
                   <span className="font-bold">Emily Watson</span> <br />
-                  {tasker.taskType}
+                <p className='text-xl text-gray-500 font-light mt-2'>Electrician {tasker.taskType}</p> 
+                <p className="text-gray-700">⭐⭐⭐ {tasker.rating}</p>
+
                 </h1>
+                
                 <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
                 <div className="hidden md:block h-1 w-[50%] mt-2 mb-2 bg-gray-300"></div>
                 <p className="text-gray-600">
                   Services Included:
                 </p>
-                <p className="text-gray-600 w-2/2">
+                <p className="text-gray-600 w-2/2 mt-2">
                   Our professional offers a wide range of services to meet your needs. In the next step, you can select the specific service required. If you don’t find what you're looking for, you can contact the provider to discuss additional tasks.
                 </p>
-                <div className="mt-6 flex gap-4">
-                  <button
-                    className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300"
-                  >
-                    Book a Service
-                  </button>
-                  <button className="px-6 py-3 cursor-pointer bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
-                    Message Provider
-                  </button>
-                </div>
+                
               </div>
 
               <div className="w-full md:w-1/2">
@@ -312,7 +306,7 @@ const BookingPage = () => {
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300"
+                    className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
                   >
                     Continue
                   </button>
@@ -392,7 +386,7 @@ const BookingPage = () => {
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300"
+                  className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
                 >
                   Continue
                 </button>
@@ -417,7 +411,7 @@ const BookingPage = () => {
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300"
+                    className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
                   >
                     Confirm Booking
                   </button>
