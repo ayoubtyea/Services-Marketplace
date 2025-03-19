@@ -16,6 +16,7 @@ const BookingPage = () => {
   const [selectedTime, setSelectedTime] = useState('');
   const [taskDetails, setTaskDetails] = useState('');
   const [priceRange, setPriceRange] = useState([0, 500]); // Example price range for rc-slider
+  const [errors, setErrors] = useState({}); // Store validation errors
 
   // Example tasker data (replace with your actual data fetching logic)
   const tasker = {
@@ -51,30 +52,51 @@ const BookingPage = () => {
     setSelectedService(service);
   };
 
-  // Handle date and time selection
-  const handleDateTimeSelection = (date, time) => {
-    setSelectedDate(date);
-    setSelectedTime(time);
-  };
-
   // Handle task details input change
   const handleTaskDetailsChange = (e) => {
     setTaskDetails(e.target.value);
   };
 
+  // Validate form inputs
+  const validateStep = () => {
+    const newErrors = {};
+
+    if (step === 1) {
+      if (!address.street.trim()) newErrors.street = 'Street address is required.';
+    }
+
+    if (step === 2) {
+      if (!selectedService) newErrors.service = 'Please select a service.';
+      if (!selectedTime) newErrors.time = 'Please select a time.';
+    }
+
+    if (step === 3) {
+      if (!taskDetails.trim()) newErrors.taskDetails = 'Task details are required.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your booking logic here
-    console.log('Booking confirmed!', {
-      taskerId: id,
-      address,
-      selectedService,
-      selectedDate,
-      selectedTime,
-      taskDetails,
-      priceRange, // Include price range in the booking data
-    });
+    if (validateStep()) {
+      if (step < 3) {
+        setStep(step + 1); // Move to the next step
+      } else {
+        // Submit the form
+        console.log('Booking confirmed!', {
+          taskerId: id,
+          address,
+          selectedService,
+          selectedDate,
+          selectedTime,
+          taskDetails,
+          priceRange,
+        });
+      }
+    }
   };
 
   return (
@@ -185,7 +207,7 @@ const BookingPage = () => {
               <img
                 src="https://i.postimg.cc/853rTD8m/bobworking.jpg"
                 alt={tasker.name}
-                className="w-full h-auto rounded-lg"
+                className="w-full h-64 object-cover rounded-lg" // Adjusted image height
               />
             </div>
             <div className="w-full md:w-1/2 bg-gray-100 px-6 py-6 rounded-lg">
@@ -196,14 +218,12 @@ const BookingPage = () => {
               <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
               <div className="hidden md:block h-1 w-[50%] mt-2 mb-2 bg-gray-300"></div>
               <p className="text-gray-600">
-              Our expert electricians provide comprehensive electrical services for your home. From repairs and installations to safety inspections and upgrades. All work is performed by licensed professionals and backed by our satisfaction guarantee.
+                Our expert electricians provide comprehensive electrical services for your home. From repairs and installations to safety inspections and upgrades. All work is performed by licensed professionals and backed by our satisfaction guarantee.
               </p>
               <div className="hidden md:block h-1 w-[50%] mt-8 bg-gray-200"></div>
               <p className="text-[#076870] text-3xl mt-2">
-              $85 - $120 / <span className='text-gray-900'>hour</span>
+                $85 - $120 / <span className="text-gray-900">hour</span>
               </p>
-
-              <p className="text-xl text-[#076870] font-semibold">{tasker.price}</p>
             </div>
           </div>
 
@@ -231,12 +251,9 @@ const BookingPage = () => {
               <div className="w-full md:w-1/2 bg-gray-100 px-6 py-6 rounded-lg">
                 <h1 className="text-3xl font-bold">
                   <span className="font-bold">Emily Watson</span> <br />
-                <p className='text-xl text-gray-500 font-light mt-2'>Electrician {tasker.taskType}</p> 
-                <p className="text-gray-700">⭐⭐⭐ {tasker.rating}</p>
-
+                  <p className="text-xl text-gray-500 font-light mt-2">Electrician {tasker.taskType}</p>
+                  <p className="text-gray-700">⭐⭐⭐ {tasker.rating}</p>
                 </h1>
-                
-                <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
                 <div className="hidden md:block h-1 w-[50%] mt-2 mb-2 bg-gray-300"></div>
                 <p className="text-gray-600">
                   Services Included:
@@ -244,14 +261,13 @@ const BookingPage = () => {
                 <p className="text-gray-600 w-2/2 mt-2">
                   Our professional offers a wide range of services to meet your needs. In the next step, you can select the specific service required. If you don’t find what you're looking for, you can contact the provider to discuss additional tasks.
                 </p>
-                
               </div>
 
               <div className="w-full md:w-1/2">
                 <img
                   src="https://i.postimg.cc/QM1Q4HRZ/bobworking.png"
                   alt={tasker.name}
-                  className="w-full h-auto rounded-lg"
+                  className="w-full h-64 object-cover rounded-lg" // Adjusted image height
                 />
               </div>
             </div>
@@ -277,6 +293,34 @@ const BookingPage = () => {
               </motion.div>
             </div>
 
+            <div>
+              <div className="flex flex-col items-center justify-center mt-4">
+                <motion.div>
+                  <motion.h2>
+                    <img
+                      className="h-8"
+                      src="https://i.postimg.cc/JnkRBHYv/ixon.png"
+                      alt="icon"
+                    />
+                  </motion.h2>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-center mt-4"
+                >
+                  <motion.p>
+                    <h2 className="text-sm font-semibold mb-4 w-1/2 mx-auto">
+                      Tell us about your task so we can share the details with your chosen
+                      Tasker and ensure they understand your needs.
+                    </h2>
+                  </motion.p>
+                </motion.div>
+              </div>
+            </div>
+
             {/* Step 1: Address Input */}
             {step === 1 && (
               <div className="bg-white p-6 rounded-lg shadow-md mt-8">
@@ -292,6 +336,7 @@ const BookingPage = () => {
                       className="w-full p-2 border rounded"
                       required
                     />
+                    {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-700">Unit/Apt</label>
@@ -305,7 +350,7 @@ const BookingPage = () => {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={handleSubmit}
                     className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
                   >
                     Continue
@@ -334,6 +379,7 @@ const BookingPage = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.service && <p className="text-red-500 text-sm mt-1">{errors.service}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700">Select Date</label>
@@ -363,6 +409,7 @@ const BookingPage = () => {
                       </motion.button>
                     ))}
                   </div>
+                  {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700">Price Range</label>
@@ -385,7 +432,7 @@ const BookingPage = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setStep(3)}
+                  onClick={handleSubmit}
                   className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
                 >
                   Continue
@@ -407,6 +454,7 @@ const BookingPage = () => {
                       rows="4"
                       required
                     />
+                    {errors.taskDetails && <p className="text-red-500 text-sm mt-1">{errors.taskDetails}</p>}
                   </div>
                   <button
                     type="button"
