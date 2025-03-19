@@ -21,39 +21,23 @@ const BookingPage = () => {
   const tasker = {
     id: 1,
     name: 'John Doe',
-    rating: 4.5,
-    location: 'New York',
-    price: 100,
-    available: true,
-    image: 'https://i.postimg.cc/76sV36ty/bob.jpg',
-    taskType: 'Electrician',
-    department: 'Electrical Engineering',
-    experience: '5+ years',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    reviews: 120,
-    availability: {
-      Monday: { start: '09:00', end: '17:00', status: 'Available' },
-      Tuesday: { start: '09:00', end: '17:00', status: 'Available' },
-      Wednesday: { start: '09:00', end: '17:00', status: 'Booked' },
-      Thursday: { start: '09:00', end: '17:00', status: 'Available' },
-      Friday: { start: '09:00', end: '17:00', status: 'Available' },
-      Saturday: { start: '10:00', end: '14:00', status: 'Available' },
-      Sunday: { status: 'Not Available' },
-    },
-    bio: 'John Doe brings a wealth of expertise and experience to his role as an electrician at HandyHome.',
-    skills: ['Wiring', 'Lighting Installation', 'Circuit Repair'],
     services: [
-      { name: 'Wiring Installation', price: 150, description: 'Professional wiring installation for homes and offices.' },
-      { name: 'Lighting Setup', price: 100, description: 'Installation of modern lighting solutions.' },
-      { name: 'Circuit Repair', price: 200, description: 'Diagnosis and repair of electrical circuits.' },
-    ],
-    clientReviews: [
-      { name: 'Alice', rating: "", comment: 'Great work, very professional!', date: '2023-10-01' },
-      { name: 'Bob', rating: "", comment: 'Fixed my issue quickly.', date: '2023-09-25' },
-      { name: 'Charlie', rating: "", comment: 'Highly recommended.', date: '2023-09-20' },
+      { name: 'Wiring Installation', price: 150 },
+      { name: 'Lighting Setup', price: 100 },
+      { name: 'Circuit Repair', price: 200 },
     ],
   };
+
+  // Generate time slots from 8 AM to 6 PM
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 8; hour <= 18; hour++) {
+      slots.push(`${hour < 10 ? '0' + hour : hour}:00`);
+    }
+    return slots;
+  };
+
+  const timeSlots = generateTimeSlots();
 
   // Handle address input change
   const handleAddressChange = (e) => {
@@ -62,7 +46,8 @@ const BookingPage = () => {
   };
 
   // Handle service selection
-  const handleServiceSelection = (service) => {
+  const handleServiceSelection = (e) => {
+    const service = tasker.services.find((s) => s.name === e.target.value);
     setSelectedService(service);
   };
 
@@ -91,7 +76,6 @@ const BookingPage = () => {
       priceRange, // Include price range in the booking data
     });
   };
-
 
   return (
     <>
@@ -134,7 +118,7 @@ const BookingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Select your preferred date and time to book an appointment with Emily Watson
+            Select your preferred date and time to book an appointment with {tasker.name}.
           </motion.p>
         </div>
       </section>
@@ -153,7 +137,7 @@ const BookingPage = () => {
               <div className="text-center md:text-left">
                 <p className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-semibold text-black">
                   Confirm <span className="text-[#076870] font-light">Your</span> <br />
-                  <span className="text-[#076870] font-light">Booking</span> 
+                  <span className="text-[#076870] font-light">Booking</span>
                 </p>
               </div>
             </motion.div>
@@ -165,7 +149,7 @@ const BookingPage = () => {
             >
               <div className="text-center md:text-left">
                 <p className="text-sm font-light sm:text-sm lg:text-base text-gray-600">
-                Book expert home services today and enjoy fast, reliable, and hassle-free solutions for your home
+                  Book expert home services today and enjoy fast, reliable, and hassle-free solutions for your home.
                 </p>
               </div>
             </motion.div>
@@ -199,7 +183,7 @@ const BookingPage = () => {
           <div className="flex flex-col md:flex-row gap-8 mt-8">
             <div className="w-full md:w-1/2">
               <img
-                src="https://cdn.prod.website-files.com/6641b18a77a92d76b329c2d5/6641b50e3a30a5d77c8578a8_electrical-problems.jpg"
+                src="https://i.postimg.cc/853rTD8m/bobworking.jpg"
                 alt={tasker.name}
                 className="w-full h-auto rounded-lg"
               />
@@ -211,22 +195,73 @@ const BookingPage = () => {
               </h1>
               <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
               <div className="hidden md:block h-1 w-[50%] mt-2 mb-2 bg-gray-300"></div>
-              <p className="text-gray-600">Department: {tasker.department}</p>
-              <p className="text-gray-600">Experience: {tasker.experience}</p>
-              <p className="text-gray-600">Email: {tasker.email}</p>
-              <p className="text-gray-600">Phone: {tasker.phone}</p>
-              <div className="mt-6 flex gap-4">
-                <button
-                  className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300"
-                >
-                  Book a Service
-                </button>
-                <button className="px-6 py-3 cursor-pointer bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
-                  Message Provider
-                </button>
-              </div>
+              <p className="text-gray-600">
+              Our expert electricians provide comprehensive electrical services for your home. From repairs and installations to safety inspections and upgrades. All work is performed by licensed professionals and backed by our satisfaction guarantee.
+              </p>
+              <div className="hidden md:block h-1 w-[50%] mt-8 bg-gray-200"></div>
+              <p className="text-[#076870] text-3xl mt-2">
+              $85 - $120 / <span className='text-gray-900'>hour</span>
+              </p>
+
+              <p className="text-xl text-[#076870] font-semibold">{tasker.price}</p>
             </div>
           </div>
+
+          {/* Provider Selected Section */}
+          <section className="mt-12">
+            <div className="text-center">
+              <motion.div
+                className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-[#EAF4F4]"
+                initial={{ opacity: 0, y: 70 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.h2
+                  className="text-sm font-light sm:text-sm md:text-sm"
+                  initial={{ opacity: 0, y: 70 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Provider Selected
+                </motion.h2>
+              </motion.div>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-8 mt-8">
+              <div className="w-full md:w-1/2 bg-gray-100 px-6 py-6 rounded-lg">
+                <h1 className="text-3xl font-bold">
+                  <span className="font-bold">Emily Watson</span> <br />
+                  {tasker.taskType}
+                </h1>
+                <p className="text-xl text-[#076870] font-semibold">{tasker.taskType}</p>
+                <div className="hidden md:block h-1 w-[50%] mt-2 mb-2 bg-gray-300"></div>
+                <p className="text-gray-600">
+                  Services Included:
+                </p>
+                <p className="text-gray-600 w-2/2">
+                  Our professional offers a wide range of services to meet your needs. In the next step, you can select the specific service required. If you don’t find what you're looking for, you can contact the provider to discuss additional tasks.
+                </p>
+                <div className="mt-6 flex gap-4">
+                  <button
+                    className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300"
+                  >
+                    Book a Service
+                  </button>
+                  <button className="px-6 py-3 cursor-pointer bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
+                    Message Provider
+                  </button>
+                </div>
+              </div>
+
+              <div className="w-full md:w-1/2">
+                <img
+                  src="https://i.postimg.cc/QM1Q4HRZ/bobworking.png"
+                  alt={tasker.name}
+                  className="w-full h-auto rounded-lg"
+                />
+              </div>
+            </div>
+          </section>
 
           {/* Booking Form Section */}
           <section className="mt-12">
@@ -291,20 +326,20 @@ const BookingPage = () => {
                 <h2 className="text-xl font-semibold mb-4">Select Service and Time</h2>
                 <div className="mb-4">
                   <label className="block text-gray-700">Select Service</label>
-                  <div className="space-y-2">
+                  <select
+                    value={selectedService?.name || ''}
+                    onChange={handleServiceSelection}
+                    className="w-full p-2 border rounded"
+                  >
+                    <option value="" disabled>
+                      Choose a service
+                    </option>
                     {tasker.services.map((service, index) => (
-                      <div
-                        key={index}
-                        className={`p-4 border rounded cursor-pointer ${
-                          selectedService?.name === service.name ? 'bg-blue-100' : ''
-                        }`}
-                        onClick={() => handleServiceSelection(service)}
-                      >
-                        <p className="font-semibold">{service.name}</p>
-                        <p className="text-gray-600">${service.price}</p>
-                      </div>
+                      <option key={index} value={service.name}>
+                        {service.name} (${service.price})
+                      </option>
                     ))}
-                  </div>
+                  </select>
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700">Select Date</label>
@@ -316,12 +351,24 @@ const BookingPage = () => {
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700">Select Time</label>
-                  <input
-                    type="time"
-                    value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                    className="w-full p-2 border rounded"
-                  />
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                    {timeSlots.map((time, index) => (
+                      <motion.button
+                        key={index}
+                        type="button"
+                        onClick={() => setSelectedTime(time)}
+                        className={`p-4 border rounded-lg text-center transition-all duration-300 ${
+                          selectedTime === time
+                            ? 'bg-[#076870] text-white border-[#076870]'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-[#076870]'
+                        }`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {time}
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700">Price Range</label>
