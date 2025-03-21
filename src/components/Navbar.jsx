@@ -5,7 +5,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-[#F2EADD] shadow-md rounded-full mt-4 mx-auto max-w-7xl">
+    <nav className="bg-[#F2EADD] rounded-full md:rounded-full mt-4 mx-auto max-w-7xl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <a href="/" className="flex items-center">
@@ -40,7 +40,7 @@ const Navbar = () => {
           
           {/* Correcting the link tag to React Router's Link */}
           <Link to="/auth">
-            <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
+            <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
               Sign Up / Log in
             </button>
           </Link>
@@ -74,7 +74,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#F2EADD] shadow-lg font-poppins rounded-lg mx-4 mt-2">
+        <div className="md:hidden bg-[#F2EADD] font-poppins mx-4 mt-2 px-6 py-6">
           <a
             href="/"
             className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300"
@@ -99,13 +99,16 @@ const Navbar = () => {
           >
             Contact Us
           </a>
-          <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
-            Become a Tasker
+         
+          <Link>
+          <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-[#076870] rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-white hover:bg-[#076870] hover:text-black cursor-pointer">
+            Become A Tasker
           </button>
+          </Link>
           
           {/* Correcting the link tag to React Router's Link */}
           <Link to="/auth">
-            <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
+            <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
               Sign Up / Log in
             </button>
           </Link>
