@@ -68,7 +68,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="footer-widget text-black">
-            <h2 className="footer-widget-title text-lg font-semibold mb-4">Quick Links</h2>
+            <h2 className="footer-widget-title text-lg font-medium mb-4">About Link</h2>
             <ul className="space-y-2">
               <li>
                 <a href="/home" className="text-sm text-gray-600 hover:text-[#076870] transition duration-300">
@@ -95,7 +95,7 @@ const Footer = () => {
 
           {/* Contact Block */}
           <div className="footer-widget text-black">
-            <h2 className="footer-widget-title text-lg font-semibold mb-4">Get In Touch</h2>
+            <h2 className="footer-widget-title text-lg font-medium mb-4">Get In Touch</h2>
             <a
               href="mailto:contact@handyhome.com"
               className="block text-sm text-gray-600 mb-2 hover:text-[#076870] transition duration-300"
@@ -113,7 +113,7 @@ const Footer = () => {
 
           {/* Newsletter Block */}
           <div className="footer-widget text-black">
-            <h2 className="footer-widget-title text-lg font-semibold mb-4">Subscribe Our Newsletter</h2>
+            <h2 className="footer-widget-title text-lg font-medium mb-4">Subscribe Our Newsletter</h2>
             <div className="footer-newsletter-form">
               <form action="#" method="post" className="flex items-center">
                 <input
