@@ -444,54 +444,113 @@ const BookingPage = () => {
 
             {/* Step 3: Task Size and Vehicle Requirements */}
             {step === 3 && (
-              <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-                <h2 className="text-3xl font-medium mb-4 text-[#065f57]">Task Options</h2>
-                <form>
-                  <div className="mb-4">
-                    <label className="block text-gray-700">How big is your task?</label>
-                    <select
-                      value={taskSize}
+            <div className="bg-white p-6 rounded-lg shadow-md mt-8">
+            <h2 className="text-3xl font-medium mb-4 text-[#065f57]">Task Options</h2>
+            <form>
+              {/* Task Size Radio Buttons */}
+              <div className="mb-6">
+                <label className="block text-gray-700 text-lg font-medium mb-2">How big is your task?</label>
+                <div className="space-y-3">
+                  {/* Small Task */}
+                  <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition duration-300">
+                    <input
+                      type="radio"
+                      name="taskSize"
+                      value="small"
+                      checked={taskSize === 'small'}
                       onChange={handleTaskSizeChange}
-                      className="w-full p-2 border rounded"
-                      required
-                    >
-                      <option value="" disabled>
-                        Select task size
-                      </option>
-                      <option value="small">Small (Est. 1hr)</option>
-                      <option value="medium">Medium (Est. 2-3hrs)</option>
-                      <option value="large">Large (Est. 4+ hrs)</option>
-                    </select>
-                    {errors.taskSize && <p className="text-red-500 text-sm mt-1">{errors.taskSize}</p>}
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-700">Vehicle Requirements</label>
-                    <select
-                      value={vehicleRequirements}
-                      onChange={handleVehicleRequirementsChange}
-                      className="w-full p-2 border rounded"
-                      required
-                    >
-                      <option value="" disabled>
-                        Select vehicle requirements
-                      </option>
-                      <option value="not_needed">Not needed for task</option>
-                      <option value="car">Task requires a car</option>
-                      <option value="truck">Task requires a truck</option>
-                    </select>
-                    {errors.vehicleRequirements && <p className="text-red-500 text-sm mt-1">{errors.vehicleRequirements}</p>}
-                  </div>
-                  <div className="flex justify-center">
-                    <button
-                      type="button"
-                      onClick={handleSubmit}
-                      className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </form>
+                      className="form-radio h-5 w-5 text-[#076870]"
+                    />
+                    <span className="ml-3 text-gray-700">Small (Est. 1hr)</span>
+                  </label>
+          
+                  {/* Medium Task */}
+                  <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition duration-300">
+                    <input
+                      type="radio"
+                      name="taskSize"
+                      value="medium"
+                      checked={taskSize === 'medium'}
+                      onChange={handleTaskSizeChange}
+                      className="form-radio h-5 w-5 text-[#076870]"
+                    />
+                    <span className="ml-3 text-gray-700">Medium (Est. 2-3hrs)</span>
+                  </label>
+          
+                  {/* Large Task */}
+                  <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition duration-300">
+                    <input
+                      type="radio"
+                      name="taskSize"
+                      value="large"
+                      checked={taskSize === 'large'}
+                      onChange={handleTaskSizeChange}
+                      className="form-radio h-5 w-5 text-[#076870]"
+                    />
+                    <span className="ml-3 text-gray-700">Large (Est. 4+ hrs)</span>
+                  </label>
+                </div>
+                {errors.taskSize && <p className="text-red-500 text-sm mt-1">{errors.taskSize}</p>}
               </div>
+          
+              {/* Vehicle Requirements Radio Buttons */}
+              <div className="mb-6">
+                <label className="block text-gray-700 text-lg font-medium mb-2">Vehicle Requirements</label>
+                <div className="space-y-3">
+                  {/* Not Needed */}
+                  <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition duration-300">
+                    <input
+                      type="radio"
+                      name="vehicleRequirements"
+                      value="not_needed"
+                      checked={vehicleRequirements === 'not_needed'}
+                      onChange={handleVehicleRequirementsChange}
+                      className="form-radio h-5 w-5 text-[#076870]"
+                    />
+                    <span className="ml-3 text-gray-700">Not needed for task</span>
+                  </label>
+          
+                  {/* Requires a Car */}
+                  <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition duration-300">
+                    <input
+                      type="radio"
+                      name="vehicleRequirements"
+                      value="car"
+                      checked={vehicleRequirements === 'car'}
+                      onChange={handleVehicleRequirementsChange}
+                      className="form-radio h-5 w-5 text-[#076870]"
+                    />
+                    <span className="ml-3 text-gray-700">Task requires a car</span>
+                  </label>
+          
+                  {/* Requires a Truck */}
+                  <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition duration-300">
+                    <input
+                      type="radio"
+                      name="vehicleRequirements"
+                      value="truck"
+                      checked={vehicleRequirements === 'truck'}
+                      onChange={handleVehicleRequirementsChange}
+                      className="form-radio h-5 w-5 text-[#076870]"
+                    />
+                    <span className="ml-3 text-gray-700">Task requires a truck</span>
+                  </label>
+                </div>
+                {errors.vehicleRequirements && <p className="text-red-500 text-sm mt-1">{errors.vehicleRequirements}</p>}
+              </div>
+          
+              {/* Continue Button */}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </div>
             )}
 
             {/* Step 4: Task Details */}
