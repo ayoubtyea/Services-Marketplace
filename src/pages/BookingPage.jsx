@@ -7,9 +7,40 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { motion } from 'framer-motion';
 
+// ProgressLine Component
+const ProgressLine = ({ step, totalSteps }) => {
+  const progressPercentage = ((step - 1) / (totalSteps - 1)) * 100;
+
+  return (
+    <div className="w-full mt-8">
+      <div className="relative h-2 bg-gray-200 rounded-full">
+        <motion.div
+          className="absolute top-0 left-0 h-2 bg-[#076870] rounded-full"
+          initial={{ width: "0%" }}
+          animate={{ width: `${progressPercentage}%` }}
+          transition={{ duration: 0.5 }}
+        />
+      </div>
+      <div className="flex justify-between mt-2">
+        {[...Array(totalSteps)].map((_, index) => (
+          <div
+            key={index}
+            className={`text-sm ${
+              index + 1 <= step ? "text-[#076870]" : "text-gray-400"
+            }`}
+          >
+            Step {index + 1}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const BookingPage = () => {
   const { id } = useParams(); // Get the tasker ID from the URL
   const [step, setStep] = useState(1); // Step for the booking process
+  const totalSteps = 4; // Total number of steps
   const [address, setAddress] = useState({ street: '', unit: '' });
   const [selectedService, setSelectedService] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -95,7 +126,7 @@ const BookingPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateStep()) {
-      if (step < 4) {
+      if (step < totalSteps) {
         setStep(step + 1); // Move to the next step
       } else {
         // Submit the form
@@ -110,6 +141,7 @@ const BookingPage = () => {
           taskSize,
           vehicleRequirements,
         });
+        alert("Booking confirmed!");
       }
     }
   };
@@ -308,6 +340,7 @@ const BookingPage = () => {
               </motion.div>
             </div>
 
+            
             <div>
               <div className="flex flex-col items-center justify-center mt-4">
                 <motion.div>
@@ -335,6 +368,9 @@ const BookingPage = () => {
                 </motion.div>
               </div>
             </div>
+            {/* Progress Line */}
+            <ProgressLine step={step} totalSteps={totalSteps} />
+
 
             {/* Step 1: Address Input */}
             {step === 1 && (
