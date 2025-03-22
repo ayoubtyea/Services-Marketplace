@@ -17,6 +17,8 @@ const BookingPage = () => {
   const [taskDetails, setTaskDetails] = useState('');
   const [priceRange, setPriceRange] = useState([0, 500]); // Example price range for rc-slider
   const [errors, setErrors] = useState({}); // Store validation errors
+  const [taskSize, setTaskSize] = useState(''); // New state for task size
+  const [vehicleRequirements, setVehicleRequirements] = useState(''); // New state for vehicle requirements
 
   // Example tasker data (replace with your actual data fetching logic)
   const tasker = {
@@ -57,6 +59,16 @@ const BookingPage = () => {
     setTaskDetails(e.target.value);
   };
 
+  // Handle task size selection
+  const handleTaskSizeChange = (e) => {
+    setTaskSize(e.target.value);
+  };
+
+  // Handle vehicle requirements selection
+  const handleVehicleRequirementsChange = (e) => {
+    setVehicleRequirements(e.target.value);
+  };
+
   // Validate form inputs
   const validateStep = () => {
     const newErrors = {};
@@ -71,7 +83,8 @@ const BookingPage = () => {
     }
 
     if (step === 3) {
-      if (!taskDetails.trim()) newErrors.taskDetails = 'Task details are required.';
+      if (!taskSize) newErrors.taskSize = 'Please select the size of your task.';
+      if (!vehicleRequirements) newErrors.vehicleRequirements = 'Please select vehicle requirements.';
     }
 
     setErrors(newErrors);
@@ -82,7 +95,7 @@ const BookingPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateStep()) {
-      if (step < 3) {
+      if (step < 4) {
         setStep(step + 1); // Move to the next step
       } else {
         // Submit the form
@@ -94,6 +107,8 @@ const BookingPage = () => {
           selectedTime,
           taskDetails,
           priceRange,
+          taskSize,
+          vehicleRequirements,
         });
       }
     }
@@ -324,10 +339,10 @@ const BookingPage = () => {
             {/* Step 1: Address Input */}
             {step === 1 && (
               <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-                <h2 className="text-xl font-semibold mb-4">Enter Your Address</h2>
+                <h2 className="text-3xl font-medium mb-4 text-[#065f57]">Your task location</h2>
                 <form>
-                  <div className="mb-4">
-                    <label className="block text-gray-700">Street Address</label>
+                  <div className="mb-4 ">
+                    <label className="block text-gray-700"></label>
                     <input
                       type="text"
                       name="street"
@@ -335,26 +350,30 @@ const BookingPage = () => {
                       onChange={handleAddressChange}
                       className="w-full p-2 border rounded"
                       required
+                      placeholder="Street Address"
                     />
                     {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Unit/Apt</label>
+                    <label className="block text-gray-700"></label>
                     <input
                       type="text"
                       name="unit"
                       value={address.unit}
                       onChange={handleAddressChange}
                       className="w-full p-2 border rounded"
+                      placeholder="Unit/Apt"
                     />
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
-                  >
-                    Continue
-                  </button>
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
+                    >
+                      Continue
+                    </button>
+                  </div>
                 </form>
               </div>
             )}
@@ -362,9 +381,9 @@ const BookingPage = () => {
             {/* Step 2: Service and Date/Time Selection */}
             {step === 2 && (
               <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-                <h2 className="text-xl font-semibold mb-4">Select Service and Time</h2>
+                <h2 className="text-3xl font-medium mb-4 text-[#065f57]">Service & Date & time selection</h2>
                 <div className="mb-4">
-                  <label className="block text-gray-700">Select Service</label>
+                  <label className="block text-gray-700">Select Service Type</label>
                   <select
                     value={selectedService?.name || ''}
                     onChange={handleServiceSelection}
@@ -390,7 +409,7 @@ const BookingPage = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700">Select Time</label>
+                  <label className="block text-gray-700">Availible Time Slotes</label>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                     {timeSlots.map((time, index) => (
                       <motion.button
@@ -411,42 +430,77 @@ const BookingPage = () => {
                   </div>
                   {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
                 </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700">Price Range</label>
-                  <Slider
-                    range
-                    min={0}
-                    max={500}
-                    defaultValue={priceRange}
-                    onChange={(value) => setPriceRange(value)}
-                    trackStyle={[{ backgroundColor: '#076870' }]}
-                    handleStyle={[
-                      { borderColor: '#076870', backgroundColor: '#076870' },
-                      { borderColor: '#076870', backgroundColor: '#076870' },
-                    ]}
-                    railStyle={{ backgroundColor: '#ddd' }}
-                  />
-                  <p className="text-gray-600 mt-2">
-                    Selected Price Range: ${priceRange[0]} - ${priceRange[1]}
-                  </p>
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
+                  >
+                    Continue
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
-                >
-                  Continue
-                </button>
               </div>
             )}
 
-            {/* Step 3: Task Details */}
+            {/* Step 3: Task Size and Vehicle Requirements */}
             {step === 3 && (
               <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-                <h2 className="text-xl font-semibold mb-4">Tell Us About Your Task</h2>
+                <h2 className="text-3xl font-medium mb-4 text-[#065f57]">Task Options</h2>
                 <form>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Task Details</label>
+                    <label className="block text-gray-700">How big is your task?</label>
+                    <select
+                      value={taskSize}
+                      onChange={handleTaskSizeChange}
+                      className="w-full p-2 border rounded"
+                      required
+                    >
+                      <option value="" disabled>
+                        Select task size
+                      </option>
+                      <option value="small">Small (Est. 1hr)</option>
+                      <option value="medium">Medium (Est. 2-3hrs)</option>
+                      <option value="large">Large (Est. 4+ hrs)</option>
+                    </select>
+                    {errors.taskSize && <p className="text-red-500 text-sm mt-1">{errors.taskSize}</p>}
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700">Vehicle Requirements</label>
+                    <select
+                      value={vehicleRequirements}
+                      onChange={handleVehicleRequirementsChange}
+                      className="w-full p-2 border rounded"
+                      required
+                    >
+                      <option value="" disabled>
+                        Select vehicle requirements
+                      </option>
+                      <option value="not_needed">Not needed for task</option>
+                      <option value="car">Task requires a car</option>
+                      <option value="truck">Task requires a truck</option>
+                    </select>
+                    {errors.vehicleRequirements && <p className="text-red-500 text-sm mt-1">{errors.vehicleRequirements}</p>}
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Step 4: Task Details */}
+            {step === 4 && (
+              <div className="bg-white p-6 rounded-lg shadow-md mt-8">
+                <h2 className="text-3xl font-medium mb-4 text-[#065f57]">Tell Us the details of your task</h2>
+                <form>
+                  <div className="mb-4">
+                    <label className="block text-gray-700">Start the conversation and let your Tasker know what you need done. This ensures they understand your requirements. Don't worry, you can edit the details later.</label>
                     <textarea
                       value={taskDetails}
                       onChange={handleTaskDetailsChange}
@@ -456,13 +510,15 @@ const BookingPage = () => {
                     />
                     {errors.taskDetails && <p className="text-red-500 text-sm mt-1">{errors.taskDetails}</p>}
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
-                  >
-                    Confirm Booking
-                  </button>
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      className="bg-[#076870] text-white px-6 py-3 rounded-lg hover:bg-[#065f57] transition duration-300 cursor-pointer"
+                    >
+                      Confirm Booking
+                    </button>
+                  </div>
                 </form>
               </div>
             )}
