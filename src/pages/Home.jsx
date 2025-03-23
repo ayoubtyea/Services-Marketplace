@@ -5,6 +5,7 @@ import Testimonial from "../components/Testimonial";
 import AuthPage from "../pages/AuthPage";
 import Contact from "../components/Contact";
 import { Link } from "react-router-dom"; 
+import SapruinLandingPage from "../pages/SapruinLandingPage";
 
 
 import "../index.css";
@@ -55,7 +56,7 @@ export default function HeroSection() {
   return (
     <>
 
-<section
+      <section
         className="hero-section py-16 mt-7 bg-cover bg-center"
         style={{
           backgroundImage:
@@ -73,7 +74,7 @@ export default function HeroSection() {
             >
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-light text-gray-900">
                 <span className="block font-extrabold">Home</span> Solutions with{" "}
-                <span className="bg-[url('https://i.postimg.cc/4dPVjTJQ/modified-image-v3.png')] text-white inline-block font-extrabold px-4 py-1 rounded-lg rotate-[-2deg]">
+                <span className="bg-[url('https://i.postimg.cc/4dPVjTJQ/modified-image-v3.png')] text-white inline-block font-medium mb-2 px-4 py-1 rounded-lg rotate-[-5deg] border-l-black">
                     HandyHome
                  </span>
               </h1>
@@ -182,17 +183,20 @@ export default function HeroSection() {
               {/* Secondary Image */}
               <div className="static">
                 {/* Text Div (Above the Image) */}
-                <div className="md:absolute top-0 left-2/3 transform md:-translate-x-1/5 bg-black text-white text-center flex items-center rounded-full p-4 z-10 mb-2 md:mb-0">
-                  <span className="py-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8 bg-teal-500 rounded-full p-1" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                    </svg>
-                  </span>
-                  <a className="text-xs sm:text-sm ml-2">Free Home Services in the next 7 days!</a>
+                <div className="absolute -top-6 right-0 md:-right-3 bg-black text-white px-6 py-4 rounded-full flex items-center space-x-3">
+                <div className="bg-[#076870] p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
                 </div>
+                <div>
+                  <p className="text-sm">Free Home Services in the</p>
+                  <p className="text-sm font-bold">next 7 days!</p>
+                </div>
+              </div>
 
                 {/* Image Div */}
-                <div className="max-w-full md:w-auto flex justify-center md:mt-32 mt-8">
+                <div className="max-w-full md:w-auto flex justify-center md:mt-20 mt-8">
                   <motion.img
                     src="https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664083dca0f5e2e460f7281d_hero-secondary-image.jpg"
                     alt="Client"
@@ -580,8 +584,7 @@ export default function HeroSection() {
     
   
       < Testimonial />
-      < Contact />
-        
+      < Contact />        
         <section className="joinU"
         style={{
           backgroundImage:
