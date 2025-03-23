@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const Contact = () => {
   return (
-    <section className="max-w-5xl lg:max-w-7xl mx-auto px-4 py-12 mt-2 mb-4">
+    <section className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 py-12 mt-2 mb-4">
       <div className="text-center mt-8 mb-8">
         <motion.div
           className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer"
@@ -128,7 +128,7 @@ const Contact = () => {
         </div>
 
         {/* Contact Form */}
-        <div className="w-full px-4 lg:w-1/2 xl:w-5/12">
+        <div className="w-full px-4 lg:w-1/2 xl:w-5/12 mt-4 md:mt-0">
           <div className="relative rounded-lg bg-white p-8 shadow-lg dark:bg-dark-2 sm:p-12">
             <h2 className="text-2xl">Get In Touch</h2>
             <p className="mt-2 mb-2 text-sm">

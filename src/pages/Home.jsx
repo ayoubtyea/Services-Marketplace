@@ -414,7 +414,8 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Button Wrapper */}          <div className="text-left">
+          {/* Button Wrapper */}         
+           <div className="text-center md:text-left">
             <a
               href="/about"
               className="button-default outline inline-flex items-center px-6 py-3 border border-[#076870] text-[#076870] rounded-full hover:bg-[#076870] hover:text-white transition-colors"
@@ -449,7 +450,7 @@ export default function HeroSection() {
           'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
       }}
     >
-      <div className="max-w-6xl lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="text-center">
           <motion.div
