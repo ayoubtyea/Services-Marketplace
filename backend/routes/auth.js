@@ -38,8 +38,40 @@ router.post('/signup', async (req, res) => {
     // Respond with the token and user data
     res.status(201).json({ token, user: newUser });
   } catch (err) {
-    console.error("Error signing up user:", err);
+    console.error("Error signing up user:", err); // Log the error details
     res.status(500).json({ message: 'Error signing up user', error: err.message });
+  }
+});
+
+
+// Post route for login a user
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Compare the entered password with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Generate a JWT token for the user
+    const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', {
+      expiresIn: '1h',
+    });
+
+    // Respond with the token and user data
+    res.status(200).json({ token, user });
+
+  } catch (err) {
+    console.error("Error logging in user:", err);
+    res.status(500).json({ message: 'Error logging in user', error: err.message });
   }
 });
 
