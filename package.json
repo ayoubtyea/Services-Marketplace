@@ -12,6 +12,7 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.0.12",
+    "axios": "^1.8.4",
     "framer-motion": "^12.4.10",
     "rc-slider": "^11.1.8",
     "react": "^19.0.0",
