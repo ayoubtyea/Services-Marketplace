@@ -1,71 +1,161 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000/api"; // Your backend URL
+const API_URL = "http://localhost:5000/api";
 
 const AuthPage = ({ onAuthSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true); // Toggle between Login/SignUp
-  const [showForm, setShowForm] = useState(false); // Control form visibility
-  const [showForgotPassword, setShowForgotPassword] = useState(false); // Toggle Forgot Password form
-  const [error, setError] = useState(""); // To capture errors for display
+  const [isLogin, setIsLogin] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleButtonClick = (isLoginForm) => {
     setIsLogin(isLoginForm);
     setShowForm(true);
-    setShowForgotPassword(false); // Reset Forgot Password visibility
+    setShowForgotPassword(false);
+    setError("");
+    setFormData({
+      fullName: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      confirmPassword: ""
+    });
   };
 
   const handleForgotPasswordClick = () => {
     setShowForgotPassword(true);
+    setError("");
   };
 
   const handleBackToLogin = () => {
     setShowForgotPassword(false);
+    setError("");
   };
 
-  // Function to handle form submission
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const validateForm = () => {
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+
+    // Password validation
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return false;
+    }
+
+    // Signup specific validations
+    if (!isLogin) {
+      if (!formData.fullName.trim()) {
+        setError("Full name is required");
+        return false;
+      }
+      
+      if (!formData.phoneNumber.trim()) {
+        setError("Phone number is required");
+        return false;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords don't match");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
+    setError("");
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        isLogin ? `${API_URL}/login` : `${API_URL}/signup`, // Depending on whether it's login or signup
-        data
-      );
+      const payload = isLogin
+        ? { email: formData.email, password: formData.password }
+        : {
+            fullName: formData.fullName,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            password: formData.password
+          };
 
-      // Store the JWT token in localStorage
+      const endpoint = isLogin ? "login" : "signup";
+      const response = await axios.post(`${API_URL}/${endpoint}`, payload);
+
       localStorage.setItem("authToken", response.data.token);
-      onAuthSuccess(response.data.user); // Pass user data to parent component
-
-      setError(""); // Clear error on success
-
-      // Redirect user to a protected page after successful authentication
-      window.location.href = "/"; // Change this to your protected route
+      onAuthSuccess(response.data.user);
+      navigate("/");
 
     } catch (err) {
-      setError("Something went wrong. Please try again.");
+      handleAuthError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAuthError = (err) => {
+    if (err.response) {
+      switch (err.response.status) {
+        case 400:
+          setError(err.response.data.message || "Invalid request");
+          break;
+        case 401:
+          setError("Invalid email or password");
+          break;
+        case 409:
+          setError("Email already in use");
+          break;
+        default:
+          setError("Something went wrong. Please try again.");
+      }
+    } else {
+      setError("Network error. Please check your connection.");
     }
   };
 
   return (
-    <div
-      className="min-h-screen flex justify-center items-center bg-cover bg-center"
-      style={{
-        backgroundImage:
-          'url("https://s3-alpha-sig.figma.com/img/ec36/6190/b0a1cdce092091e2710452391cd3428d?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=rh7-3UHY3naBhJuiZbckeI-c-1Uqwf-GeY7fcbnOxmh1WBJmVWkNHqeexBYfrYhB2xGiP-1cdUIfRIQA0IQuOe1GOwJIJNW0LSt-Fd4~i1Jd8S3YdKFjDk-nMce5wRhmzAMFR26E2hMh44sS2sygzN-qXBB6i~0MowC1J9didwQ~-ZBPNYRNGny~1dikT38zH7d9Ji-sFb6e85Glq7J17nc-e1DVTDxWOBmZYCGViZWwKvRfREXZxKRjQsUhNgb67R~F2imCGgIH2uWEdqob6PZ8URtDeTMi9wLOc1Ad4S7qIWKL8exQRwxF9pYSZdhgmD3xtBwkbX6L0Kxs8A-x7g__")',
-      }}
-    >
+    <div className="min-h-screen flex justify-center items-center bg-cover bg-center" style={{
+      backgroundImage: 'url("https://s3-alpha-sig.figma.com/img/ec36/6190/b0a1cdce092091e2710452391cd3428d?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VAImpOZGx4AujJ3qiYStb07bcaN-UqWH5uwXgD8YczwKT0oUP7jfTeY6us1p-BD4VmW5R93gfpPcDeHdZbYzB-GL3epdEpaR5ayjgu9gvbmQWRyuL9zmznW~qNxil~4wt-2Uj7TIz5S2EOccxdvc7AnylZbQd5SZTxdXdu2Hf7sb90Rh6VcZfRt2HreF-Br4wF7j3KgbZEHixSJkLRfUl69VI~96rVUOwUCpMRVGvPdPOFPTFNvzQAjwcgiyZGRi2DsQU9RHZMisk8o2jKp8z49luk-35eU7YEvzYWpODq2gC9g6MHADTFtjxA96U1W9S3j~KI~EKqBtSFaw5kUysg__")',
+    }}>
       <div className="bg-white bg-opacity-90 p-8 rounded-xl shadow-lg text-center w-full max-w-md transition-all duration-500">
-        {/* Logo */}
         <img
-          src="https://i.postimg.cc/C5dQgh9H/MAIN-1.png" // Your logo URL
+          src="https://i.postimg.cc/C5dQgh9H/MAIN-1.png"
           alt="Logo"
-          className="h-8 mx-auto mb-8" // Adjusted size for better visibility
+          className="h-8 mx-auto mb-8"
         />
 
-        {/* Show Buttons or Form */}
         {!showForm ? (
           <div className="flex flex-col space-y-4">
             <button
@@ -83,22 +173,32 @@ const AuthPage = ({ onAuthSuccess }) => {
           </div>
         ) : (
           <>
-            {/* Forgot Password Form */}
             {showForgotPassword ? (
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <h1 className="text-3xl font-light mb-4">Forgot Password</h1>
                 <input
                   type="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Email Address"
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
                   required
                 />
                 <button
                   type="submit"
-                  className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 cursor-pointer"
+                  className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 cursor-pointer disabled:opacity-70"
+                  disabled={isLoading}
                 >
-                  Reset Password
+                  {isLoading ? (
+                    <span className="inline-flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : "Reset Password"}
                 </button>
                 <button
                   type="button"
@@ -114,29 +214,111 @@ const AuthPage = ({ onAuthSuccess }) => {
                   {isLogin ? "Log In" : "Sign Up"}
                 </h1>
 
-                {/* Conditionally Render Forms */}
-                {isLogin ? (
-                  <form onSubmit={handleFormSubmit} className="space-y-4">
+                {error && (
+                  <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md">
+                    {error}
+                  </div>
+                )}
+
+                <form onSubmit={handleFormSubmit} className="space-y-4">
+                  {!isLogin && (
                     <input
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
+                      type="text"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      placeholder="Full Name"
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
                       required
                     />
+                  )}
+
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Email Address"
+                    className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
+                      error.toLowerCase().includes("email") ? "border-red-500 focus:ring-red-300" : "border-gray-300 focus:ring-[#076870]"
+                    }`}
+                    required
+                  />
+
+                  {!isLogin && (
                     <input
-                      type="password"
+                      type="tel"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
+                      placeholder="Phone Number"
+                      className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
+                        error.toLowerCase().includes("phone") ? "border-red-500 focus:ring-red-300" : "border-gray-300 focus:ring-[#076870]"
+                      }`}
+                      required
+                    />
+                  )}
+
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
                       name="password"
+                      value={formData.password}
+                      onChange={handleChange}
                       placeholder="Password"
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                      className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
+                        error.toLowerCase().includes("password") ? "border-red-500 focus:ring-red-300" : "border-gray-300 focus:ring-[#076870]"
+                      }`}
                       required
                     />
                     <button
-                      type="submit"
-                      className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 cursor-pointer"
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
                     >
-                      Log In
+                      {showPassword ? "👁️" : "👁️‍🗨️"}
                     </button>
+                  </div>
+
+                  {!isLogin && (
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        placeholder="Confirm Password"
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
+                          formData.password && formData.password !== formData.confirmPassword
+                            ? "border-red-500 focus:ring-red-300"
+                            : "border-gray-300 focus:ring-[#076870]"
+                        }`}
+                        required
+                      />
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 cursor-pointer disabled:opacity-70"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <span className="inline-flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : isLogin ? (
+                      "Log In"
+                    ) : (
+                      "Create Account"
+                    )}
+                  </button>
+
+                  {isLogin && (
                     <div className="text-right">
                       <button
                         type="button"
@@ -146,63 +328,19 @@ const AuthPage = ({ onAuthSuccess }) => {
                         Forgot Password?
                       </button>
                     </div>
-                  </form>
-                ) : (
-                  <form onSubmit={handleFormSubmit} className="space-y-4">
-                    <input
-                      type="text"
-                      name="fullName"
-                      placeholder="Full Name"
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                      required
-                    />
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                      required
-                    />
-                    <input
-                      type="number"
-                      name="phoneNumber"
-                      placeholder="Phone Number"
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                      required
-                    />
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Password"
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                      required
-                    />
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      placeholder="Confirm Password"
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 cursor-pointer"
-                    >
-                      Create Account
-                    </button>
+                  )}
+                </form>
 
-                    {/* Terms and Conditions */}
-                    <p className="text-sm text-gray-600 mt-4">
-                      By signing up, you agree to our{" "}
-                      <a href="#" className="text-[#076870] hover:text-[#065d64]">
-                        Terms and Conditions
-                      </a>
-                      .
-                    </p>
-                  </form>
+                {!isLogin && (
+                  <p className="text-sm text-gray-600 mt-4">
+                    By signing up, you agree to our{" "}
+                    <a href="#" className="text-[#076870] hover:text-[#065d64]">
+                      Terms and Conditions
+                    </a>
+                    .
+                  </p>
                 )}
 
-                {error && <p className="text-red-500 mt-4">{error}</p>} {/* Show error */}
                 <button
                   onClick={() => setShowForm(false)}
                   className="text-[#076870] hover:text-[#065d64] transition duration-300 cursor-pointer mt-4"
