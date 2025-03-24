@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-const AuthPage = () => {
+const API_URL = "http://localhost:5000/api"; // Your backend URL
+
+const AuthPage = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true); // Toggle between Login/SignUp
   const [showForm, setShowForm] = useState(false); // Control form visibility
   const [showForgotPassword, setShowForgotPassword] = useState(false); // Toggle Forgot Password form
+  const [error, setError] = useState(""); // To capture errors for display
 
   const handleButtonClick = (isLoginForm) => {
     setIsLogin(isLoginForm);
@@ -19,11 +23,30 @@ const AuthPage = () => {
     setShowForgotPassword(false);
   };
 
-  const handleFormSubmit = (e) => {
+  // Function to handle form submission
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
-    console.log("Form Data:", data); // Replace with your backend logic
+
+    try {
+      const response = await axios.post(
+        isLogin ? `${API_URL}/login` : `${API_URL}/signup`, // Depending on whether it's login or signup
+        data
+      );
+
+      // Store the JWT token in localStorage
+      localStorage.setItem("authToken", response.data.token);
+      onAuthSuccess(response.data.user); // Pass user data to parent component
+
+      setError(""); // Clear error on success
+
+      // Redirect user to a protected page after successful authentication
+      window.location.href = "/"; // Change this to your protected route
+
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -114,8 +137,6 @@ const AuthPage = () => {
                     >
                       Log In
                     </button>
-
-                    {/* Forgot Password Link */}
                     <div className="text-right">
                       <button
                         type="button"
@@ -181,7 +202,7 @@ const AuthPage = () => {
                   </form>
                 )}
 
-                {/* Back Button */}
+                {error && <p className="text-red-500 mt-4">{error}</p>} {/* Show error */}
                 <button
                   onClick={() => setShowForm(false)}
                   className="text-[#076870] hover:text-[#065d64] transition duration-300 cursor-pointer mt-4"
