@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Footer from './components/Footer';
+import AuthPage from './pages/AuthPage';
+import Services from './pages/Services';
+import ServiceDetailsPage from './pages/ServiceDetailsPage';
+import TaskerDetailsPage from './pages/TaskerDetailsPage';
+import BookingPage from './pages/BookingPage'; 
 
-function App() {
-  const [count, setCount] = useState(0)
 
+
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Router>
+      {/* Navbar should be rendered on all pages except /auth */}
+      <Routes>
+        <Route path="/" element={<Navbar />} />
+        <Route path="/auth" element={<AuthPage />} />
+      </Routes>
 
-export default App
+      {/* Main Routes */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/service-details/:id" element={<ServiceDetailsPage />} />
+        <Route path="/taskers/:id" element={<TaskerDetailsPage />} /> 
+        <Route path="/book/:id" element={<BookingPage />} /> {/* Add this route */}
+
+        </Routes>
+
+      <Footer />
+    </Router>
+  );
+};
+
+export default App;
