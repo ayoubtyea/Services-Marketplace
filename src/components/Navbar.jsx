@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -8,13 +9,12 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check authentication status when component mounts or updates
     const token = localStorage.getItem("authToken");
     const userData = JSON.parse(localStorage.getItem("userData") || "{}");
     
     if (token) {
       setIsAuthenticated(true);
-      setUserRole(userData.role); // 'client', 'provider', or 'admin'
+      setUserRole(userData.role);
     } else {
       setIsAuthenticated(false);
       setUserRole(null);
@@ -27,11 +27,11 @@ const Navbar = () => {
     setIsAuthenticated(false);
     setUserRole(null);
     navigate("/");
-    window.location.reload(); // Refresh to update UI
   };
 
   const getDashboardPath = () => {
-    switch(userRole) {
+    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+    switch(userData.role) {
       case 'admin': return '/admin-dashboard';
       case 'provider': return '/provider-dashboard';
       default: return '/client-dashboard';
@@ -66,7 +66,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Desktop Buttons - Updated for auth state */}
+        {/* Desktop Buttons - Styled exactly as before */}
         <div className="hidden md:flex items-center space-x-4">
           {isAuthenticated ? (
             <>
@@ -122,7 +122,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu - Updated for auth state */}
+      {/* Mobile Menu - Same styling as before */}
       {isOpen && (
         <div className="md:hidden bg-[#F2EADD] font-poppins mx-4 mt-2 px-6 py-6 space-y-3">
           <Link to="/" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">

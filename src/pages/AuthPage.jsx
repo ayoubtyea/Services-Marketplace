@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 const API_URL = "http://localhost:5000/api/auth"; 
 
 const AuthPage = () => {
@@ -96,45 +97,34 @@ const AuthPage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     if (!validateForm()) return;
-
+  
     setIsLoading(true);
-
+  
     try {
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : {
-            fullName: formData.fullName,
-            email: formData.email,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password,
-            role: formData.role
-          };
-
-      console.log("Sending payload:", payload);
-
-      const endpoint = isLogin ? "login" : "signup";
-      const response = await axios.post(`${API_URL}/${endpoint}`, payload);
-
+      const payload = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+        role: formData.role // Make sure this is 'provider' when signing up as provider
+      };
+  
+      const response = await axios.post(`${API_URL}/signup`, payload);
+  
+      // DEBUG: Verify the role in response
+      console.log("Signup Response:", response.data);
+      
       // Store token and user data
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("userData", JSON.stringify(response.data.user));
       
-      // Redirect based on role
-      switch(response.data.user.role) {
-        case 'admin':
-          navigate('/');
-          break;
-        case 'provider':
-          navigate('/');
-          break;
-        default:
-          navigate('/');
-      }
+      // Redirect to home page first
+      navigate("/");
       
     } catch (err) {
-      console.error("Auth Error:", err.response?.data || err.message);
+      console.error("Signup Error:", err.response?.data || err.message);
       handleAuthError(err);
     } finally {
       setIsLoading(false);
@@ -250,33 +240,64 @@ const AuthPage = () => {
                       />
                       
                       {/* Role Selection */}
-                      <div className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]">
-                        <label className="block text-sm text-gray-600 mb-1">Account Type</label>
-                        <div className="flex space-x-4">
-                          <label className="inline-flex items-center">
-                            <input
-                              type="radio"
-                              name="role"
-                              value="client"
-                              checked={formData.role === 'client'}
-                              onChange={handleChange}
-                              className="text-[#076870] focus:ring-[#076870]"
-                            />
-                            <span className="ml-2">Client</span>
-                          </label>
-                          <label className="inline-flex items-center">
-                            <input
-                              type="radio"
-                              name="role"
-                              value="provider"
-                              checked={formData.role === 'provider'}
-                              onChange={handleChange}
-                              className="text-[#076870] focus:ring-[#076870]"
-                            />
-                            <span className="ml-2">Provider</span>
-                          </label>
-                        </div>
-                      </div>
+                      <div className="w-full space-y-2">
+  <label className="block text-sm font-medium text-gray-700">Account Type</label>
+  <div className="flex gap-4">
+    {/* Client Option */}
+    <label className={`flex-1 cursor-pointer rounded-lg border-2 p-4 transition-all 
+      ${formData.role === 'client' 
+        ? 'border-[#076870] bg-[#076870]/10 shadow-md' 
+        : 'border-gray-200 hover:border-gray-300'}`}
+    >
+      <div className="flex items-center">
+        <input
+          type="radio"
+          name="role"
+          value="client"
+          checked={formData.role === 'client'}
+          onChange={handleChange}
+          className="h-5 w-5 border-gray-300 text-[#076870] focus:ring-[#076870]"
+        />
+        <div className="ml-3 flex flex-col">
+          <span className={`text-sm font-medium 
+            ${formData.role === 'client' ? 'text-[#076870]' : 'text-gray-700'}`}>
+            Client
+          </span>
+          <span className="text-xs text-gray-500">
+            I want to hire services
+          </span>
+        </div>
+      </div>
+    </label>
+
+    {/* Provider Option */}
+    <label className={`flex-1 cursor-pointer rounded-lg border-2 p-4 transition-all 
+      ${formData.role === 'provider' 
+        ? 'border-[#076870] bg-[#076870]/10 shadow-md' 
+        : 'border-gray-200 hover:border-gray-300'}`}
+    >
+      <div className="flex items-center">
+        <input
+          type="radio"
+          name="role"
+          value="provider"
+          checked={formData.role === 'provider'}
+          onChange={handleChange}
+          className="h-5 w-5 border-gray-300 text-[#076870] focus:ring-[#076870]"
+        />
+        <div className="ml-3 flex flex-col">
+          <span className={`text-sm font-medium 
+            ${formData.role === 'provider' ? 'text-[#076870]' : 'text-gray-700'}`}>
+            Provider
+          </span>
+          <span className="text-xs text-gray-500">
+            I want to offer services
+          </span>
+        </div>
+      </div>
+    </label>
+  </div>
+</div>
                     </>
                   )}
 
