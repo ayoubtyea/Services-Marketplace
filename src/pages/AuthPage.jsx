@@ -124,13 +124,13 @@ const AuthPage = () => {
       // Redirect based on role
       switch(response.data.user.role) {
         case 'admin':
-          navigate('/admin-dashboard');
+          navigate('/');
           break;
         case 'provider':
-          navigate('/provider-dashboard');
+          navigate('/');
           break;
         default:
-          navigate('/client-dashboard');
+          navigate('/');
       }
       
     } catch (err) {

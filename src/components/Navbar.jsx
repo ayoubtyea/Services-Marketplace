@@ -1,60 +1,99 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check authentication status when component mounts or updates
+    const token = localStorage.getItem("authToken");
+    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+    
+    if (token) {
+      setIsAuthenticated(true);
+      setUserRole(userData.role); // 'client', 'provider', or 'admin'
+    } else {
+      setIsAuthenticated(false);
+      setUserRole(null);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    setIsAuthenticated(false);
+    setUserRole(null);
+    navigate("/");
+    window.location.reload(); // Refresh to update UI
+  };
+
+  const getDashboardPath = () => {
+    switch(userRole) {
+      case 'admin': return '/admin-dashboard';
+      case 'provider': return '/provider-dashboard';
+      default: return '/client-dashboard';
+    }
+  };
 
   return (
     <nav className="bg-[#F2EADD] md:rounded-full mt-4 mx-auto max-w-7xl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         {/* Logo */}
-        <a href="/" className="flex items-center">
+        <Link to="/" className="flex items-center">
           <img
             src="https://i.postimg.cc/C5dQgh9H/MAIN-1.png"
             alt="Handy Home"
             className="h-8"
           />
-        </a>
+        </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8 font-poppins flex-grow justify-center">
-          <a
-            href="/"
-            className="text-gray-700 hover:text-[#076870] transition-colors duration-300"
-          >
+          <Link to="/" className="text-gray-700 hover:text-[#076870] transition-colors duration-300">
             Home
-          </a>
-          <a
-            href="/services"
-            className="text-gray-700 hover:text-[#076870] transition-colors duration-300"
-          >
+          </Link>
+          <Link to="/services" className="text-gray-700 hover:text-[#076870] transition-colors duration-300">
             Services
-          </a>
-          <a
-            href="/about"
-            className="text-gray-700 hover:text-[#076870] transition-colors duration-300"
-          >
+          </Link>
+          <Link to="/about" className="text-gray-700 hover:text-[#076870] transition-colors duration-300">
             About Us
-          </a>
-          <a
-            href="/contact"
-            className="text-gray-700 hover:text-[#076870] transition-colors duration-300"
-          >
+          </Link>
+          <Link to="/contact" className="text-gray-700 hover:text-[#076870] transition-colors duration-300">
             Contact Us
-          </a>
+          </Link>
         </div>
 
-        {/* Desktop Buttons */}
+        {/* Desktop Buttons - Updated for auth state */}
         <div className="hidden md:flex items-center space-x-4">
-          <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
-            Become a Tasker
-          </button>
-
-          <Link to="/auth">
-            <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
-              Sign Up / Log in
-            </button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to={getDashboardPath()}>
+                <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
+                  Dashboard
+                </button>
+              </Link>
+              <button 
+                onClick={handleLogout}
+                className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
+                Become a Tasker
+              </button>
+              <Link to="/auth">
+                <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
+                  Sign Up / Log in
+                </button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -83,45 +122,48 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Updated for auth state */}
       {isOpen && (
-        <div className="md:hidden bg-[#F2EADD] font-poppins mx-4 mt-2 px-6 py-6">
-          <a
-            href="/"
-            className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300"
-          >
+        <div className="md:hidden bg-[#F2EADD] font-poppins mx-4 mt-2 px-6 py-6 space-y-3">
+          <Link to="/" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             Home
-          </a>
-          <a
-            href="/services"
-            className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300"
-          >
+          </Link>
+          <Link to="/services" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             Services
-          </a>
-          <a
-            href="/about"
-            className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300"
-          >
+          </Link>
+          <Link to="/about" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             About Us
-          </a>
-          <a
-            href="/contact"
-            className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300"
-          >
+          </Link>
+          <Link to="/contact" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             Contact Us
-          </a>
-
-          <Link>
-            <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-[#076870] rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-white hover:bg-[#076870] hover:text-black cursor-pointer">
-              Become A Tasker
-            </button>
           </Link>
 
-          <Link to="/auth">
-            <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
-              Sign Up / Log in
-            </button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to={getDashboardPath()} className="block">
+                <button className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
+                  Dashboard
+                </button>
+              </Link>
+              <button 
+                onClick={handleLogout}
+                className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="w-full text-left px-4 py-2 text-sm font-medium text-[#076870] rounded-full focus:outline-none transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
+                Become A Tasker
+              </button>
+              <Link to="/auth" className="block">
+                <button className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
+                  Sign Up / Log in
+                </button>
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>
