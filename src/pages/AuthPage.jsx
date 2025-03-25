@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://localhost:5000/api/auth"; 
 
-const AuthPage = ({ onAuthSuccess }) => {
+const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -15,7 +15,8 @@ const AuthPage = ({ onAuthSuccess }) => {
     email: "",
     phoneNumber: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    role: "client" // Default role
   });
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -30,7 +31,8 @@ const AuthPage = ({ onAuthSuccess }) => {
       email: "",
       phoneNumber: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
+      role: "client"
     });
   };
 
@@ -95,9 +97,7 @@ const AuthPage = ({ onAuthSuccess }) => {
     e.preventDefault();
     setError("");
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsLoading(true);
 
@@ -108,17 +108,33 @@ const AuthPage = ({ onAuthSuccess }) => {
             fullName: formData.fullName,
             email: formData.email,
             phoneNumber: formData.phoneNumber,
-            password: formData.password
+            password: formData.password,
+            role: formData.role
           };
+
+      console.log("Sending payload:", payload);
 
       const endpoint = isLogin ? "login" : "signup";
       const response = await axios.post(`${API_URL}/${endpoint}`, payload);
 
+      // Store token and user data
       localStorage.setItem("authToken", response.data.token);
-      onAuthSuccess(response.data.user);
-      navigate("/");
-
+      localStorage.setItem("userData", JSON.stringify(response.data.user));
+      
+      // Redirect based on role
+      switch(response.data.user.role) {
+        case 'admin':
+          navigate('/admin-dashboard');
+          break;
+        case 'provider':
+          navigate('/provider-dashboard');
+          break;
+        default:
+          navigate('/client-dashboard');
+      }
+      
     } catch (err) {
+      console.error("Auth Error:", err.response?.data || err.message);
       handleAuthError(err);
     } finally {
       setIsLoading(false);
@@ -222,15 +238,46 @@ const AuthPage = ({ onAuthSuccess }) => {
 
                 <form onSubmit={handleFormSubmit} className="space-y-4">
                   {!isLogin && (
-                    <input
-                      type="text"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      placeholder="Full Name"
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                      required
-                    />
+                    <>
+                      <input
+                        type="text"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleChange}
+                        placeholder="Full Name"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                        required
+                      />
+                      
+                      {/* Role Selection */}
+                      <div className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]">
+                        <label className="block text-sm text-gray-600 mb-1">Account Type</label>
+                        <div className="flex space-x-4">
+                          <label className="inline-flex items-center">
+                            <input
+                              type="radio"
+                              name="role"
+                              value="client"
+                              checked={formData.role === 'client'}
+                              onChange={handleChange}
+                              className="text-[#076870] focus:ring-[#076870]"
+                            />
+                            <span className="ml-2">Client</span>
+                          </label>
+                          <label className="inline-flex items-center">
+                            <input
+                              type="radio"
+                              name="role"
+                              value="provider"
+                              checked={formData.role === 'provider'}
+                              onChange={handleChange}
+                              className="text-[#076870] focus:ring-[#076870]"
+                            />
+                            <span className="ml-2">Provider</span>
+                          </label>
+                        </div>
+                      </div>
+                    </>
                   )}
 
                   <input

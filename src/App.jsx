@@ -29,7 +29,6 @@ const App = () => {
         <Route path="/book/:id" element={<BookingPage />} /> {/* Add this route */}
 
         </Routes>
-
       <Footer />
     </Router>
   );
