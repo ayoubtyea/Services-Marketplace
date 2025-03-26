@@ -198,7 +198,7 @@ const handleFormSubmit = async (e) => {
         </div>
 
         {!showForm ? (
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-3 sm:space-y-4 text-center">
             <button
               onClick={() => handleButtonClick(false)}
               className="w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] rounded-full text-white text-sm sm:text-base transition duration-200"
@@ -211,15 +211,15 @@ const handleFormSubmit = async (e) => {
             >
               Log In
             </button>
-            <button
+            <a
               onClick={() => {
                 setIsAdminLogin(true);
                 setShowForm(true);
               }}
-              className="w-full py-2.5 sm:py-3 bg-[#065d64] hover:bg-[#05484f] text-white rounded-full text-sm sm:text-base transition duration-200"
+              className="hover:text-[#05484fce] text-[#05484f] rounded-full text-base sm:text-base transition duration-200"
             >
               Admin Login
-            </button>
+            </a>
           </div>
         ) : showForgotPassword ? (
           <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
