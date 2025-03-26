@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
-const API_URL = "http://localhost:5000/api/auth"; 
+const API_URL = "http://localhost:5000/api/auth";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,7 +16,7 @@ const AuthPage = () => {
     phoneNumber: "",
     password: "",
     confirmPassword: "",
-    role: "client" // Default role
+    role: "client" // Default to client
   });
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -33,7 +32,8 @@ const AuthPage = () => {
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-      role: "client"
+      // REMOVE THIS: role: "client" // Don't reset role when toggling
+      role: formData.role // Keep existing role selection
     });
   };
 
@@ -52,6 +52,13 @@ const AuthPage = () => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleRoleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      role: e.target.value
     }));
   };
 
@@ -97,34 +104,39 @@ const AuthPage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     if (!validateForm()) return;
-  
+
     setIsLoading(true);
-  
+
     try {
-      const payload = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        password: formData.password,
-        role: formData.role // Make sure this is 'provider' when signing up as provider
-      };
-  
-      const response = await axios.post(`${API_URL}/signup`, payload);
-  
-      // DEBUG: Verify the role in response
-      console.log("Signup Response:", response.data);
-      
+      const payload = isLogin
+        ? { email: formData.email, password: formData.password }
+        : {
+            fullName: formData.fullName,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            password: formData.password,
+            role: formData.role // Make sure role is included
+          };
+
+      console.log("Submitting with role:", formData.role); // Debug log
+      console.log("Full payload:", payload); // Debug log
+
+      const endpoint = isLogin ? "login" : "signup";
+      const response = await axios.post(`${API_URL}/${endpoint}`, payload);
+
+      console.log("Server response:", response.data); // Debug log
+
       // Store token and user data
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("userData", JSON.stringify(response.data.user));
       
-      // Redirect to home page first
-      navigate("/");
+      // Force reload to ensure all components update with new auth state
+      window.location.href = "/";
       
     } catch (err) {
-      console.error("Signup Error:", err.response?.data || err.message);
+      console.error("Auth Error:", err.response?.data || err.message);
       handleAuthError(err);
     } finally {
       setIsLoading(false);
@@ -239,65 +251,34 @@ const AuthPage = () => {
                         required
                       />
                       
-                      {/* Role Selection */}
-                      <div className="w-full space-y-2">
-  <label className="block text-sm font-medium text-gray-700">Account Type</label>
-  <div className="flex gap-4">
-    {/* Client Option */}
-    <label className={`flex-1 cursor-pointer rounded-lg border-2 p-4 transition-all 
-      ${formData.role === 'client' 
-        ? 'border-[#076870] bg-[#076870]/10 shadow-md' 
-        : 'border-gray-200 hover:border-gray-300'}`}
-    >
-      <div className="flex items-center">
-        <input
-          type="radio"
-          name="role"
-          value="client"
-          checked={formData.role === 'client'}
-          onChange={handleChange}
-          className="h-5 w-5 border-gray-300 text-[#076870] focus:ring-[#076870]"
-        />
-        <div className="ml-3 flex flex-col">
-          <span className={`text-sm font-medium 
-            ${formData.role === 'client' ? 'text-[#076870]' : 'text-gray-700'}`}>
-            Client
-          </span>
-          <span className="text-xs text-gray-500">
-            I want to hire services
-          </span>
-        </div>
-      </div>
-    </label>
-
-    {/* Provider Option */}
-    <label className={`flex-1 cursor-pointer rounded-lg border-2 p-4 transition-all 
-      ${formData.role === 'provider' 
-        ? 'border-[#076870] bg-[#076870]/10 shadow-md' 
-        : 'border-gray-200 hover:border-gray-300'}`}
-    >
-      <div className="flex items-center">
-        <input
-          type="radio"
-          name="role"
-          value="provider"
-          checked={formData.role === 'provider'}
-          onChange={handleChange}
-          className="h-5 w-5 border-gray-300 text-[#076870] focus:ring-[#076870]"
-        />
-        <div className="ml-3 flex flex-col">
-          <span className={`text-sm font-medium 
-            ${formData.role === 'provider' ? 'text-[#076870]' : 'text-gray-700'}`}>
-            Provider
-          </span>
-          <span className="text-xs text-gray-500">
-            I want to offer services
-          </span>
-        </div>
-      </div>
-    </label>
-  </div>
-</div>
+                      {/* Role Selection - Updated with proper handler */}
+                      <div className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]">
+                        <label className="block text-sm text-gray-600 mb-1">Account Type</label>
+                        <div className="flex space-x-4">
+                          <label className="inline-flex items-center">
+                            <input
+                              type="radio"
+                              name="role"
+                              value="client"
+                              checked={formData.role === 'client'}
+                              onChange={handleRoleChange}
+                              className="text-[#076870] focus:ring-[#076870]"
+                            />
+                            <span className="ml-2">Client</span>
+                          </label>
+                          <label className="inline-flex items-center">
+                            <input
+                              type="radio"
+                              name="role"
+                              value="provider"
+                              checked={formData.role === 'provider'}
+                              onChange={handleRoleChange}
+                              className="text-[#076870] focus:ring-[#076870]"
+                            />
+                            <span className="ml-2">Provider</span>
+                          </label>
+                        </div>
+                      </div>
                     </>
                   )}
 

@@ -1,43 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
+  const [authState, setAuthState] = useState({
+    isAuthenticated: false,
+    userRole: null,
+    userData: null
+  });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-    
-    if (token) {
-      setIsAuthenticated(true);
-      setUserRole(userData.role);
-    } else {
-      setIsAuthenticated(false);
-      setUserRole(null);
+  // Enhanced auth check with proper state setting
+  const checkAuth = () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const userData = JSON.parse(localStorage.getItem("userData") || "null");
+      
+      console.log("Auth check - userData:", userData); // Debug log
+      
+      setAuthState({
+        isAuthenticated: !!token,
+        userRole: userData?.role || null,
+        userData: userData
+      });
+    } catch (error) {
+      console.error("Error checking auth:", error);
+      setAuthState({
+        isAuthenticated: false,
+        userRole: null,
+        userData: null
+      });
     }
+  };
+
+  useEffect(() => {
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    setIsAuthenticated(false);
-    setUserRole(null);
+    setAuthState({ 
+      isAuthenticated: false, 
+      userRole: null,
+      userData: null
+    });
     navigate("/");
   };
 
   const getDashboardPath = () => {
-    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-    switch(userData.role) {
+    // Use the state data rather than localStorage directly
+    const { userRole, userData } = authState;
+    console.log("Dashboard path - current role:", userRole, "Full userData:", userData);
+    
+    switch(userRole) {
       case 'admin': return '/admin-dashboard';
       case 'provider': return '/provider-dashboard';
-      default: return '/client-dashboard';
+      case 'client': return '/client-dashboard';
+      default: {
+        console.warn("Unknown role, redirecting to home");
+        return '/';
+      }
     }
   };
-
   return (
     <nav className="bg-[#F2EADD] md:rounded-full mt-4 mx-auto max-w-7xl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
@@ -66,9 +93,9 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Desktop Buttons - Styled exactly as before */}
+        {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-4">
-          {isAuthenticated ? (
+          {authState.isAuthenticated ? (
             <>
               <Link to={getDashboardPath()}>
                 <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
@@ -122,31 +149,38 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu - Same styling as before */}
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-[#F2EADD] font-poppins mx-4 mt-2 px-6 py-6 space-y-3">
-          <Link to="/" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
+          <Link to="/" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             Home
           </Link>
-          <Link to="/services" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
+          <Link to="/services" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             Services
           </Link>
-          <Link to="/about" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
+          <Link to="/about" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             About Us
           </Link>
-          <Link to="/contact" className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
+          <Link to="/contact" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-[#076870] hover:text-white transition-colors duration-300">
             Contact Us
           </Link>
 
-          {isAuthenticated ? (
+          {authState.isAuthenticated ? (
             <>
-              <Link to={getDashboardPath()} className="block">
+              <Link 
+                to={getDashboardPath()} 
+                onClick={() => setIsOpen(false)}
+                className="block"
+              >
                 <button className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
                   Dashboard
                 </button>
               </Link>
               <button 
-                onClick={handleLogout}
+                onClick={() => {
+                  setIsOpen(false);
+                  handleLogout();
+                }}
                 className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer"
               >
                 Logout
@@ -154,10 +188,17 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <button className="w-full text-left px-4 py-2 text-sm font-medium text-[#076870] rounded-full focus:outline-none transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="w-full text-left px-4 py-2 text-sm font-medium text-[#076870] rounded-full focus:outline-none transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer"
+              >
                 Become A Tasker
               </button>
-              <Link to="/auth" className="block">
+              <Link 
+                to="/auth" 
+                onClick={() => setIsOpen(false)}
+                className="block"
+              >
                 <button className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
                   Sign Up / Log in
                 </button>
