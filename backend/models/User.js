@@ -1,18 +1,25 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Remove any duplicate schema declaration and use this single schema definition:
 const userSchema = new mongoose.Schema({
   email: { 
     type: String, 
     required: true, 
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
+    validate: {
+      validator: function(v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid email address!`
+    }
   },
   password: { 
     type: String, 
-    required: true 
+    required: true,
+    minlength: 8,
+    select: false
   },
   role: { 
     type: String, 
@@ -20,45 +27,52 @@ const userSchema = new mongoose.Schema({
     required: true,
     default: 'client'
   },
+  isAdmin: {
+    type: Boolean,
+    default: function() {
+      return this.role === 'admin';
+    }
+  },
   fullName: {
     type: String,
     required: function() {
-      return this.role !== 'admin'; // Admins might not need fullName
-    }
+      return this.role !== 'admin';
+    },
+    trim: true
   },
   phoneNumber: {
     type: String,
     required: function() {
       return this.role === 'client' || this.role === 'provider';
-    }
+    },
+    trim: true
   },
-  // Common fields for all roles
   isVerified: {
     type: Boolean,
     default: false
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-}, { 
-  discriminatorKey: 'role',
-  timestamps: true ,
   passwordResetToken: String,
   passwordResetExpires: Date,
-  createdAt: {
-    type: Date,
-    default: Date.now
+  lastLogin: Date
+}, { 
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: function(doc, ret) {
+      delete ret.password;
+      delete ret.__v;
+      return ret;
+    }
   }
 });
 
-
 // Password hashing middleware
 userSchema.pre('save', async function(next) {
+  // Only hash the password if it has been modified
   if (!this.isModified('password')) return next();
   
   try {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (err) {
@@ -66,9 +80,31 @@ userSchema.pre('save', async function(next) {
   }
 });
 
+// Update isAdmin when role changes
+userSchema.pre('save', function(next) {
+  if (this.isModified('role')) {
+    this.isAdmin = this.role === 'admin';
+  }
+  next();
+});
+
 // Method to compare passwords
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Method to generate password reset token
+userSchema.methods.createPasswordResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+    
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);

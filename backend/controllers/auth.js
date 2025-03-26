@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const validator = require('validator');
 const crypto = require('crypto');
 const sendEmail = require('../utils/email');
- // You'll need to implement this
+
 
 
 // Signup controller
@@ -125,8 +125,46 @@ exports.login = async (req, res) => {
   }
 };
 
+// Admin Login
+exports.adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // 1. Find user and check if admin
+    const user = await User.findOne({ email }).select('+password');
+    if (!user || !user.isAdmin) {
+      return res.status(401).json({ message: 'Invalid admin credentials' });
+    }
+
+    // 2. Verify password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid admin credentials' });
+    }
+
+    // 3. Generate admin-specific token
+    const token = jwt.sign(
+      { userId: user._id, role: 'admin', isAdmin: true },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({ 
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: 'admin',
+        isAdmin: true
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Admin login failed', error: err.message });
+  }
+};
+
+
 // Forgot Password
-// controllers/auth.js
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
