@@ -33,11 +33,13 @@ const MainLayout = () => {
             <ClientDashboard />
           </ProtectedRoute>
         } />
+
         <Route path="/provider-dashboard" element={
-  <ProtectedRoute allowedRoles={['provider']}>
-    <ProviderDashboard />
-  </ProtectedRoute>
-}/>
+          <ProtectedRoute allowedRoles={['provider']}>
+            <ProviderDashboard />
+          </ProtectedRoute>
+        } />
+
         <Route path="/admin-dashboard" element={
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminDashboard />

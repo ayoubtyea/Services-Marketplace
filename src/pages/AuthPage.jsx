@@ -15,6 +15,8 @@ const AuthPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -108,38 +110,34 @@ const AuthPage = () => {
     return true;
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+// In your handleFormSubmit function
+const handleFormSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    setIsLoading(true);
+  setIsLoading(true);
 
-    try {
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : {
-            fullName: formData.fullName,
-            email: formData.email,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password,
-            role: formData.role
-          };
+  try {
+    const endpoint = isAdminLogin ? "admin/login" : isLogin ? "login" : "signup";
+    const response = await axios.post(`${API_URL}/${endpoint}`, formData);
 
-      const endpoint = isLogin ? "login" : "signup";
-      const response = await axios.post(`${API_URL}/${endpoint}`, payload);
-
-      localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("userData", JSON.stringify(response.data.user));
-      window.location.href = "/";
-      
-    } catch (err) {
-      setError(err.response?.data?.message || "Authentication failed");
-    } finally {
-      setIsLoading(false);
+    localStorage.setItem("authToken", response.data.token);
+    localStorage.setItem("userData", JSON.stringify(response.data.user));
+    
+    // Redirect based on user type
+    if (isAdminLogin) {
+      navigate('/admin-dashboard');
+    } else {
+      navigate('/');
     }
-  };
+  } catch (err) {
+    setError(err.response?.data?.message || "Authentication failed");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
@@ -184,6 +182,8 @@ const AuthPage = () => {
     }
   };
 
+
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center" style={{
       backgroundImage: 'url("https://i.postimg.cc/wvny7Q4N/workingman.jpg")',
@@ -198,7 +198,7 @@ const AuthPage = () => {
         </div>
 
         {!showForm ? (
-          <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-3 sm:space-y-4">
             <button
               onClick={() => handleButtonClick(false)}
               className="w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] rounded-full text-white text-sm sm:text-base transition duration-200"
@@ -210,6 +210,15 @@ const AuthPage = () => {
               className="w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] text-white rounded-full text-sm sm:text-base transition duration-200"
             >
               Log In
+            </button>
+            <button
+              onClick={() => {
+                setIsAdminLogin(true);
+                setShowForm(true);
+              }}
+              className="w-full py-2.5 sm:py-3 bg-[#065d64] hover:bg-[#05484f] text-white rounded-full text-sm sm:text-base transition duration-200"
+            >
+              Admin Login
             </button>
           </div>
         ) : showForgotPassword ? (
@@ -289,8 +298,8 @@ const AuthPage = () => {
         ) : (
           <>
             <h1 className="text-2xl sm:text-3xl font-light mb-3 sm:mb-4 text-center">
-              {isLogin ? "Log In" : "Sign Up"}
-            </h1>
+  {isAdminLogin ? "Admin Login" : isLogin ? "Log In" : "Sign Up"}
+</h1>
 
             {error && (
               <div className="mb-3 sm:mb-4 p-2 text-sm bg-red-100 text-red-700 rounded-md">
@@ -298,87 +307,99 @@ const AuthPage = () => {
               </div>
             )}
 
-            <form onSubmit={handleFormSubmit} className="space-y-3 sm:space-y-4">
-              {!isLogin && (
-                <>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    placeholder="Full Name"
-                    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                    required
-                  />
-                  
-                  <div className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-lg bg-white/90 backdrop-blur-sm focus-within:border-[#076870] focus-within:ring-2 focus-within:ring-[#076870]/30 transition-all duration-200">
-                    <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2 px-1">
-                      Account Type
-                    </label>
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                      <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
-                        formData.role === 'client' 
-                          ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                      }`}>
-                        <input
-                          type="radio"
-                          name="role"
-                          value="client"
-                          checked={formData.role === 'client'}
-                          onChange={handleRoleChange}
-                          className="sr-only"
-                        />
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
-                          formData.role === 'client' 
-                            ? 'border-[#076870] bg-[#076870]'
-                            : 'border-gray-300'
-                        }`}>
-                          {formData.role === 'client' && (
-                            <div className="w-2 h-2 rounded-full bg-white"></div>
-                          )}
-                        </div>
-                        <span className="text-sm sm:text-base font-medium text-gray-700">Client</span>
-                      </label>
-
-                      <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
-                        formData.role === 'provider' 
-                          ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                      }`}>
-                        <input
-                          type="radio"
-                          name="role"
-                          value="provider"
-                          checked={formData.role === 'provider'}
-                          onChange={handleRoleChange}
-                          className="sr-only"
-                        />
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
-                          formData.role === 'provider' 
-                            ? 'border-[#076870] bg-[#076870]'
-                            : 'border-gray-300'
-                        }`}>
-                          {formData.role === 'provider' && (
-                            <div className="w-2 h-2 rounded-full bg-white"></div>
-                          )}
-                        </div>
-                        <span className="text-sm sm:text-base font-medium text-gray-700">Provider</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <input
-                    type="tel"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    placeholder="Phone Number"
-                    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                    required
-                  />
-                </>
+<form onSubmit={handleFormSubmit} className="space-y-3 sm:space-y-4">
+  {/* Hide these fields for admin login */}
+  {!isLogin && !isAdminLogin && (
+    <>
+      <input
+        type="text"
+        name="fullName"
+        value={formData.fullName}
+        onChange={handleChange}
+        placeholder="Full Name"
+        className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+        required
+      />
+      
+      <div className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-lg bg-white/90 backdrop-blur-sm focus-within:border-[#076870] focus-within:ring-2 focus-within:ring-[#076870]/30 transition-all duration-200">
+        <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2 px-1">
+          Account Type
+        </label>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
+            formData.role === 'client' 
+              ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
+              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+          }`}>
+            <input
+              type="radio"
+              name="role"
+              value="client"
+              checked={formData.role === 'client'}
+              onChange={handleRoleChange}
+              className="sr-only"
+            />
+            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
+              formData.role === 'client' 
+                ? 'border-[#076870] bg-[#076870]'
+                : 'border-gray-300'
+            }`}>
+              {formData.role === 'client' && (
+                <div className="w-2 h-2 rounded-full bg-white"></div>
               )}
+            </div>
+            <span className="text-sm sm:text-base font-medium text-gray-700">Client</span>
+          </label>
+
+          <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
+            formData.role === 'provider' 
+              ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
+              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+          }`}>
+            <input
+              type="radio"
+              name="role"
+              value="provider"
+              checked={formData.role === 'provider'}
+              onChange={handleRoleChange}
+              className="sr-only"
+            />
+            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
+              formData.role === 'provider' 
+                ? 'border-[#076870] bg-[#076870]'
+                : 'border-gray-300'
+            }`}>
+              {formData.role === 'provider' && (
+                <div className="w-2 h-2 rounded-full bg-white"></div>
+              )}
+            </div>
+            <span className="text-sm sm:text-base font-medium text-gray-700">Provider</span>
+          </label>
+        </div>
+      </div>
+
+      <input
+        type="tel"
+        name="phoneNumber"
+        value={formData.phoneNumber}
+        onChange={handleChange}
+        placeholder="Phone Number"
+        className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+        required
+      />
+    </>
+  )}
+
+  {/* Keep these fields for all login types */}
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    placeholder="Email Address"
+    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+    required
+  />
 
               <input
                 type="email"
@@ -425,21 +446,21 @@ const AuthPage = () => {
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white text-sm sm:text-base rounded-lg transition duration-200 cursor-pointer disabled:opacity-70"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <span className="inline-flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </span>
-                ) : isLogin ? "Log In" : "Create Account"}
-              </button>
+<button
+  type="submit"
+  className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white text-sm sm:text-base rounded-lg transition duration-200 cursor-pointer disabled:opacity-70"
+  disabled={isLoading}
+>
+  {isLoading ? (
+    <span className="inline-flex items-center justify-center">
+      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Processing...
+    </span>
+  ) : isAdminLogin ? "Login as Admin" : isLogin ? "Log In" : "Create Account"}
+</button>
 
               {isLogin && (
                 <div className="text-right">
@@ -463,12 +484,15 @@ const AuthPage = () => {
               </p>
             )}
 
-            <button
-              onClick={() => setShowForm(false)}
-              className="text-[#076870] hover:text-[#065d64] text-sm transition duration-200 cursor-pointer mt-3 sm:mt-4"
-            >
-              Go Back
-            </button>
+<button
+  onClick={() => {
+    setShowForm(false);
+    setIsAdminLogin(false);
+  }}
+  className="text-[#076870] hover:text-[#065d64] text-sm transition duration-200 cursor-pointer mt-3 sm:mt-4"
+>
+  Go Back
+</button>
           </>
         )}
       </div>
