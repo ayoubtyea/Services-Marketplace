@@ -43,8 +43,15 @@ const userSchema = new mongoose.Schema({
   }
 }, { 
   discriminatorKey: 'role',
-  timestamps: true 
+  timestamps: true ,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
+
 
 // Password hashing middleware
 userSchema.pre('save', async function(next) {
