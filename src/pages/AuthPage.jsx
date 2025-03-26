@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -10,31 +10,47 @@ const AuthPage = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [resetToken, setResetToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [resetSuccess, setResetSuccess] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phoneNumber: "",
     password: "",
     confirmPassword: "",
-    role: "client" // Default to client
+    role: "client"
   });
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  // Check for reset token in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      setResetToken(token);
+      setShowForgotPassword(true);
+      setShowForm(true);
+    }
+  }, []);
 
   const handleButtonClick = (isLoginForm) => {
     setIsLogin(isLoginForm);
     setShowForm(true);
     setShowForgotPassword(false);
     setError("");
-    setFormData({
+    setFormData(prev => ({
+      ...prev,
       fullName: "",
       email: "",
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-      // REMOVE THIS: role: "client" // Don't reset role when toggling
-      role: formData.role // Keep existing role selection
-    });
+      role: prev.role
+    }));
   };
 
   const handleForgotPasswordClick = () => {
@@ -44,22 +60,17 @@ const AuthPage = () => {
 
   const handleBackToLogin = () => {
     setShowForgotPassword(false);
+    setResetToken("");
     setError("");
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleRoleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      role: e.target.value
-    }));
+    setFormData(prev => ({ ...prev, role: e.target.value }));
   };
 
   const togglePasswordVisibility = () => {
@@ -67,20 +78,16 @@ const AuthPage = () => {
   };
 
   const validateForm = () => {
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setError("Please enter a valid email address");
       return false;
     }
 
-    // Password validation
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters");
       return false;
     }
 
-    // Signup specific validations
     if (!isLogin) {
       if (!formData.fullName.trim()) {
         setError("Full name is required");
@@ -117,287 +124,351 @@ const AuthPage = () => {
             email: formData.email,
             phoneNumber: formData.phoneNumber,
             password: formData.password,
-            role: formData.role // Make sure role is included
+            role: formData.role
           };
-
-      console.log("Submitting with role:", formData.role); // Debug log
-      console.log("Full payload:", payload); // Debug log
 
       const endpoint = isLogin ? "login" : "signup";
       const response = await axios.post(`${API_URL}/${endpoint}`, payload);
 
-      console.log("Server response:", response.data); // Debug log
-
-      // Store token and user data
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("userData", JSON.stringify(response.data.user));
-      
-      // Force reload to ensure all components update with new auth state
       window.location.href = "/";
       
     } catch (err) {
-      console.error("Auth Error:", err.response?.data || err.message);
-      handleAuthError(err);
+      setError(err.response?.data?.message || "Authentication failed");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAuthError = (err) => {
-    if (err.response) {
-      switch (err.response.status) {
-        case 400:
-          setError(err.response.data.message || "Invalid request");
-          break;
-        case 401:
-          setError("Invalid email or password");
-          break;
-        case 409:
-          setError("Email already in use");
-          break;
-        default:
-          setError("Something went wrong. Please try again.");
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    
+    try {
+      if (!resetToken) {
+        if (!forgotPasswordEmail) {
+          setError("Please enter your email");
+          return;
+        }
+        
+        await axios.post(`${API_URL}/forgot-password`, { email: forgotPasswordEmail });
+        alert('Email Sent Successfully');
+      } else {
+        if (newPassword !== confirmNewPassword) {
+          setError("Passwords don't match");
+          return;
+        }
+        if (newPassword.length < 6) {
+          setError("Password must be at least 6 characters");
+          return;
+        }
+
+        const response = await axios.post(`${API_URL}/reset-password/${resetToken}`, { 
+          password: newPassword 
+        });
+
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("userData", JSON.stringify(response.data.user));
+        setResetSuccess(true);
+        
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
       }
-    } else {
-      setError("Network error. Please check your connection.");
+    } catch (err) {
+      setError(err.response?.data?.message || 'Password reset failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-cover bg-center" style={{
-      backgroundImage: 'url("https://s3-alpha-sig.figma.com/img/ec36/6190/b0a1cdce092091e2710452391cd3428d?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=VAImpOZGx4AujJ3qiYStb07bcaN-UqWH5uwXgD8YczwKT0oUP7jfTeY6us1p-BD4VmW5R93gfpPcDeHdZbYzB-GL3epdEpaR5ayjgu9gvbmQWRyuL9zmznW~qNxil~4wt-2Uj7TIz5S2EOccxdvc7AnylZbQd5SZTxdXdu2Hf7sb90Rh6VcZfRt2HreF-Br4wF7j3KgbZEHixSJkLRfUl69VI~96rVUOwUCpMRVGvPdPOFPTFNvzQAjwcgiyZGRi2DsQU9RHZMisk8o2jKp8z49luk-35eU7YEvzYWpODq2gC9g6MHADTFtjxA96U1W9S3j~KI~EKqBtSFaw5kUysg__")',
+    <div className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center" style={{
+      backgroundImage: 'url("https://i.postimg.cc/wvny7Q4N/workingman.jpg")',
     }}>
-      <div className="bg-white bg-opacity-90 p-8 rounded-xl shadow-lg text-center w-full max-w-md transition-all duration-500">
-        <img
-          src="https://i.postimg.cc/C5dQgh9H/MAIN-1.png"
-          alt="Logo"
-          className="h-8 mx-auto mb-8"
-        />
+      <div className="bg-white bg-opacity-90 p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-xs sm:max-w-sm md:max-w-md transition-all duration-300">
+        <div className="flex justify-center mb-6">
+          <img
+            src="https://i.postimg.cc/Jz7n7F7g/MAIN-1.png"
+            alt="Logo"
+            className="h-7 sm:h-8"
+          />
+        </div>
 
         {!showForm ? (
-          <div className="flex flex-col space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <button
               onClick={() => handleButtonClick(false)}
-              className="w-full py-3 bg-[#076870] hover:bg-[#065d64] rounded-full text-white cursor-pointer transition duration-300"
+              className="w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] rounded-full text-white text-sm sm:text-base transition duration-200"
             >
               Sign Up
             </button>
             <button
               onClick={() => handleButtonClick(true)}
-              className="w-full py-3 bg-[#076870] hover:bg-[#065d64] text-white rounded-full cursor-pointer transition duration-300"
+              className="w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] text-white rounded-full text-sm sm:text-base transition duration-200"
             >
               Log In
             </button>
           </div>
-        ) : (
-          <>
-            {showForgotPassword ? (
-              <form onSubmit={handleFormSubmit} className="space-y-4">
-                <h1 className="text-3xl font-light mb-4">Forgot Password</h1>
+        ) : showForgotPassword ? (
+          <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+            {!resetToken ? (
+              <>
+                <h2 className="text-xl font-semibold text-gray-800 text-center">Reset Password</h2>
+                <p className="text-sm text-gray-600 mb-4 text-center">
+                  Enter your email to receive a password reset link
+                </p>
                 <input
                   type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Email Address"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                  value={forgotPasswordEmail}
+                  onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                  placeholder="Your email address"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#076870]"
                   required
                 />
-                <button
-                  type="submit"
-                  className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 cursor-pointer disabled:opacity-70"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span className="inline-flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Processing...
-                    </span>
-                  ) : "Reset Password"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleBackToLogin}
-                  className="text-[#076870] hover:text-[#065d64] transition duration-300 cursor-pointer mt-4"
-                >
-                  Back to Log In
-                </button>
-              </form>
+              </>
             ) : (
               <>
-                <h1 className="text-3xl font-light mb-4">
-                  {isLogin ? "Log In" : "Sign Up"}
-                </h1>
-
-                {error && (
-                  <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md">
-                    {error}
+                <h2 className="text-xl font-semibold text-gray-800">Set New Password</h2>
+                {resetSuccess ? (
+                  <div className="p-3 bg-green-100 text-green-700 rounded-lg">
+                    Password reset successfully!
                   </div>
-                )}
-
-                <form onSubmit={handleFormSubmit} className="space-y-4">
-                  {!isLogin && (
-                    <>
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        placeholder="Full Name"
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                        required
-                      />
-                      
-                      {/* Role Selection - Updated with proper handler */}
-                      <div className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]">
-                        <label className="block text-sm text-gray-600 mb-1">Account Type</label>
-                        <div className="flex space-x-4">
-                          <label className="inline-flex items-center">
-                            <input
-                              type="radio"
-                              name="role"
-                              value="client"
-                              checked={formData.role === 'client'}
-                              onChange={handleRoleChange}
-                              className="text-[#076870] focus:ring-[#076870]"
-                            />
-                            <span className="ml-2">Client</span>
-                          </label>
-                          <label className="inline-flex items-center">
-                            <input
-                              type="radio"
-                              name="role"
-                              value="provider"
-                              checked={formData.role === 'provider'}
-                              onChange={handleRoleChange}
-                              className="text-[#076870] focus:ring-[#076870]"
-                            />
-                            <span className="ml-2">Provider</span>
-                          </label>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Email Address"
-                    className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
-                      error.toLowerCase().includes("email") ? "border-red-500 focus:ring-red-300" : "border-gray-300 focus:ring-[#076870]"
-                    }`}
-                    required
-                  />
-
-                  {!isLogin && (
+                ) : (
+                  <>
                     <input
-                      type="tel"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleChange}
-                      placeholder="Phone Number"
-                      className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
-                        error.toLowerCase().includes("phone") ? "border-red-500 focus:ring-red-300" : "border-gray-300 focus:ring-[#076870]"
-                      }`}
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="New password"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#076870]"
                       required
+                      minLength="6"
                     />
-                  )}
-
-                  <div className="relative">
                     <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Password"
-                      className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
-                        error.toLowerCase().includes("password") ? "border-red-500 focus:ring-red-300" : "border-gray-300 focus:ring-[#076870]"
-                      }`}
+                      type="password"
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#076870]"
                       required
+                      minLength="6"
                     />
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibility}
-                      className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword ? "👁️" : "👁️‍🗨️"}
-                    </button>
-                  </div>
-
-                  {!isLogin && (
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        placeholder="Confirm Password"
-                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 ${
-                          formData.password && formData.password !== formData.confirmPassword
-                            ? "border-red-500 focus:ring-red-300"
-                            : "border-gray-300 focus:ring-[#076870]"
-                        }`}
-                        required
-                      />
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 cursor-pointer disabled:opacity-70"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <span className="inline-flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                      </span>
-                    ) : isLogin ? (
-                      "Log In"
-                    ) : (
-                      "Create Account"
-                    )}
-                  </button>
-
-                  {isLogin && (
-                    <div className="text-right">
-                      <button
-                        type="button"
-                        onClick={handleForgotPasswordClick}
-                        className="text-[#076870] hover:text-[#065d64] text-sm font-light transition duration-300"
-                      >
-                        Forgot Password?
-                      </button>
-                    </div>
-                  )}
-                </form>
-
-                {!isLogin && (
-                  <p className="text-sm text-gray-600 mt-4">
-                    By signing up, you agree to our{" "}
-                    <a href="#" className="text-[#076870] hover:text-[#065d64]">
-                      Terms and Conditions
-                    </a>
-                    .
-                  </p>
+                  </>
                 )}
-
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="text-[#076870] hover:text-[#065d64] transition duration-300 cursor-pointer mt-4"
-                >
-                  Go Back
-                </button>
               </>
             )}
+            {error && (
+              <div className="text-red-500 text-sm">{error}</div>
+            )}
+            <button
+              type="submit"
+              className="w-full py-3 bg-[#076870] hover:bg-[#065d64] text-white rounded-lg transition duration-300 disabled:opacity-70"
+              disabled={isLoading || (resetToken && newPassword !== confirmNewPassword)}
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {resetToken ? "Updating..." : "Sending..."}
+                </>
+              ) : resetToken ? "Update Password" : "Send Reset Link"}
+            </button>
+            <button
+              type="button"
+              onClick={handleBackToLogin}
+              className="text-[#076870] hover:text-[#065d64] text-sm font-medium mt-4"
+            >
+              Back to Login
+            </button>
+          </form>
+        ) : (
+          <>
+            <h1 className="text-2xl sm:text-3xl font-light mb-3 sm:mb-4 text-center">
+              {isLogin ? "Log In" : "Sign Up"}
+            </h1>
+
+            {error && (
+              <div className="mb-3 sm:mb-4 p-2 text-sm bg-red-100 text-red-700 rounded-md">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleFormSubmit} className="space-y-3 sm:space-y-4">
+              {!isLogin && (
+                <>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Full Name"
+                    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                    required
+                  />
+                  
+                  <div className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-lg bg-white/90 backdrop-blur-sm focus-within:border-[#076870] focus-within:ring-2 focus-within:ring-[#076870]/30 transition-all duration-200">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2 px-1">
+                      Account Type
+                    </label>
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
+                        formData.role === 'client' 
+                          ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="role"
+                          value="client"
+                          checked={formData.role === 'client'}
+                          onChange={handleRoleChange}
+                          className="sr-only"
+                        />
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
+                          formData.role === 'client' 
+                            ? 'border-[#076870] bg-[#076870]'
+                            : 'border-gray-300'
+                        }`}>
+                          {formData.role === 'client' && (
+                            <div className="w-2 h-2 rounded-full bg-white"></div>
+                          )}
+                        </div>
+                        <span className="text-sm sm:text-base font-medium text-gray-700">Client</span>
+                      </label>
+
+                      <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
+                        formData.role === 'provider' 
+                          ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="role"
+                          value="provider"
+                          checked={formData.role === 'provider'}
+                          onChange={handleRoleChange}
+                          className="sr-only"
+                        />
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
+                          formData.role === 'provider' 
+                            ? 'border-[#076870] bg-[#076870]'
+                            : 'border-gray-300'
+                        }`}>
+                          {formData.role === 'provider' && (
+                            <div className="w-2 h-2 rounded-full bg-white"></div>
+                          )}
+                        </div>
+                        <span className="text-sm sm:text-base font-medium text-gray-700">Provider</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
+                    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                    required
+                  />
+                </>
+              )}
+
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email Address"
+                className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                required
+              />
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Password"
+                  className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                  required
+                  minLength="6"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-2 top-2 text-gray-500 hover:text-gray-700 text-sm"
+                >
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
+
+              {!isLogin && (
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm Password"
+                    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+                    required
+                    minLength="6"
+                  />
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white text-sm sm:text-base rounded-lg transition duration-200 cursor-pointer disabled:opacity-70"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="inline-flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : isLogin ? "Log In" : "Create Account"}
+              </button>
+
+              {isLogin && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={handleForgotPasswordClick}
+                    className="text-[#076870] hover:text-[#065d64] text-xs sm:text-sm transition duration-200"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+              )}
+            </form>
+
+            {!isLogin && (
+              <p className="text-xs sm:text-sm text-gray-600 mt-3 sm:mt-4">
+                By signing up, you agree to our{" "}
+                <a href="#" className="text-[#076870] hover:text-[#065d64]">
+                  Terms and Conditions
+                </a>
+              </p>
+            )}
+
+            <button
+              onClick={() => setShowForm(false)}
+              className="text-[#076870] hover:text-[#065d64] text-sm transition duration-200 cursor-pointer mt-3 sm:mt-4"
+            >
+              Go Back
+            </button>
           </>
         )}
       </div>
