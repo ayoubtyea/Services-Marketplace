@@ -262,7 +262,37 @@ const ClientDashboard = () => {
     ))}
   </div>
 </div>
-
+<div className="lg:w-80 space-y-6 w-full">
+            {/* Recent Activity Section */}
+            <div className="bg-[#E0F2F1] p-4 rounded-xl">
+              <h2 className="text-xl font-semibold text-[#076870] mb-4">Recent Activity</h2>
+              <div className="space-y-4">
+                {recentActivities.map(activity => (
+                  <div key={activity.id} className="bg-white p-3 rounded-lg border border-gray-200">
+                    <div className="flex items-start">
+                      <div className={`p-2 rounded-full mr-3 ${
+                        activity.type === "Booking Confirmed" 
+                          ? "bg-green-100 text-green-600" 
+                          : "bg-blue-100 text-blue-600"
+                      }`}>
+                        {activity.type === "Booking Confirmed" ? (
+                          <FiCheckCircle size={16} />
+                        ) : (
+                          <FiDollarSign size={16} />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-800">{activity.type}</h3>
+                        <p className="text-sm text-gray-600">{activity.service}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(activity.date).toLocaleDateString()} at {activity.time}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
   {/* Feedback Section */}
   <div className="w-full lg:w-1/3 space-y-6 bg-[#E0F2F1] py-4 px-4 rounded">
