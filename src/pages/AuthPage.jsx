@@ -122,6 +122,7 @@ const handleFormSubmit = async (e) => {
   try {
     const endpoint = isAdminLogin ? "admin/login" : isLogin ? "login" : "signup";
     const response = await axios.post(`${API_URL}/${endpoint}`, formData);
+    
 
     localStorage.setItem("authToken", response.data.token);
     localStorage.setItem("userData", JSON.stringify(response.data.user));
