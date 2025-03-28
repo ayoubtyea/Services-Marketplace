@@ -290,7 +290,7 @@ const ClientDashboard = () => {
       {/* Bottom Section */}
       <div  className="flex flex-col lg:flex-row gap-6 mt-4 w-full">
         {/* Upcoming Bookings */}
-        <div className="w-full lg:w-2/3 bg-[#E0F2F1] rounded-xl border border-gray-200 overflow-hidden">
+        <div className="w-full lg:w-2/3 rounded-xl border border-gray-200 overflow-hidden bg-[#E0F2F1]">
           <div className="p-5 border-b border-gray-200 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-800">Upcoming Bookings</h2>
             <h2 className="text-[#076870] text-sm cursor-pointer">View All</h2>
@@ -300,7 +300,7 @@ const ClientDashboard = () => {
               <div key={booking.id} className="p-5 hover:bg-gray-50 transition-colors">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-lg text-[#076870]">{booking.service}</h3>
-                  <button className="text-[#076870] bg-[#DCFCE7] rounded text-sm py-2 px-2 cursor-pointer">
+                  <button className="text-[#076870] bg-[#DCFCE7] rounded-full text-sm py-2 px-2 cursor-pointer">
                     Confirmed
                   </button>
                 </div>
@@ -330,14 +330,15 @@ const ClientDashboard = () => {
               </div>
             ))}
           </div>
-          <div className="flex flex-col lg:flex-row gap-6 bg-white mt-6">
+          
+        {/* Upcoming Bookings */}
+        <div className="flex flex-col lg:flex-row gap-3 bg-white mt-18">
   {/* Recent Activity */}
   <div className="bg-[#E0F2F1] p-6 rounded-xl border border-[#076870]/10 shadow-sm w-full">
     <div className="flex items-center justify-between mb-6">
       <h2 className="text-xl font-semibold text-[#076870] flex items-center">
         Recent Activity
       </h2>
-      <button className="text-[#076870] text-sm hover:underline">View All</button>
     </div>
     <div className="space-y-4">
       {sampleRecentActivities.map(activity => (
@@ -375,14 +376,13 @@ const ClientDashboard = () => {
   <div className="bg-[#E0F2F1] p-6 rounded-xl border border-[#076870]/10 shadow-sm w-full">
     <div className="flex items-center justify-between mb-6">
       <h2 className="text-xl font-semibold text-[#076870] flex items-center">
-        Ongoing Support
+      Ongoing Support Requests
       </h2>
-      <button className="text-[#076870] text-sm hover:underline">View All</button>
     </div>
     <div className="space-y-4">
       {sampleOngoingSupportRequests.map(request => (
         <div key={request.id} className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-all">
-          <div className="flex justify-between items-start mb-2">
+          <div className="justify-between items-start mb-2">
             <div className="flex items-center">
               <div className="p-3 rounded-full mr-3 bg-[#076870] text-[#E0F2F1]">
                 {request.type === "Refund Request" ? (
@@ -396,18 +396,19 @@ const ClientDashboard = () => {
                 <p className="text-sm text-gray-600">{request.service}</p>
               </div>
             </div>
-            <span className={`text-xs px-3 py-1 rounded-full ${
+           
+            <p className="text-xs text-gray-500">
+              Opened: {new Date(request.dateOpened).toLocaleDateString()}
+            </p>
+          </div>
+          <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-100">
+          <span className={`text-xs px-3 py-1 rounded-full ${
               request.status === "In Progress" 
                 ? "bg-blue-100 text-blue-800" 
                 : "bg-gray-100 text-gray-800"
             }`}>
               {request.status}
             </span>
-          </div>
-          <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-100">
-            <p className="text-xs text-gray-500">
-              Opened: {new Date(request.dateOpened).toLocaleDateString()}
-            </p>
             <button className="text-xs text-[#076870] font-medium flex items-center hover:text-[#054b52]">
               <FiEye className="mr-1" size={14} /> View Details
             </button>
@@ -416,14 +417,16 @@ const ClientDashboard = () => {
       ))}
     </div>
   </div>
-</div>
+          </div>
           
         </div>
 
         {/* Right Sidebar */}
-        <div className="lg:w-80 space-y-6 w-full">
+        <div className="lg:w-80 space-y-6 w-full 
+">
           {/* Feedback */}
-          <div className="bg-[#E0F2F1] p-4 rounded-xl">
+          <div className="bg-[#E0F2F1] p-4 rounded-xl h-full
+">
             <h2 className="text-2xl font-semibold text-[#076870] mb-4 text-center">My Feedback</h2>
             <div className="bg-[#076870] rounded-xl border border-gray-200 p-5 text-center">
               <div className="text-4xl font-bold text-white">{sampleClientFeedback.rating}</div>
