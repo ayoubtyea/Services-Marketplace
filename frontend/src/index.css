@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+
+*{
+    font-family: "Poppins", sans-serif;
+    box-sizing: border-box;
+}
+html{
+    background-color: #FEF5E8;
+}
+.hero-section{
+    background-color: #fff5e9;
+    background-image: url("	https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.hero-title-span.with-bg {
+    color: var(--white);
+    background-image: url(https://cdn.prod.website-files.com/663b34c…/66407ca…_hero-title-highlight.png);
+    background-position: 50% 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    transform: rotate(-2.08deg);
+}
+.hero-image-wrapper{
+    grid-column-gap: 25px;
+    grid-row-gap: 25px;
+     grid-template-rows: auto;
+     grid-template-columns: 1fr 1fr;
+      grid-auto-columns: 1fr; 
+      padding-left: 130px;
+    display: grid;
+    position: relative;
+}
+.hero-image-group-block{
+    grid-row-gap: 25px;
+    flex-flow: column;
+    display: flex;
+}
+
