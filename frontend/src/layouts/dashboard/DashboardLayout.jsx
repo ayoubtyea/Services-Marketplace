@@ -21,8 +21,7 @@ const DashboardLayout = ({ userRole = 'client' }) => {
     { name: 'Dashboard', icon: <FiHome />, path: `/${userRole}-dashboard`, exact: true },
     { name: 'My Bookings', icon: <FiCalendar />, path: `/${userRole}-dashboard/bookings` },
     { name: 'Notifications', icon: <FiBell />, path: `/${userRole}-dashboard/notifications`, badge: 5 },
-    { name: 'Profile', icon: <FiUser />, path: `/${userRole}-dashboard/profile` },
-    { name: 'Settings', icon: <FiSettings />, path: `/${userRole}-dashboard/settings` },
+    { name: 'Profile & Settings', icon: <FiUser />, path: `/${userRole}-dashboard/profile` },
     { name: 'Help & Support', icon: <FiHelpCircle />, path: `/${userRole}-dashboard/support` },
   ];
 
