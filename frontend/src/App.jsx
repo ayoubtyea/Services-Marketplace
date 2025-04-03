@@ -16,6 +16,7 @@ import Services from './pages/Services';
 import ServiceDetailsPage from './pages/ServiceDetailsPage';
 import TaskerDetailsPage from './pages/TaskerDetailsPage';
 import BookingPage from './pages/BookingPage';
+import BecomeTasker from './pages/BecomeTasker';
 
 // Dashboard Pages
 import ClientBookings from './pages/dashboard/client/Bookings';
@@ -25,6 +26,7 @@ import ClientDashboardHome from './pages/dashboard/client/DashboardHome';
 import Notifications from './pages/dashboard/client/Notifications';
 import ProfileSettings from './pages/dashboard/client/Profile';
 import HelpAndSupport from './pages/dashboard/client/Help';
+import ProviderDashboardHome from './pages/dashboard/provider/DashboardHome';
 
 // Import Navbar and Footer if they're used in MainLayout
 import Navbar from './components/Navbar';
@@ -58,7 +60,7 @@ const App = () => {
               <ProviderDashboard />
             </ProtectedRoute>
           }>
-            <Route index element={<div>Provider Dashboard Home</div>} />
+            <Route index element={<ProviderDashboardHome />} />
             <Route path="bookings" element={<ProviderBookings />} />
             {/* Add other provider routes */}
           </Route>
@@ -83,6 +85,7 @@ const App = () => {
                 <Route path="/services" element={<Services />} />
                 <Route path="/service-details/:id" element={<ServiceDetailsPage />} />
                 <Route path="/taskers/:id" element={<TaskerDetailsPage />} />
+                <Route path="/become-tasker" element={<BecomeTasker />} />
                 <Route path="/book/:id" element={<BookingPage />} />
               </Routes>
               <Footer />

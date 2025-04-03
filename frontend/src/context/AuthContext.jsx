@@ -1,44 +1,133 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios'; // Add this import
+
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [authState, setAuthState] = useState({
+    user: null,
+    isAuthenticated: false,
+    isLoading: true,
+    error: null
+  });
 
-  // Initialize user from localStorage
+  // Initialize auth state from localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem('userData');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (err) {
-        clearAuthData();
+    const initializeAuth = async () => {
+      const token = localStorage.getItem('authToken');
+      const userData = JSON.parse(localStorage.getItem('userData') || null);
+
+      if (token && userData) {
+        try {
+          // Verify token with backend
+          const response = await axios.get('/api/auth/validate-token', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          if (response.data.valid) {
+            setAuthState({
+              user: userData,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null
+            });
+          } else {
+            clearAuthData();
+          }
+        } catch (error) {
+          console.error('Token validation error:', error);
+          clearAuthData();
+        }
+      } else {
+        setAuthState(prev => ({ ...prev, isLoading: false }));
       }
-    }
+    };
+
+    initializeAuth();
   }, []);
 
   const clearAuthData = () => {
     localStorage.removeItem('userData');
     localStorage.removeItem('authToken');
+    setAuthState({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null
+    });
   };
 
-  const login = (userData, token) => {
-    localStorage.setItem('userData', JSON.stringify(userData));
-    localStorage.setItem('authToken', token);
-    setUser(userData);
-    return userData; // Return user data for navigation handling
+  const login = async (credentials) => {
+    try {
+      setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+      
+      const response = await axios.post('/api/auth/login', credentials);
+      const { token, user } = response.data;
+
+      if (!user?.role) {
+        throw new Error('User role missing in response');
+      }
+
+      localStorage.setItem('userData', JSON.stringify(user));
+      localStorage.setItem('authToken', token);
+
+      setAuthState({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null
+      });
+
+      return { success: true, user };
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message || 'Login failed';
+      setAuthState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: errorMsg
+      }));
+      return { success: false, error: errorMsg };
+    }
   };
 
   const logout = () => {
     clearAuthData();
-    setUser(null);
+    // Navigation should be handled in components where Router is available
+  };
+
+  const getDashboardPath = () => {
+    if (!authState.user?.role) {
+      console.error('No user role available', authState.user);
+      return '/';
+    }
+
+    switch(authState.user.role) {
+      case 'admin': return '/admin-dashboard';
+      case 'provider': return '/provider-dashboard';
+      case 'client': return '/client-dashboard';
+      default:
+        console.warn('Unknown role:', authState.user.role);
+        return '/';
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{
+      ...authState,
+      login,
+      logout,
+      getDashboardPath
+    }}>
+      {!authState.isLoading && children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

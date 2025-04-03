@@ -217,9 +217,7 @@ const DashboardLayout = ({ userRole = 'client' }) => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="hidden md:inline text-gray-700 group-hover:text-[#076870]">
-                Jane Doe
-              </span>
+             
             </div>
           </div>
         </header>

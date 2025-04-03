@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [authState, setAuthState] = useState({
@@ -11,13 +10,16 @@ const Navbar = () => {
   });
   const navigate = useNavigate();
 
-  // Enhanced auth check with proper state setting
   const checkAuth = () => {
     try {
       const token = localStorage.getItem("authToken");
       const userData = JSON.parse(localStorage.getItem("userData") || "null");
       
-      console.log("Auth check - userData:", userData); // Debug log
+      console.log("Current auth state:", { 
+        tokenExists: !!token,
+        userRole: userData?.role,
+        userData: userData 
+      });
       
       setAuthState({
         isAuthenticated: !!token,
@@ -51,21 +53,36 @@ const Navbar = () => {
     navigate("/");
   };
 
-  const getDashboardPath = () => {
-    // Use the state data rather than localStorage directly
-    const { userRole, userData } = authState;
-    console.log("Dashboard path - current role:", userRole, "Full userData:", userData);
+  const handleDashboardClick = () => {
+    console.log("Attempting dashboard navigation with role:", authState.userRole);
     
-    switch(userRole) {
-      case 'admin': return '/admin-dashboard';
-      case 'provider': return '/provider-dashboard';
-      case 'client': return '/client-dashboard';
-      default: {
-        console.warn("Unknown role, redirecting to home");
-        return '/';
-      }
+    if (!authState.userRole) {
+      console.warn('No user role available - redirecting to home');
+      navigate('/');
+      return;
+    }
+
+    const role = authState.userRole.toLowerCase();
+    
+    switch(role) {
+      case 'admin':
+        console.log("Navigating to admin dashboard");
+        navigate('/admin/dashboard');
+        break;
+      case 'provider':
+        console.log("Navigating to provider dashboard");
+        navigate('/provider/dashboard');
+        break;
+      case 'client':
+        console.log("Navigating to client dashboard");
+        navigate('/client/dashboard');
+        break;
+      default:
+        console.warn(`Unknown role '${role}' - redirecting to home`);
+        navigate('/');
     }
   };
+
   return (
     <nav className="bg-[#F2EADD] md:rounded-full mt-4 mx-auto max-w-7xl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
@@ -98,11 +115,12 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-4">
           {authState.isAuthenticated ? (
             <>
-              <Link to={getDashboardPath()}>
-                <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
-                  Dashboard
-                </button>
-              </Link>
+              <button 
+                onClick={handleDashboardClick}
+                className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer"
+              >
+                Dashboard
+              </button>
               <button 
                 onClick={handleLogout}
                 className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer"
@@ -112,9 +130,11 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
-                Become a Tasker
-              </button>
+             <Link to="/become-tasker">
+  <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
+    Become a Tasker
+  </button>
+</Link>
               <Link to="/auth">
                 <button className="relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
                   Sign Up / Log in
@@ -168,15 +188,15 @@ const Navbar = () => {
 
           {authState.isAuthenticated ? (
             <>
-              <Link 
-                to={getDashboardPath()} 
-                onClick={() => setIsOpen(false)}
-                className="block"
+              <button 
+                onClick={() => {
+                  setIsOpen(false);
+                  handleDashboardClick();
+                }}
+                className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer"
               >
-                <button className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
-                  Dashboard
-                </button>
-              </Link>
+                Dashboard
+              </button>
               <button 
                 onClick={() => {
                   setIsOpen(false);
@@ -189,12 +209,11 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="w-full text-left px-4 py-2 text-sm font-medium text-[#076870] rounded-full focus:outline-none transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer"
-              >
-                Become A Tasker
-              </button>
+              <Link to="/become-tasker" onClick={() => setIsOpen(false)}>
+                <button className="w-full text-left px-4 py-2 text-sm font-medium text-[#076870] rounded-full focus:outline-none transition-all duration-300 hover:bg-[#076870] hover:text-white cursor-pointer">
+                  Become A Tasker
+                </button>
+              </Link>
               <Link 
                 to="/auth" 
                 onClick={() => setIsOpen(false)}

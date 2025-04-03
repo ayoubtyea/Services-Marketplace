@@ -16,6 +16,7 @@ const AuthPage = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
+  const [loading, setLoading] = useState(false); // Add this state
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -113,30 +114,71 @@ const AuthPage = () => {
 // In your handleFormSubmit function
 const handleFormSubmit = async (e) => {
   e.preventDefault();
-  setError("");
-
-  if (!validateForm()) return;
-
-  setIsLoading(true);
+  setLoading(true);
+  setError(null);
 
   try {
-    const endpoint = isAdminLogin ? "admin/login" : isLogin ? "login" : "signup";
-    const response = await axios.post(`${API_URL}/${endpoint}`, formData);
-    
+    const response = await axios.post(
+      'http://localhost:5000/api/auth/login',
+      {
+        email: formData.email.trim(),
+        password: formData.password.trim()
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true // Important for cookies if using them
+      }
+    );
 
-    localStorage.setItem("authToken", response.data.token);
-    localStorage.setItem("userData", JSON.stringify(response.data.user));
-    
-    // Redirect based on user type
-    if (isAdminLogin) {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/');
+    // Store the authentication data
+    localStorage.setItem('authToken', response.data.token);
+    localStorage.setItem('userData', JSON.stringify(response.data.user));
+
+    // Log the received data for debugging
+    console.log('Login successful - User data:', response.data.user);
+    console.log('Stored token:', response.data.token);
+
+    // Redirect based on role
+    switch(response.data.user.role.toLowerCase()) {
+      case 'admin':
+        navigate('/admin/dashboard');
+        break;
+      case 'provider':
+        navigate('/provider/dashboard');
+        break;
+      case 'client':
+        navigate('/client/dashboard');
+        break;
+      default:
+        navigate('/');
     }
-  } catch (err) {
-    setError(err.response?.data?.message || "Authentication failed");
-  } finally {
-    setIsLoading(false);
+
+  } catch (error) {
+    setLoading(false);
+    
+    // Detailed error handling
+    if (error.response) {
+      console.error('Login error response:', error.response.data);
+      
+      switch(error.response.status) {
+        case 401:
+          setError('Invalid email or password');
+          break;
+        case 403:
+          setError('Account not authorized as provider');
+          break;
+        default:
+          setError(error.response.data.message || 'Login failed');
+      }
+    } else if (error.request) {
+      console.error('No response received:', error.request);
+      setError('Network error. Please try again.');
+    } else {
+      console.error('Request setup error:', error.message);
+      setError('An error occurred. Please try again.');
+    }
   }
 };
 
