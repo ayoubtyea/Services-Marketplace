@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { 
   FiBell, FiCheckCircle, FiClock, FiAlertTriangle,
-  FiCalendar, FiTag, FiChevronRight, FiStar,
-  FiMessageSquare, FiDollarSign, FiThumbsUp
+  FiCalendar, FiTag, FiChevronRight, 
+  FiMessageSquare, FiDollarSign, FiThumbsUp,
+  FiHome, FiBriefcase, FiUser, FiSettings
 } from 'react-icons/fi';
 
 const Notifications = () => {
@@ -138,39 +139,73 @@ const Notifications = () => {
     setNotifications(updatedNotifications);
   };
 
+  const markAllAsRead = () => {
+    const updatedNotifications = {...notifications};
+    for (const tab in updatedNotifications) {
+      updatedNotifications[tab] = updatedNotifications[tab].map(notification => ({
+        ...notification,
+        read: true
+      }));
+    }
+    setNotifications(updatedNotifications);
+  };
+
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="bg-gray-50 min-h-screen">
+      {/* Top Navigation Bar (simplified version) */}
+     
+      <div className="p-6 pt-4 max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-[#076870]">Notifications Center</h1>
-            <p className="text-gray-500 mt-1">Your recent updates and activities</p>
-          </div>
-          <div className="flex items-center mt-4 md:mt-0">
-            <button className="text-[#076870] text-sm font-medium flex items-center">
-              Mark all as read <FiCheckCircle className="ml-2" size={16} />
-            </button>
-          </div>
+       
+          <button 
+            onClick={markAllAsRead}
+            className="text-[#076870] text-sm font-medium flex items-center mt-4 md:mt-0 hover:text-[#054b52]"
+          >
+            Mark all as read <FiCheckCircle className="ml-2" size={16} />
+          </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="bg-white rounded-xl shadow-sm p-1 mb-6 border border-gray-200">
+        {/* Tab Navigation (styled like ProfileSettings) */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
           <div className="flex overflow-x-auto">
-            {['all', 'bookings', 'updates', 'promotions'].map((tab) => (
+            {[
+              { 
+                id: 'all', 
+                icon: <FiBell size={18} />,
+                label: "All",
+                badge: notifications['all'].filter(n => !n.read).length
+              },
+              { 
+                id: 'bookings', 
+                icon: <FiCalendar size={18} />,
+                label: "Bookings" 
+              },
+              { 
+                id: 'updates', 
+                icon: <FiAlertTriangle size={18} />,
+                label: "Updates" 
+              },
+              { 
+                id: 'promotions', 
+                icon: <FiTag size={18} />,
+                label: "Promotions" 
+              }
+            ].map((tab) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                  activeTab === tab 
-                    ? 'bg-[#076870] text-white shadow-sm' 
-                    : 'text-gray-600 hover:bg-gray-50'
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center px-6 py-4 text-sm font-medium transition-colors flex-shrink-0 ${
+                  activeTab === tab.id 
+                    ? 'text-[#076870] border-b-2 border-[#076870]' 
+                    : 'text-gray-600 hover:text-[#076870] hover:bg-gray-50'
                 }`}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                {tab === 'all' && (
-                  <span className="ml-2 bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">
-                    {notifications[tab].filter(n => !n.read).length}
+                <span className="mr-2">{tab.icon}</span>
+                {tab.label}
+                {tab.badge > 0 && (
+                  <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    {tab.badge}
                   </span>
                 )}
               </button>
