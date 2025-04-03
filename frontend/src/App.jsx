@@ -24,6 +24,7 @@ import AdminBookings from "./pages/dashboard/admin/Bookings"
 import ClientDashboardHome from './pages/dashboard/client/DashboardHome';
 import Notifications from './pages/dashboard/client/Notifications';
 import ProfileSettings from './pages/dashboard/client/Profile';
+import HelpAndSupport from './pages/dashboard/client/Help';
 
 // Import Navbar and Footer if they're used in MainLayout
 import Navbar from './components/Navbar';
@@ -47,6 +48,7 @@ const App = () => {
             <Route path="bookings" element={<ClientBookings />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="profile" element={<ProfileSettings />} />
+            <Route path="help" element={<HelpAndSupport />} />
             {/* Add other client routes */}
           </Route>
           

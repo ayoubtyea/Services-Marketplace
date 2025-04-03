@@ -143,7 +143,7 @@ const Bookings = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Service Dashboard</h1>
+            <h1 className="text-3xl font-bold text-[#076870]">Service Dashboard</h1>
             <p className="text-gray-500 mt-1">Manage your upcoming and completed services</p>
           </div>
           <div className="flex space-x-2 bg-white p-1 rounded-xl shadow-sm mt-4 md:mt-0 border border-gray-200">
