@@ -1,57 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FiHome, FiCalendar, FiMessageSquare, FiBell, 
   FiUser, FiSettings, FiHelpCircle, FiLogOut,
-  FiSearch, FiChevronRight, FiCheckCircle,
-  FiUsers, FiPackage, FiDollarSign, FiBarChart2
+  FiSearch, FiChevronRight, FiCheckCircle
 } from 'react-icons/fi';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 
-const DashboardLayout = ({ children, userRole = 'client' }) => {
+const DashboardLayout = ({ userRole = 'client' }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activePath, setActivePath] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
-  const [profileCompletion] = useState(85); // Example completion percentage
-
-
-
   
-  // Define navigation items for each role
-  const roleBasedNavItems = {
-    client: [
-      { name: 'Dashboard', icon: <FiHome />, path: '/client-dashboard' },
-      { name: 'My Bookings', icon: <FiCalendar />, path: '/client-dashboard/bookings' },
-      { name: 'Messages', icon: <FiMessageSquare />, path: '/client-dashboard/messages', badge: 3 },
-      { name: 'Notifications', icon: <FiBell />, path: '/client-dashboard/notifications', badge: 5 },
-      { name: 'Profile', icon: <FiUser />, path: '/client-dashboard/profile' },
-      { name: 'Settings', icon: <FiSettings />, path: '/client-dashboard/settings' },
-      { name: 'Help & Support', icon: <FiHelpCircle />, path: '/client-dashboard/support' },
-    ],
-    provider: [
-      { name: 'Dashboard', icon: <FiHome />, path: '/provider-dashboard' },
-      { name: 'Services', icon: <FiPackage />, path: '/provider-dashboard/services' },
-      { name: 'Appointments', icon: <FiCalendar />, path: '/provider-dashboard/appointments' },
-      { name: 'Messages', icon: <FiMessageSquare />, path: '/provider-dashboard/messages', badge: 3 },
-      { name: 'Earnings', icon: <FiDollarSign />, path: '/provider-dashboard/earnings' },
-      { name: 'Profile', icon: <FiUser />, path: '/provider-dashboard/profile' },
-      { name: 'Settings', icon: <FiSettings />, path: '/provider-dashboard/settings' },
-    ],
-    admin: [
-      { name: 'Dashboard', icon: <FiHome />, path: '/admin-dashboard' },
-      { name: 'Users', icon: <FiUsers />, path: '/admin-dashboard/users' },
-      { name: 'Services', icon: <FiPackage />, path: '/admin-dashboard/services' },
-      { name: 'Bookings', icon: <FiCalendar />, path: '/admin-dashboard/bookings' },
-      { name: 'Reports', icon: <FiBarChart2 />, path: '/admin-dashboard/reports' },
-      { name: 'Settings', icon: <FiSettings />, path: '/admin-dashboard/settings' },
-    ]
+  // Update active path when location changes
+  useEffect(() => {
+    setActivePath(location.pathname);
+  }, [location]);
+
+  const navItems = [
+    { name: 'Dashboard', icon: <FiHome />, path: `/${userRole}-dashboard`, exact: true },
+    { name: 'My Bookings', icon: <FiCalendar />, path: `/${userRole}-dashboard/bookings` },
+    { name: 'Notifications', icon: <FiBell />, path: `/${userRole}-dashboard/notifications`, badge: 5 },
+    { name: 'Profile', icon: <FiUser />, path: `/${userRole}-dashboard/profile` },
+    { name: 'Settings', icon: <FiSettings />, path: `/${userRole}-dashboard/settings` },
+    { name: 'Help & Support', icon: <FiHelpCircle />, path: `/${userRole}-dashboard/support` },
+  ];
+
+  // Check if current path matches nav item
+  const isActive = (item) => {
+    if (item.exact) {
+      return activePath === item.path;
+    }
+    return activePath.startsWith(item.path);
   };
 
-  // Get the appropriate nav items based on user role
-  const navItems = roleBasedNavItems[userRole] || roleBasedNavItems.client;
+  // Get current active section title
+  const getActiveTitle = () => {
+    const activeItem = navItems.find(item => isActive(item));
+    return activeItem ? activeItem.name : 'Dashboard';
+  };
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Smooth Sidebar */}
+      {/* Fixed Sidebar */}
       <aside 
         className={`hidden lg:flex flex-col bg-[#076870] text-white fixed h-full z-10 transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64' : 'w-20'}`}
       >
@@ -59,10 +50,11 @@ const DashboardLayout = ({ children, userRole = 'client' }) => {
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           {sidebarOpen ? (
             <div className="flex items-center">
-              <img src={"https://i.postimg.cc/HLc2m50J/WHITH-1.png"} alt="Logo" className="h-8 mr-2" />
+              <img src="https://i.postimg.cc/HLc2m50J/WHITH-1.png" alt="Logo" className="h-8 mr-2" />
+              <span className="text-lg font-semibold">{userRole.charAt(0).toUpperCase() + userRole.slice(1)}</span>
             </div>
           ) : (
-            <img src={"https://i.postimg.cc/HLc2m50J/WHITH-1.png"} alt="Logo" className="h-8 mx-auto" />
+            <img src="https://i.postimg.cc/HLc2m50J/WHITH-1.png" alt="Logo" className="h-8 mx-auto" />
           )}
         </div>
 
@@ -73,7 +65,9 @@ const DashboardLayout = ({ children, userRole = 'client' }) => {
               <li key={index}>
                 <Link 
                   to={item.path}
-                  className={`flex items-center p-3 rounded-lg transition-all duration-200 ${location.pathname === item.path ? 'bg-white/10' : 'hover:bg-white/10'} ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
+                  className={`flex items-center p-3 rounded-lg transition-all duration-200 ${
+                    isActive(item) ? 'bg-white/10' : 'hover:bg-white/10'
+                  } ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
                 >
                   <span className="text-lg relative">
                     {item.icon}
@@ -84,7 +78,11 @@ const DashboardLayout = ({ children, userRole = 'client' }) => {
                     )}
                   </span>
                   {sidebarOpen && (
-                    <span className="ml-3 whitespace-nowrap">{item.name}</span>
+                    <span className={`ml-3 whitespace-nowrap transition-opacity duration-200 ${
+                      isActive(item) ? 'font-medium' : ''
+                    }`}>
+                      {item.name}
+                    </span>
                   )}
                 </Link>
               </li>
@@ -104,12 +102,14 @@ const DashboardLayout = ({ children, userRole = 'client' }) => {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className={`flex-1 overflow-auto h-full ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
-        {/* Header with Search */}
+      {/* Main Content Area */}
+      <div className={`flex-1 flex flex-col overflow-hidden ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+        {/* Fixed Header - Always visible */}
         <header className="bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-10">
-          <div className="flex items-center w-full max-w-2xl">
-            <h1 className="text-xl font-semibold text-[#076870]">Dashboard</h1>
+          <div className="flex items-center">
+            <h1 className="text-xl font-semibold text-[#076870]">
+              {getActiveTitle()}
+            </h1>
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center w-full max-w-2xl bg-[#E0F2F1] rounded-2xl px-2 py-2">
@@ -126,7 +126,6 @@ const DashboardLayout = ({ children, userRole = 'client' }) => {
                 5
               </span>
             </button>
-            
             <div className="flex items-center space-x-2 cursor-pointer group">
               <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                 <img 
@@ -139,8 +138,9 @@ const DashboardLayout = ({ children, userRole = 'client' }) => {
           </div>
         </header>
 
-        <main className="p-6 min-h-full">
-          {children}
+        {/* Scrollable Content */}
+        <main className="flex-1 overflow-auto p-6 bg-gray-50">
+          <Outlet />
         </main>
       </div>
     </div>

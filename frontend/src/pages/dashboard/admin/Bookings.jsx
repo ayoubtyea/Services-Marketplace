@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MainLayout = () => {
+const Bookings = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const MainLayout = () => {
   )
 }
 
-export default MainLayout
+export default Bookings

@@ -202,13 +202,13 @@ const handleFormSubmit = async (e) => {
             <div className="space-y-3 sm:space-y-4 text-center">
             <button
               onClick={() => handleButtonClick(false)}
-              className="w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] rounded-full text-white text-sm sm:text-base transition duration-200"
+              className="cursor-pointer w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] rounded-full text-white text-sm sm:text-base transition duration-200"
             >
               Sign Up
             </button>
             <button
               onClick={() => handleButtonClick(true)}
-              className="w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] text-white rounded-full text-sm sm:text-base transition duration-200"
+              className="cursor-pointer w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] text-white rounded-full text-sm sm:text-base transition duration-200"
             >
               Log In
             </button>
@@ -217,7 +217,7 @@ const handleFormSubmit = async (e) => {
                 setIsAdminLogin(true);
                 setShowForm(true);
               }}
-              className="hover:text-[#05484fce] text-[#05484f] rounded-full text-base sm:text-base transition duration-200"
+              className="cursor-pointer hover:text-[#05484fce] text-[#05484f] rounded-full text-base sm:text-base transition duration-200"
             >
               Admin Login
             </a>
@@ -402,15 +402,6 @@ const handleFormSubmit = async (e) => {
     required
   />
 
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email Address"
-                className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                required
-              />
 
               <div className="relative">
                 <input
