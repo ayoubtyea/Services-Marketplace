@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  FaArrowRight, FaUserTie, FaTools, FaRegClock, 
-  FaMoneyBillWave, FaCheck, FaQuestionCircle 
+  FaArrowRight, FaUserTie, FaTools, FaMoneyBillWave, 
+  FaCheck, FaQuestionCircle 
 } from 'react-icons/fa';
 import { 
   MdLocationOn, MdWorkOutline, MdVerifiedUser,
@@ -87,109 +87,111 @@ const BecomeTasker = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-white">
-      {/* Hero Section with Split Layout */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative bg-gradient-to-r from-[#076870] to-[#054a52] text-white overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="container mx-auto px-6 py-24 md:py-32 relative z-10 flex flex-col md:flex-row items-center">
-          {/* Left Side - Content */}
-          <motion.div 
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="md:w-1/2 mb-12 md:mb-0 md:pr-12"
-          >
-            <img 
-              src="https://i.postimg.cc/XNgLYBgK/handy-Home.jpg" 
-              alt="HandyHome service"
-              className="rounded-xl shadow-lg w-full h-auto"
-            />
-          </motion.div>
-          
-          {/* Right Side - Quick Start Form */}
-          <motion.div 
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="md:w-1/2 bg-white rounded-xl shadow-2xl p-8 text-gray-800 transform md:-translate-y-4"
-          >
-            <h2 className="text-2xl font-bold mb-6 text-[#076870]">Earn money your way</h2>
-            <p className='text-sm font-light mb-6 text-[#076870]'>See how much you can make tasking on HandyHome</p>
-            
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <motion.div variants={itemVariants}>
-                <label className="block text-gray-700 mb-2 font-medium">Select Your City</label>
-                <div className="relative">
-                  <MdLocationOn className="absolute left-3 top-3 text-gray-400 text-xl" />
-                  <select
-                    value={formData.city}
-                    onChange={(e) => setFormData({...formData, city: e.target.value})}
-                    className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-transparent appearance-none"
-                    required
-                  >
-                    <option value="">Choose your city</option>
-                    {moroccanCities.map((city, index) => (
-                      <option key={index} value={city}>{city}</option>
-                    ))}
-                  </select>
-                </div>
-              </motion.div>
-              
-              <motion.div variants={itemVariants}>
-                <label className="block text-gray-700 mb-2 font-medium">Choose a Category</label>
-                <div className="relative">
-                  <MdWorkOutline className="absolute left-3 top-3 text-gray-400 text-xl" />
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-transparent appearance-none"
-                    required
-                  >
-                    <option value="">Select your service</option>
-                    {serviceCategories.map((category, index) => (
-                      <option key={index} value={category}>{category}</option>
-                    ))}
-                  </select>
-                </div>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <label className="block text-gray-700 mb-2 font-medium">Email Address</label>
-                <input
-                  type="email"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-transparent"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  required
+    <div className="min-h-screen flex flex-col font-sans mt-12">
+      {/* Hero Section with Perfectly Matched Image/Form */}
+      <section className="relative text-white">
+        <div className="container mx-auto px-6 py-12 md:py-20">
+          <div className="flex flex-col md:flex-row items-stretch gap-8 min-h-[70vh]">
+            {/* Image Column - Fixed Dimensions */}
+            <motion.div 
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="md:w-1/2 flex"
+            >
+              <div className="relative w-full rounded-xl shadow-2xl overflow-hidden flex-1">
+                <img 
+                  src="https://i.postimg.cc/XNgLYBgK/handy-Home.jpg" 
+                  alt="HandyHome professionals at work"
+                  className="w-full h-full object-cover min-h-[500px]"
                 />
-              </motion.div>
-              
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                className="w-full bg-[#076870] text-white py-4 px-6 rounded-lg hover:bg-[#054a52] transition flex items-center justify-center font-bold shadow-lg"
-              >
-                Continue <FaArrowRight className="ml-2" />
-              </motion.button>
-              
-              <motion.div variants={itemVariants} className="text-center pt-2">
-                <p className="text-gray-600">
-                  Already have an account?{' '}
-                  <Link to="/provider-login" className="text-[#076870] font-medium hover:underline">
-                    Sign In
-                  </Link>
-                </p>
-              </motion.div>
-            </form>
-          </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-bold mb-2">Build Your Business With HandyHome</h1>
+                    <p className="text-lg opacity-90">Join Morocco's most trusted home services network</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Form Column - Matched Height */}
+            <motion.div 
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="md:w-1/2 flex"
+            >
+              <div className="bg-white rounded-xl shadow-2xl p-8 text-gray-800 w-full flex flex-col justify-center">
+                <div className="mb-8">
+                  <h2 className="text-4xl font-bold text-[#076870]">Earn money your way
+                  </h2>
+                  <p className="text-gray-600 mt-2">See how much you can make
+                  tasking on HandyHome</p>
+                </div>
+                
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-gray-700 mb-2 font-medium text-sm uppercase tracking-wider">
+                      Select Your City
+                    </label>
+                    <div className="relative">
+                      <MdLocationOn className="absolute left-3 top-3 text-gray-400 text-xl" />
+                      <select
+                        value={formData.city}
+                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-transparent appearance-none transition duration-200"
+                        required
+                      >
+                        <option value="">Choose your city</option>
+                        {moroccanCities.map((city, index) => (
+                          <option key={index} value={city}>{city}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-700 mb-2 font-medium text-sm uppercase tracking-wider">
+                      Service Category
+                    </label>
+                    <div className="relative">
+                      <MdWorkOutline className="absolute left-3 top-3 text-gray-400 text-xl" />
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({...formData, category: e.target.value})}
+                        className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-transparent appearance-none transition duration-200"
+                        required
+                      >
+                        <option value="">Select your service</option>
+                        {serviceCategories.map((category, index) => (
+                          <option key={index} value={category}>{category}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-[#076870] to-[#054a52] text-white py-4 px-6 rounded-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center font-bold shadow-lg"
+                  >
+                    Get Started <FaArrowRight className="ml-2" />
+                  </motion.button>
+                  
+                  <div className="text-center pt-4">
+                    <p className="text-gray-600 text-sm border-t border-gray-200 pt-4">
+                      Already have an account?{' '}
+                      <Link to="/provider-login" className="text-[#076870] font-medium hover:underline">
+                        Sign In
+                      </Link>
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Partners Section */}
       <motion.section 
@@ -197,21 +199,24 @@ const BecomeTasker = () => {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-12 bg-gray-50 border-b"
+        className="py-16 bg-gray-50 border-b"
       >
         <div className="container mx-auto px-6">
-          <h3 className="text-center text-gray-500 mb-8 font-medium uppercase tracking-wider text-sm">Trusted By Leading Moroccan Companies</h3>
+          <h3 className="text-center text-gray-500 mb-10 font-medium uppercase tracking-wider text-xs">
+            Trusted By Leading Moroccan Companies
+          </h3>
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             {partners.map((partner, index) => (
               <motion.div
                 key={index}
                 whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.3 }}
+                className="flex items-center justify-center w-32 h-16"
               >
                 <img 
                   src={partner.logo} 
                   alt={partner.name}
-                  className="h-10 md:h-12 object-contain opacity-70 hover:opacity-100 transition duration-300"
+                  className="h-full w-full object-contain opacity-70 hover:opacity-100 transition duration-300"
                 />
               </motion.div>
             ))}
@@ -228,10 +233,10 @@ const BecomeTasker = () => {
         className="py-20 bg-white"
       >
         <div className="container mx-auto px-6">
-          <motion.div variants={itemVariants} className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-light text-[#076870] mb-4">Flexible work, at your fingertips</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Find local jobs that fit your skills and schedule. With HandyHome, you have the freedom and support to be your own boss.
+          <motion.div variants={itemVariants} className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#076870] mb-4">Why Choose HandyHome?</h2>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              Join Morocco's most trusted home services platform and enjoy the freedom to work on your own terms while we handle the clients and payments.
             </p>
           </motion.div>
           
@@ -257,22 +262,21 @@ const BecomeTasker = () => {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -10 }}
-                className="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition duration-300"
+                className="bg-white p-8 rounded-xl border border-gray-100 hover:shadow-lg transition duration-300 h-full flex flex-col"
               >
                 <div className="flex justify-center mb-5">
                   <div className="bg-[#E6F2F3] w-16 h-16 rounded-full flex items-center justify-center">
                     {benefit.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-center">{benefit.title}</h3>
-                <p className="text-gray-600 text-center">{benefit.desc}</p>
+                <h3 className="text-xl font-bold mb-3 text-center text-gray-800">{benefit.title}</h3>
+                <p className="text-gray-600 text-center leading-relaxed flex-grow">{benefit.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </motion.section>
-
-      {/* About Section */}
+      {/* About Section - Perfectly Matched Image/Content */}
       <motion.section 
         initial="hidden"
         whileInView="visible"
@@ -280,43 +284,54 @@ const BecomeTasker = () => {
         variants={containerVariants}
         className="py-20 bg-gray-50"
       >
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center">
-          <motion.div variants={itemVariants} className="md:w-1/2 mb-12 md:mb-0 md:pr-12">
-            <img 
-              src="https://i.postimg.cc/XNgLYBgK/handy-Home.jpg" 
-              alt="HandyHome service"
-              className="rounded-xl shadow-lg w-full h-auto"
-            />
-          </motion.div>
-          <motion.div variants={itemVariants} className="md:w-1/2">
-            <h2 className="text-3xl font-bold text-[#076870] mb-6">What is HandyHome?</h2>
-            <p className="text-lg text-gray-700 mb-6">
-              HandyHome connects busy people in need of help with trusted local professionals who can assist with everything from home repairs to errands.
-            </p>
-            <p className="text-lg text-gray-700 mb-6">
-              As a Tasker, you'll get paid to do what you love, when and where you want — all while helping clients in your community.
-            </p>
-            <ul className="space-y-3">
-              {[
-                "Choose your own hours and service area",
-                "Keep 100% of your earnings plus tips",
-                "Get paid securely through our platform",
-                "Build your reputation with client reviews"
-              ].map((item, index) => (
-                <motion.li 
-                  key={index}
-                  initial={{ x: -20, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-start"
-                >
-                  <FaCheck className="text-green-500 mt-1 mr-2 flex-shrink-0" />
-                  <span className="text-gray-700">{item}</span>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-stretch gap-8">
+            <motion.div variants={itemVariants} className="md:w-1/2 flex">
+              <div className="relative w-full rounded-xl shadow-lg overflow-hidden flex-1">
+                <img 
+                  src="https://i.postimg.cc/XNgLYBgK/handy-Home.jpg" 
+                  alt="HandyHome team working"
+                  className="w-full h-full object-cover min-h-[400px]"
+                />
+              </div>
+            </motion.div>
+            
+            <motion.div variants={itemVariants} className="md:w-1/2 flex items-center">
+              <div className="max-w-lg w-full">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-1 bg-[#076870] mr-4"></div>
+                  <span className="text-sm font-medium text-[#076870] uppercase tracking-wider">About Us</span>
+                </div>
+                <h2 className="text-3xl font-bold text-[#076870] mb-6">What is HandyHome?</h2>
+                <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+                  HandyHome connects busy people in need of help with trusted local professionals who can assist with everything from home repairs to errands.
+                </p>
+                <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+                  As a Tasker, you'll get paid to do what you love, when and where you want — all while helping clients in your community.
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    "Choose your own hours and service area",
+                    "Keep 100% of your earnings plus tips",
+                    "Get paid securely through our platform",
+                    "Build your reputation with client reviews"
+                  ].map((item, index) => (
+                    <motion.li 
+                      key={index}
+                      initial={{ x: -20, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-start"
+                    >
+                      <FaCheck className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                      <span className="text-gray-700">{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </motion.section>
 
@@ -371,14 +386,15 @@ const BecomeTasker = () => {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ scale: 1.05 }}
-                  className="flex flex-col items-center text-center"
+                  className="flex flex-col items-center text-center h-full"
                 >
                   <div className="bg-[#076870] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mb-5 z-10">
                     {item.icon}
                   </div>
-                  <div className="bg-white p-6 rounded-xl h-full border border-gray-100">
-                    <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                    <p className="text-gray-600">{item.desc}</p>
+                  <div className="bg-white p-6 rounded-xl h-full border border-gray-100 shadow-sm hover:shadow-md transition duration-300 w-full">
+                    <div className="text-xs font-bold text-[#076870] mb-2">STEP {item.step}</div>
+                    <h3 className="text-xl font-bold mb-3 text-gray-800">{item.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -387,47 +403,88 @@ const BecomeTasker = () => {
         </div>
       </motion.section>
 
-      {/* Testimonial Section */}
+      {/* Testimonial Section - Matched Heights */}
       <motion.section 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}
-        className="py-20 bg-gray-50"
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}
+  variants={containerVariants}
+  className="py-20 bg-gray-50"
+>
+  <div className="container mx-auto px-6">
+    <motion.div variants={itemVariants} className="text-center mb-16">
+      <h2 className="text-3xl font-bold text-[#076870] mb-4">What Our Providers Say</h2>
+      <p className="text-gray-600 max-w-2xl mx-auto">
+        Hear from professionals who've grown their business with HandyHome
+      </p>
+    </motion.div>
+
+    <div className="max-w-4xl mx-auto">
+      <motion.div 
+        variants={itemVariants}
+        className="bg-white rounded-xl shadow-md p-8 md:p-10"
       >
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center">
-          <motion.div variants={itemVariants} className="md:w-1/2 mb-12 md:mb-0 md:pr-12">
-            <img 
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
-              alt="Mohamed, HandyHome Provider"
-              className="rounded-xl shadow-lg w-full h-auto object-cover"
-            />
-          </motion.div>
-          <motion.div variants={itemVariants} className="md:w-1/2">
-            <div className="p-8 md:p-12 bg-white rounded-xl shadow-sm">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-1 bg-[#076870] mr-4"></div>
-                <span className="text-sm font-medium text-[#076870] uppercase tracking-wider">Success Story</span>
-              </div>
-              <blockquote className="text-xl italic mb-6">
-                "Before HandyHome, I struggled to find consistent work. Now I have a full schedule of clients and earn 3x what I made before. The platform is easy to use and payments always arrive on time."
-              </blockquote>
-              <div className="mb-8">
-                <p className="font-bold">Mohamed E.</p>
-                <p className="text-gray-600">Professional Plumber in Casablanca</p>
-                <p className="text-sm text-gray-500 mt-2">HandyHome Provider since 2021</p>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-[#076870] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#054a52] transition"
-              >
-                View More Success Stories
-              </motion.button>
+        <div className="flex flex-col md:flex-row items-start gap-6">
+          {/* Compact Avatar */}
+          <div className="flex-shrink-0">
+            <div className="relative h-20 w-20 rounded-full overflow-hidden border-4 border-[#076870]/10">
+              <img 
+                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" 
+                alt="Mohamed E."
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[#076870]/10"></div>
             </div>
-          </motion.div>
+          </div>
+
+          {/* Testimonial Content */}
+          <div className="flex-1">
+            <div className="flex items-center mb-4">
+              <div className="w-8 h-1 bg-[#076870] mr-3"></div>
+              <span className="text-xs font-medium text-[#076870] uppercase tracking-wider">Success Story</span>
+            </div>
+            
+            <blockquote className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed">
+              "Before HandyHome, I struggled to find consistent work. Now I have a full schedule of clients and earn 3x what I made before. The platform is easy to use and payments always arrive on time."
+            </blockquote>
+            
+            <div className="mb-6">
+              <p className="font-bold text-gray-900">Mohamed E.</p>
+              <p className="text-gray-600 text-sm">Professional Plumber • Casablanca</p>
+              <p className="text-xs text-gray-500 mt-1">HandyHome Provider since 2021</p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <svg 
+                  key={star}
+                  className="w-5 h-5 text-yellow-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+          </div>
         </div>
-      </motion.section>
+
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="text-[#076870] font-medium hover:underline flex items-center"
+          >
+            Read more success stories
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </motion.button>
+        </div>
+      </motion.div>
+    </div>
+  </div>
+</motion.section>
 
       {/* FAQ Section */}
       <motion.section 
@@ -454,9 +511,9 @@ const BecomeTasker = () => {
               >
                 <button
                   onClick={() => toggleQuestion(index)}
-                  className="flex justify-between items-center w-full py-4 text-left focus:outline-none"
+                  className="flex justify-between items-center w-full py-4 text-left focus:outline-none group"
                 >
-                  <h3 className="text-lg font-medium text-gray-800 flex items-center">
+                  <h3 className="text-lg font-medium text-gray-800 flex items-center group-hover:text-[#076870] transition">
                     <FaQuestionCircle className="text-[#076870] mr-3" />
                     {faq.question}
                   </h3>
@@ -470,7 +527,7 @@ const BecomeTasker = () => {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="pl-8 pr-4 pb-2 text-gray-600"
+                    className="pl-8 pr-4 pb-2 text-gray-600 leading-relaxed"
                   >
                     {faq.answer}
                   </motion.div>
@@ -487,21 +544,27 @@ const BecomeTasker = () => {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-20 bg-[#F2EADD]"
+        className="py-20 text-white md:bg-[url('https://i.postimg.cc/3xdk0rpv/bghandyhome.jpg')]"
+        
       >
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Take Control of Your Career?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">Ready to make money your way?
+          </h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Join Morocco's fastest growing network of home service professionals
           </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="bg-[#076870] text-white font-bold py-4 px-8 rounded-full hover:bg-[#054a52] transition shadow-lg hover:shadow-xl"
-          >
-            Become a Provider Today
-          </motion.button>
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+
+              className="bg-gradient-to-r from-[#076870] to-[#054a52] text-white font-bold py-4 px-8 rounded-full hover:bg-white/10 transition shadow-lg hover:shadow-xl"
+            >
+              Get Started
+            </motion.button>
+
+          </div>
         </div>
       </motion.section>
     </div>
