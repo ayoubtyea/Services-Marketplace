@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   FaArrowRight, FaUserTie, FaTools, FaMoneyBillWave, 
-  FaCheck, FaQuestionCircle, FaTimes, FaUser, FaPhone, 
+  FaCheck, FaQuestionCircle, FaTimes, FaUser, FaPhone,FaIdCard,FaUserCircle, 
   FaLock, FaCalendarAlt, FaBriefcase, FaCertificate, FaCamera
 } from 'react-icons/fa';
 import { 
@@ -11,58 +11,13 @@ import {
   MdAccountCircle, MdSchedule, MdPayment, MdEmail,
   MdDescription, MdPhotoCamera
 } from 'react-icons/md';
+import ProviderRegistrationModal from '../components/ProviderRegistrationModal';
 
 const BecomeTasker = () => {
   const [step, setStep] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState(null);
-  const [formData, setFormData] = useState({
-    // Step 1: Personal Info
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    
-    // Step 2: Location & Services
-    city: '',
-    serviceAreas: [],
-    category: '',
-    subcategories: [],
-    
-    // Step 3: Professional Details
-    yearsExperience: '',
-    skills: '',
-    certifications: '',
-    languages: [],
-    
-    // Step 4: Business Info
-    businessName: '',
-    businessRegistration: '',
-    insurance: false,
-    teamSize: '',
-    
-    // Step 5: Verification
-    idPhoto: null,
-    profilePhoto: null,
-    portfolioPhotos: [],
-    termsAccepted: false
-  });
 
-  const moroccanCities = [
-    "Casablanca", "Rabat", "Marrakech", "Fes", "Tangier",
-    "Agadir", "Meknes", "Oujda", "Kenitra", "Tetouan",
-    "Safi", "Mohammedia", "El Jadida", "Beni Mellal", "Nador"
-  ];
-
-  const serviceCategories = [
-    { name: "Cleaning", subcategories: ["Home Cleaning", "Office Cleaning", "Deep Cleaning"] },
-    { name: "Plumbing", subcategories: ["Pipe Repair", "Installation", "Drain Cleaning"] },
-    { name: "Electrical", subcategories: ["Wiring", "Lighting", "Appliance Repair"] }
-  ];
-
-  const languages = ["Arabic", "French", "English", "Spanish"];
-  const teamSizes = ["Just me", "2-5 people", "6-10 people", "10+ people"];
 
   const partners = [
     { name: "Maroc Telecom", logo: "https://i.postimg.cc/TPYGBDQk/maroc.png" },
@@ -92,41 +47,14 @@ const BecomeTasker = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate('/provider/signup', { state: formData });
-  };
+
 
   const toggleQuestion = (index) => {
     setActiveQuestion(activeQuestion === index ? null : index);
   };
 
-  const handleNext = () => setStep(step + 1);
-  const handlePrev = () => setStep(step - 1);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
 
-  const handleFileChange = (name, file) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: file
-    }));
-  };
-
-  const handleArrayChange = (name, value, isChecked) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: isChecked 
-        ? [...prev[name], value]
-        : prev[name].filter(item => item !== value)
-    }));
-  };
 
   // Animation variants
   const containerVariants = {
@@ -186,12 +114,17 @@ const BecomeTasker = () => {
                   <p className="text-gray-600 mt-2">See how much you can make tasking on HandyHome</p>
                 </div>
                 
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="w-full bg-gradient-to-r from-[#076870] to-[#054a52] text-white py-4 px-6 rounded-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center font-bold shadow-lg"
-                >
-                  Get Started <FaArrowRight className="ml-2" />
-                </button>
+                <button 
+        onClick={() => setIsModalOpen(true)}
+        className="px-6 py-3 bg-[#076870] text-white font-medium rounded-lg hover:bg-[#054a52] transition-colors"
+      >
+        Get Started as a Provider
+      </button>
+
+      <ProviderRegistrationModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
                 
                 <div className="text-center pt-4">
                   <p className="text-gray-600 text-sm border-t border-gray-200 pt-4">
@@ -207,287 +140,7 @@ const BecomeTasker = () => {
         </div>
       </section>
 
-      {/* Provider Signup Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md"
-          >
-            <button 
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            >
-              <FaTimes className="text-xl" />
-            </button>
-
-            <h2 className="text-2xl font-bold text-[#076870] mb-4">Complete Your Profile</h2>
-            
-            {/* Progress Steps */}
-            <div className="flex justify-between mb-6">
-              {[1, 2, 3].map((stepNumber) => (
-                <div key={stepNumber} className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    step === stepNumber ? 'bg-[#076870] text-white' : 
-                    step > stepNumber ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-600'
-                  }`}>
-                    {stepNumber}
-                  </div>
-                  <div className={`text-xs mt-1 ${
-                    step === stepNumber ? 'text-[#076870] font-medium' : 'text-gray-500'
-                  }`}>
-                    {stepNumber === 1 ? 'Personal' : stepNumber === 2 ? 'Professional' : 'Verification'}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              {/* Step 1: Personal Information */}
-              {step === 1 && (
-                <motion.div
-                  initial={{ x: -10, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  className="space-y-4"
-                >
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-gray-700 mb-1 text-sm">First Name</label>
-                      <input
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-1 text-sm">Last Name</label>
-                      <input
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">Phone Number</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">Password</label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg"
-                      required
-                      minLength="8"
-                    />
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 2: Professional Details */}
-              {step === 2 && (
-                <motion.div
-                  initial={{ x: -10, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">Years of Experience</label>
-                    <select
-                      name="yearsExperience"
-                      value={formData.yearsExperience}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg"
-                      required
-                    >
-                      <option value="">Select experience</option>
-                      <option value="0-1">0-1 years</option>
-                      <option value="1-3">1-3 years</option>
-                      <option value="3-5">3-5 years</option>
-                      <option value="5+">5+ years</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">Skills & Specialties</label>
-                    <textarea
-                      name="skills"
-                      value={formData.skills}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg min-h-[80px]"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">Languages Spoken</label>
-                    <div className="flex flex-wrap gap-2">
-                      {languages.map(lang => (
-                        <div key={lang} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={lang}
-                            checked={formData.languages.includes(lang)}
-                            onChange={(e) => handleArrayChange('languages', lang, e.target.checked)}
-                            className="mr-1"
-                          />
-                          <label htmlFor={lang} className="text-sm">{lang}</label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 3: Verification */}
-              {step === 3 && (
-                <motion.div
-                  initial={{ x: -10, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">ID Verification</label>
-                    <div className="border border-dashed border-gray-300 rounded-lg p-4 text-center">
-                      {formData.idPhoto ? (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm truncate">{formData.idPhoto.name}</span>
-                          <button 
-                            onClick={() => handleFileChange('idPhoto', null)}
-                            className="text-red-500 text-sm"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <MdPhotoCamera className="mx-auto text-3xl text-gray-400 mb-1" />
-                          <p className="text-gray-500 text-sm mb-2">Upload government ID</p>
-                          <label className="cursor-pointer bg-[#076870] text-white px-3 py-1 rounded text-sm">
-                            Select File
-                            <input 
-                              type="file" 
-                              className="hidden" 
-                              onChange={(e) => handleFileChange('idPhoto', e.target.files[0])}
-                              accept="image/*"
-                            />
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1 text-sm">Profile Photo</label>
-                    <div className="border border-dashed border-gray-300 rounded-lg p-4 text-center">
-                      {formData.profilePhoto ? (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm truncate">{formData.profilePhoto.name}</span>
-                          <button 
-                            onClick={() => handleFileChange('profilePhoto', null)}
-                            className="text-red-500 text-sm"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <MdPhotoCamera className="mx-auto text-3xl text-gray-400 mb-1" />
-                          <p className="text-gray-500 text-sm mb-2">Upload professional photo</p>
-                          <label className="cursor-pointer bg-[#076870] text-white px-3 py-1 rounded text-sm">
-                            Select File
-                            <input 
-                              type="file" 
-                              className="hidden" 
-                              onChange={(e) => handleFileChange('profilePhoto', e.target.files[0])}
-                              accept="image/*"
-                            />
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-start">
-                    <input
-                      type="checkbox"
-                      name="termsAccepted"
-                      checked={formData.termsAccepted}
-                      onChange={handleChange}
-                      className="mt-1 mr-2"
-                      required
-                    />
-                    <label className="text-sm text-gray-700">
-                      I agree to the <a href="#" className="text-[#076870]">Terms</a> and <a href="#" className="text-[#076870]">Privacy Policy</a>
-                    </label>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-6">
-                {step > 1 ? (
-                  <button
-                    type="button"
-                    onClick={handlePrev}
-                    className="text-[#076870] px-4 py-2 rounded hover:bg-gray-100 text-sm"
-                  >
-                    Back
-                  </button>
-                ) : (
-                  <div></div>
-                )}
-
-                {step < 3 ? (
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className="bg-[#076870] text-white px-4 py-2 rounded text-sm ml-auto"
-                  >
-                    Continue
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className="bg-[#076870] text-white px-4 py-2 rounded text-sm ml-auto"
-                  >
-                    Submit Application
-                  </button>
-                )}
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+    
 
       {/* Partners Section */}
       <motion.section 
