@@ -3,21 +3,51 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   FaArrowRight, FaUserTie, FaTools, FaMoneyBillWave, 
-  FaCheck, FaQuestionCircle 
+  FaCheck, FaQuestionCircle, FaTimes, FaUser, FaPhone, 
+  FaLock, FaCalendarAlt, FaBriefcase, FaCertificate, FaCamera
 } from 'react-icons/fa';
 import { 
   MdLocationOn, MdWorkOutline, MdVerifiedUser,
-  MdAccountCircle, MdSchedule, MdPayment 
+  MdAccountCircle, MdSchedule, MdPayment, MdEmail,
+  MdDescription, MdPhotoCamera
 } from 'react-icons/md';
 
 const BecomeTasker = () => {
-  const [formData, setFormData] = useState({
-    city: '',
-    category: '',
-    email: ''
-  });
-
+  const [step, setStep] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState(null);
+  const [formData, setFormData] = useState({
+    // Step 1: Personal Info
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    
+    // Step 2: Location & Services
+    city: '',
+    serviceAreas: [],
+    category: '',
+    subcategories: [],
+    
+    // Step 3: Professional Details
+    yearsExperience: '',
+    skills: '',
+    certifications: '',
+    languages: [],
+    
+    // Step 4: Business Info
+    businessName: '',
+    businessRegistration: '',
+    insurance: false,
+    teamSize: '',
+    
+    // Step 5: Verification
+    idPhoto: null,
+    profilePhoto: null,
+    portfolioPhotos: [],
+    termsAccepted: false
+  });
 
   const moroccanCities = [
     "Casablanca", "Rabat", "Marrakech", "Fes", "Tangier",
@@ -26,10 +56,13 @@ const BecomeTasker = () => {
   ];
 
   const serviceCategories = [
-    "Cleaning", "Plumbing", "Electrical", "Handyman",
-    "Painting", "Carpentry", "AC Repair", "Moving Help",
-    "Landscaping", "Appliance Repair", "Pest Control"
+    { name: "Cleaning", subcategories: ["Home Cleaning", "Office Cleaning", "Deep Cleaning"] },
+    { name: "Plumbing", subcategories: ["Pipe Repair", "Installation", "Drain Cleaning"] },
+    { name: "Electrical", subcategories: ["Wiring", "Lighting", "Appliance Repair"] }
   ];
+
+  const languages = ["Arabic", "French", "English", "Spanish"];
+  const teamSizes = ["Just me", "2-5 people", "6-10 people", "10+ people"];
 
   const partners = [
     { name: "Maroc Telecom", logo: "https://i.postimg.cc/TPYGBDQk/maroc.png" },
@@ -68,6 +101,33 @@ const BecomeTasker = () => {
     setActiveQuestion(activeQuestion === index ? null : index);
   };
 
+  const handleNext = () => setStep(step + 1);
+  const handlePrev = () => setStep(step - 1);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleFileChange = (name, file) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: file
+    }));
+  };
+
+  const handleArrayChange = (name, value, isChecked) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: isChecked 
+        ? [...prev[name], value]
+        : prev[name].filter(item => item !== value)
+    }));
+  };
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -88,11 +148,11 @@ const BecomeTasker = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans mt-12">
-      {/* Hero Section with Perfectly Matched Image/Form */}
+      {/* Hero Section */}
       <section className="relative text-white">
         <div className="container mx-auto px-6 py-12 md:py-20">
           <div className="flex flex-col md:flex-row items-stretch gap-8 min-h-[70vh]">
-            {/* Image Column - Fixed Dimensions */}
+            {/* Image Column */}
             <motion.div 
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -113,7 +173,7 @@ const BecomeTasker = () => {
               </div>
             </motion.div>
             
-            {/* Form Column - Matched Height */}
+            {/* Form Column */}
             <motion.div 
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -122,76 +182,312 @@ const BecomeTasker = () => {
             >
               <div className="bg-white rounded-xl shadow-2xl p-8 text-gray-800 w-full flex flex-col justify-center">
                 <div className="mb-8">
-                  <h2 className="text-4xl font-bold text-[#076870]">Earn money your way
-                  </h2>
-                  <p className="text-gray-600 mt-2">See how much you can make
-                  tasking on HandyHome</p>
+                  <h2 className="text-4xl font-medium text-[#076870]">Earn money your way</h2>
+                  <p className="text-gray-600 mt-2">See how much you can make tasking on HandyHome</p>
                 </div>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-gray-700 mb-2 font-medium text-sm uppercase tracking-wider">
-                      Select Your City
-                    </label>
-                    <div className="relative">
-                      <MdLocationOn className="absolute left-3 top-3 text-gray-400 text-xl" />
-                      <select
-                        value={formData.city}
-                        onChange={(e) => setFormData({...formData, city: e.target.value})}
-                        className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-transparent appearance-none transition duration-200"
-                        required
-                      >
-                        <option value="">Choose your city</option>
-                        {moroccanCities.map((city, index) => (
-                          <option key={index} value={city}>{city}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-gray-700 mb-2 font-medium text-sm uppercase tracking-wider">
-                      Service Category
-                    </label>
-                    <div className="relative">
-                      <MdWorkOutline className="absolute left-3 top-3 text-gray-400 text-xl" />
-                      <select
-                        value={formData.category}
-                        onChange={(e) => setFormData({...formData, category: e.target.value})}
-                        className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-transparent appearance-none transition duration-200"
-                        required
-                      >
-                        <option value="">Select your service</option>
-                        {serviceCategories.map((category, index) => (
-                          <option key={index} value={category}>{category}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-[#076870] to-[#054a52] text-white py-4 px-6 rounded-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center font-bold shadow-lg"
-                  >
-                    Get Started <FaArrowRight className="ml-2" />
-                  </motion.button>
-                  
-                  <div className="text-center pt-4">
-                    <p className="text-gray-600 text-sm border-t border-gray-200 pt-4">
-                      Already have an account?{' '}
-                      <Link to="/provider-login" className="text-[#076870] font-medium hover:underline">
-                        Sign In
-                      </Link>
-                    </p>
-                  </div>
-                </form>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full bg-gradient-to-r from-[#076870] to-[#054a52] text-white py-4 px-6 rounded-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center font-bold shadow-lg"
+                >
+                  Get Started <FaArrowRight className="ml-2" />
+                </button>
+                
+                <div className="text-center pt-4">
+                  <p className="text-gray-600 text-sm border-t border-gray-200 pt-4">
+                    Already have an account?{' '}
+                    <Link to="/provider-login" className="text-[#076870] font-medium hover:underline">
+                      Sign In
+                    </Link>
+                  </p>
+                </div>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
+
+      {/* Provider Signup Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md"
+          >
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <FaTimes className="text-xl" />
+            </button>
+
+            <h2 className="text-2xl font-bold text-[#076870] mb-4">Complete Your Profile</h2>
+            
+            {/* Progress Steps */}
+            <div className="flex justify-between mb-6">
+              {[1, 2, 3].map((stepNumber) => (
+                <div key={stepNumber} className="flex flex-col items-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    step === stepNumber ? 'bg-[#076870] text-white' : 
+                    step > stepNumber ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {stepNumber}
+                  </div>
+                  <div className={`text-xs mt-1 ${
+                    step === stepNumber ? 'text-[#076870] font-medium' : 'text-gray-500'
+                  }`}>
+                    {stepNumber === 1 ? 'Personal' : stepNumber === 2 ? 'Professional' : 'Verification'}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              {/* Step 1: Personal Information */}
+              {step === 1 && (
+                <motion.div
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  className="space-y-4"
+                >
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-700 mb-1 text-sm">First Name</label>
+                      <input
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 mb-1 text-sm">Last Name</label>
+                      <input
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">Phone Number</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                      required
+                      minLength="8"
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 2: Professional Details */}
+              {step === 2 && (
+                <motion.div
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">Years of Experience</label>
+                    <select
+                      name="yearsExperience"
+                      value={formData.yearsExperience}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                      required
+                    >
+                      <option value="">Select experience</option>
+                      <option value="0-1">0-1 years</option>
+                      <option value="1-3">1-3 years</option>
+                      <option value="3-5">3-5 years</option>
+                      <option value="5+">5+ years</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">Skills & Specialties</label>
+                    <textarea
+                      name="skills"
+                      value={formData.skills}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-lg min-h-[80px]"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">Languages Spoken</label>
+                    <div className="flex flex-wrap gap-2">
+                      {languages.map(lang => (
+                        <div key={lang} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={lang}
+                            checked={formData.languages.includes(lang)}
+                            onChange={(e) => handleArrayChange('languages', lang, e.target.checked)}
+                            className="mr-1"
+                          />
+                          <label htmlFor={lang} className="text-sm">{lang}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 3: Verification */}
+              {step === 3 && (
+                <motion.div
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">ID Verification</label>
+                    <div className="border border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      {formData.idPhoto ? (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm truncate">{formData.idPhoto.name}</span>
+                          <button 
+                            onClick={() => handleFileChange('idPhoto', null)}
+                            className="text-red-500 text-sm"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ) : (
+                        <div>
+                          <MdPhotoCamera className="mx-auto text-3xl text-gray-400 mb-1" />
+                          <p className="text-gray-500 text-sm mb-2">Upload government ID</p>
+                          <label className="cursor-pointer bg-[#076870] text-white px-3 py-1 rounded text-sm">
+                            Select File
+                            <input 
+                              type="file" 
+                              className="hidden" 
+                              onChange={(e) => handleFileChange('idPhoto', e.target.files[0])}
+                              accept="image/*"
+                            />
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-1 text-sm">Profile Photo</label>
+                    <div className="border border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      {formData.profilePhoto ? (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm truncate">{formData.profilePhoto.name}</span>
+                          <button 
+                            onClick={() => handleFileChange('profilePhoto', null)}
+                            className="text-red-500 text-sm"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ) : (
+                        <div>
+                          <MdPhotoCamera className="mx-auto text-3xl text-gray-400 mb-1" />
+                          <p className="text-gray-500 text-sm mb-2">Upload professional photo</p>
+                          <label className="cursor-pointer bg-[#076870] text-white px-3 py-1 rounded text-sm">
+                            Select File
+                            <input 
+                              type="file" 
+                              className="hidden" 
+                              onChange={(e) => handleFileChange('profilePhoto', e.target.files[0])}
+                              accept="image/*"
+                            />
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <input
+                      type="checkbox"
+                      name="termsAccepted"
+                      checked={formData.termsAccepted}
+                      onChange={handleChange}
+                      className="mt-1 mr-2"
+                      required
+                    />
+                    <label className="text-sm text-gray-700">
+                      I agree to the <a href="#" className="text-[#076870]">Terms</a> and <a href="#" className="text-[#076870]">Privacy Policy</a>
+                    </label>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex justify-between mt-6">
+                {step > 1 ? (
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="text-[#076870] px-4 py-2 rounded hover:bg-gray-100 text-sm"
+                  >
+                    Back
+                  </button>
+                ) : (
+                  <div></div>
+                )}
+
+                {step < 3 ? (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="bg-[#076870] text-white px-4 py-2 rounded text-sm ml-auto"
+                  >
+                    Continue
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="bg-[#076870] text-white px-4 py-2 rounded text-sm ml-auto"
+                  >
+                    Submit Application
+                  </button>
+                )}
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
 
       {/* Partners Section */}
       <motion.section 
@@ -540,33 +836,32 @@ const BecomeTasker = () => {
 
       {/* CTA Section */}
       <motion.section 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="py-20 text-white md:bg-[url('https://i.postimg.cc/3xdk0rpv/bghandyhome.jpg')]"
-        
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.8 }}
+  className="py-12 md:py-20 text-white"
+  style={{ backgroundImage: "url('https://i.postimg.cc/3xdk0rpv/bghandyhome.jpg')" }}
+>
+  <div className="container mx-auto px-4 md:px-6 text-center">
+    <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 text-black">
+      Ready to make money your way?
+    </h2>
+    <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto text-gray-600">
+      Join Morocco's fastest growing network of home service professionals
+    </p>
+    <div className="flex justify-center">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="bg-gradient-to-r from-[#076870] to-[#054a52] text-white font-bold py-3 px-6 md:py-4 md:px-8 rounded-full hover:bg-white/10 transition shadow-lg hover:shadow-xl text-sm md:text-base"
       >
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">Ready to make money your way?
-          </h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Join Morocco's fastest growing network of home service professionals
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-
-              className="bg-gradient-to-r from-[#076870] to-[#054a52] text-white font-bold py-4 px-8 rounded-full hover:bg-white/10 transition shadow-lg hover:shadow-xl"
-            >
-              Get Started
-            </motion.button>
-
-          </div>
-        </div>
-      </motion.section>
+        Get Started
+      </motion.button>
+    </div>
+  </div>
+</motion.section>
     </div>
   );
 };

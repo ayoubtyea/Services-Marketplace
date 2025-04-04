@@ -148,7 +148,6 @@ const BookingPage = () => {
 
   return (
     <>
-      <Navbar />
       {/* Hero Section */}
       <section
         className="bg-cover bg-center h-96"
