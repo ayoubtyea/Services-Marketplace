@@ -4,6 +4,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import ServiceDetailsPage from "./ServiceDetailsPage";
+import ReadyToJoin from "../components/ReadyToJoin";
+
 
 const ServicesPage = () => {
   // State for toggling dropdown visibility
@@ -54,51 +56,47 @@ const ServicesPage = () => {
 
   return (
     <>
-  
+<section className="services bg-white">
+    
       {/* Hero Section */}
       <section
-        className="Services"
+        className="relative py-32 bg-cover bg-center bg-white"
         style={{
-          backgroundImage:
-            'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
+          backgroundImage: 'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
         }}
       >
-        <div className="max-w-6xl lg:max-w-7xl mx-auto px-4 py-12">
-          <div className="text-center mt-8">
+        <div className="absolute inset-0 "></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center">
             <motion.div
-              className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 cursor-pointer bg-gray-200"
-              initial={{ opacity: 0, y: 70 }}
+              className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 bg-gray-200 mb-6"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <motion.h2
-                className="text-xl font-light sm:text-xl md:text-xl"
-                initial={{ opacity: 0, y: 70 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Our Services
-              </motion.h2>
+              <h2 className="text-xl font-light">
+                Contact Us
+              </h2>
             </motion.div>
 
-            <motion.p
-              className="text-2xl font-bold mt-4 text-gray-900 sm:text-3xl md:text-4xl"
-              initial={{ opacity: 0, y: 70 }}
+            <motion.h1
+              className="text-4xl md:text-5xl font-bold text-black mb-4"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Get Comprehensive{" "}
-              <span className="text-[#076870] font-light">
-                Home <br /> Solutions
-              </span>{" "}
+              Get Comprehensive
+              <span className="text-[#076870] font-light block md:inline">
+                {" "}Home <br />  Solutions 
+               </span> 
               Services
-            </motion.p>
+            </motion.h1>
           </div>
         </div>
       </section>
 
       {/* Search Bar with Sort and Filter */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 ">
       <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Grid Container */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-center">
@@ -279,42 +277,11 @@ const ServicesPage = () => {
 </div>
     </div>
       </section>
-      <section
-        className="joinU"
-        style={{
-          backgroundImage:
-            'url("https://i.postimg.cc/8C0MKPLN/Rectangle-40065.png")',
-        }}
-      >
-        <div className="text-center mt-8">
-          <motion.p
-            className="text-2xl font-light pt-20 text-white sm:text-3xl md:text-4xl"
-            initial={{ opacity: 0, y: 70 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            Ready to Join Our Community <br /> Today?
-          </motion.p>
-
-          <motion.p className="text-center mt-2 text-gray-100 text-sm text-light">
-            Whether you're looking for quality services or want to offer your skills,
-            ServiceConnect makes it easy to connect and get things done.
-          </motion.p>
-
-          <div className="flex justify-center items-center space-x-4 py-8">
-            <button className="px-6 py-3 bg-[#076870] text-white rounded-full font-semibold hover:bg-[#065f57] transition duration-300 flex items-center space-x-2">
-              <span>Join Us As a Tasker</span>
-              <span className="transform rotate-[-50deg]">→</span>
-            </button>
-            <button className="px-6 py-3 bg-[#f3f4f6] text-[#076870] rounded-full font-semibold border border-[#076870] hover:bg-[#076870] hover:text-white transition duration-300 flex items-center space-x-2">
-              <span>Book A Service</span>
-              <span className="transform rotate-[-50deg]">→</span>
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* Ready to Join Section */}
+      <ReadyToJoin />
 
       
+</section>
     </>
   );
 };

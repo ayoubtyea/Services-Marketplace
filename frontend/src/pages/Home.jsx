@@ -5,6 +5,7 @@ import Testimonial from "../components/Testimonial";
 import AuthPage from "./AuthPage";
 import Contact from "../components/Contact";
 import { Link } from "react-router-dom"; 
+import ReadyToJoin from "../components/ReadyToJoin";
 
 
 
@@ -85,7 +86,7 @@ export default function HeroSection() {
 
               {/* CTA Button */}
               <motion.a
-                href="/contact"
+                href="/services"
                 className="mt-6 inline-flex items-center justify-center px-6 py-3 bg-[#076870] hover:bg-[#0f7780] text-white rounded-full shadow-lg text-base sm:text-lg font-medium transition-all"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -211,7 +212,7 @@ export default function HeroSection() {
    
    
         <section className="About us bg-white py-12 sm:py-16 lg:py-20">
-      <div className="max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Grid Container */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left Side: About Us Heading */}
@@ -249,8 +250,7 @@ export default function HeroSection() {
           </motion.div>
         </div>
       </div>
-      <div className="hidden md:block h-1 w-[85%] mt-8 bg-gray-200 mx-auto"></div>
-
+      <div className="hidden md:block h-1 w-full max-w-3xl lg:max-w-6xl mt-8 bg-gray-200 mx-auto"></div>
       <div>
       <div className="gap-10 items-center py-8 px-4 mx-auto max-w-6xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
         {/* About Group Wrapper */}
@@ -448,7 +448,7 @@ export default function HeroSection() {
           'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
       }}
     >
-      <div className="max-w-6xl lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="text-center">
           <motion.div
@@ -582,48 +582,7 @@ export default function HeroSection() {
   
       < Testimonial />
       < Contact />
-        
-        <section className="joinU"
-        style={{
-          backgroundImage:
-            'url("https://i.postimg.cc/8C0MKPLN/Rectangle-40065.png")',
-        }}
-        >
-        <div className="text-center mt-8">
-       
-
-        <motion.p
-          className="text-2xl font-light pt-20 text-white sm:text-3xl md:text-4xl"
-          initial={{ opacity: 0, y: 70 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Ready to Join Our Community <br /> Today?
-        </motion.p>
-
-        <motion.p>
-          <p className="text-center mt-2 text-gray-100 text-sm text-light">
-          Whether you're looking for quality services or want to offer your skills,
-          <br />
-           ServiceConnect makes it easy to connect and get things done.
-          </p>
-        </motion.p>
-        <div className="flex justify-center items-center space-x-4 py-8">
-  <button className="px-6 py-3 bg-[#076870] text-white rounded-full font-semibold hover:bg-[#065f57] transition duration-300 flex items-center space-x-2">
-    <span>Join Us As a Tasker</span>
-    <span className="transform rotate-[-50deg]">→</span>
-  </button>
-  <button className="px-6 py-3 bg-[#f3f4f6] text-[#076870] rounded-full font-semibold border border-[#076870] hover:bg-[#076870] hover:text-white transition duration-300 flex items-center space-x-2">
-    <span>Book A Service</span>
-    <span className="transform rotate-[-50deg]">→</span>
-  </button>
-</div>
-
-
-      </div>
-        </section>
-
-
+      < ReadyToJoin />
     </>
   );
 }

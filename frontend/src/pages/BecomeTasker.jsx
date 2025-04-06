@@ -77,6 +77,43 @@ const BecomeTasker = () => {
   return (
     <div className="min-h-screen flex flex-col font-sans mt-12">
       {/* Hero Section */}
+      <section
+        className="relative py-32 bg-cover bg-center"
+        style={{
+          backgroundImage: 'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/664058919f21cfec93f3fe47_hero-bg.jpg")',
+        }}
+      >
+        <div className="absolute inset-0 "></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center">
+            <motion.div
+              className="inline-block border-x-4 border-[#076870] text-[#076870] rounded-md px-6 py-2 bg-gray-200 mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-xl font-light">
+                Become A Tasker
+              </h2>
+            </motion.div>
+
+            <motion.h1
+              className="text-4xl md:text-5xl font-bold text-black mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              Your Trusted
+              <span className="text-[#076870] font-light block md:inline">
+                {" "}Home <br />  Solutions 
+              </span> 
+                  Partner
+            </motion.h1>
+          </div>
+        </div>
+      </section>
+
+
       <section className="relative text-white">
         <div className="container mx-auto px-6 py-12 md:py-20">
           <div className="flex flex-col md:flex-row items-stretch gap-8 min-h-[70vh]">
@@ -114,17 +151,19 @@ const BecomeTasker = () => {
                   <p className="text-gray-600 mt-2">See how much you can make tasking on HandyHome</p>
                 </div>
                 
-                <button 
+                <div>
+      <button 
         onClick={() => setIsModalOpen(true)}
-        className="px-6 py-3 bg-[#076870] text-white font-medium rounded-lg hover:bg-[#054a52] transition-colors"
+        className="bg-[#076870] text-white px-6 py-3 rounded-lg"
       >
         Get Started as a Provider
       </button>
 
       <ProviderRegistrationModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
+    </div>
                 
                 <div className="text-center pt-4">
                   <p className="text-gray-600 text-sm border-t border-gray-200 pt-4">

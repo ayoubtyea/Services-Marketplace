@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   FaCheck, FaUser, FaTools, FaCalendarAlt, FaFileSignature,
@@ -15,7 +16,9 @@ const moroccanCities = [
 ];
 
 const ProviderRegistrationModal = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -80,10 +83,64 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setFormData(prev => ({ ...prev, isSubmitted: true }));
+    setIsSubmitting(true);
+  
+    try {
+      // Fallback to a default API URL if environment variable is not set
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth';
+      
+      const formDataToSend = new FormData();
+      
+      // Add all form fields to FormData
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value instanceof File) {
+          formDataToSend.append(key, value);
+        } else if (Array.isArray(value)) {
+          formDataToSend.append(key, JSON.stringify(value));
+        } else if (typeof value === 'object' && value !== null) {
+          formDataToSend.append(key, JSON.stringify(value));
+        } else if (value !== null && value !== undefined) {
+          formDataToSend.append(key, value);
+        }
+      });
+  
+      const response = await fetch(`${API_BASE_URL}/provider/register`, {
+        method: 'POST',
+        body: formDataToSend,
+      });
+  
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (jsonError) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        throw new Error(errorData.message || 'Registration failed');
+      }
+  
+      const data = await response.json();
+      
+      // Save auth data
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('userData', JSON.stringify({
+        id: data.provider.id,
+        email: data.provider.email,
+        role: 'provider',
+        status: data.provider.status
+      }));
+      
+      onClose();
+      navigate('/');
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert(error.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -118,7 +175,7 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
               onClick={onClose}
               className="px-4 py-1.5 bg-[#076870] text-white text-sm font-medium rounded-lg hover:bg-[#054a52] transition-colors"
             >
-              Got It
+              Continue to Home
             </button>
           </div>
         ) : (
@@ -481,8 +538,6 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
                         </select>
                         <p className="text-[10px] text-gray-500 mt-0.5">Hold Ctrl/Cmd to select multiple cities</p>
                       </div>
-
-                     
                     </div>
 
                     <div className="bg-[#076870]/5 p-3 rounded-lg">
@@ -650,9 +705,12 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
                   ) : (
                     <button
                       type="submit"
-                      className="ml-auto px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[11px] font-medium rounded-lg transition-colors flex items-center"
+                      disabled={isSubmitting}
+                      className={`ml-auto px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[11px] font-medium rounded-lg transition-colors flex items-center ${
+                        isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                     >
-                      Submit <FaPaperPlane className="ml-1" size={10} />
+                      {isSubmitting ? 'Submitting...' : 'Submit'} <FaPaperPlane className="ml-1" size={10} />
                     </button>
                   )}
                 </div>

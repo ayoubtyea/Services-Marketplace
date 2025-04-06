@@ -364,62 +364,7 @@ const handleFormSubmit = async (e) => {
         required
       />
       
-      <div className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-lg bg-white/90 backdrop-blur-sm focus-within:border-[#076870] focus-within:ring-2 focus-within:ring-[#076870]/30 transition-all duration-200">
-        <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2 px-1">
-          Account Type
-        </label>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-          <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
-            formData.role === 'client' 
-              ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
-              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-          }`}>
-            <input
-              type="radio"
-              name="role"
-              value="client"
-              checked={formData.role === 'client'}
-              onChange={handleRoleChange}
-              className="sr-only"
-            />
-            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
-              formData.role === 'client' 
-                ? 'border-[#076870] bg-[#076870]'
-                : 'border-gray-300'
-            }`}>
-              {formData.role === 'client' && (
-                <div className="w-2 h-2 rounded-full bg-white"></div>
-              )}
-            </div>
-            <span className="text-sm sm:text-base font-medium text-gray-700">Client</span>
-          </label>
-
-          <label className={`flex items-center justify-center p-2 sm:p-3 rounded-md border-2 cursor-pointer transition-all duration-200 ${
-            formData.role === 'provider' 
-              ? 'border-[#076870] bg-[#076870]/10 shadow-inner'
-              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-          }`}>
-            <input
-              type="radio"
-              name="role"
-              value="provider"
-              checked={formData.role === 'provider'}
-              onChange={handleRoleChange}
-              className="sr-only"
-            />
-            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-2 ${
-              formData.role === 'provider' 
-                ? 'border-[#076870] bg-[#076870]'
-                : 'border-gray-300'
-            }`}>
-              {formData.role === 'provider' && (
-                <div className="w-2 h-2 rounded-full bg-white"></div>
-              )}
-            </div>
-            <span className="text-sm sm:text-base font-medium text-gray-700">Provider</span>
-          </label>
-        </div>
-      </div>
+      
 
       <input
         type="tel"

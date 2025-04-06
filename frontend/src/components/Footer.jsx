@@ -10,7 +10,7 @@ const Footer = () => {
           'url("https://cdn.prod.website-files.com/663b34c56f05c8c9e12aafdc/665bf81b5bc17a6b8ecdea5f_footer-bg.png")',
       }}
     >
-      <div className="container mx-auto">
+      <div className="container mx-auto  max-w-6xl lg:max-w-6xl">
         {/* Footer Top Block */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Footer Logo and Newsletter */}
