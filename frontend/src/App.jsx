@@ -29,6 +29,7 @@ import Notifications from './pages/dashboard/client/Notifications';
 import ProfileSettings from './pages/dashboard/client/Profile';
 import HelpAndSupport from './pages/dashboard/client/Help';
 import ProviderDashboardHome from './pages/dashboard/provider/DashboardHome';
+import NotFound from './pages/NotFound';
 
 // Components
 import Navbar from './components/Navbar';
@@ -94,10 +95,11 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/ready-to-join" element={<ReadyToJoin />} />
+              {/* 404 Page - Optional */}
+          <Route path="/NotFound" element={<NotFound />} />
+           {/* Catch-all for other public routes */}
+           <Route path="*" element={<NotFound />} />
           </Route>
-          
-          {/* 404 Page - Optional */}
-          <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </Router>
     </AuthProvider>
