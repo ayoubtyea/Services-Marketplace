@@ -219,7 +219,8 @@ const Navbar = () => {
                 onClick={() => setIsOpen(false)}
                 className="block"
               >
-                <button className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
+                <button 
+                className="w-full mt-2 relative overflow-hidden py-2.5 px-5 text-sm font-medium text-white rounded-full border border-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300 bg-[#076870] hover:bg-white hover:text-black cursor-pointer">
                   Sign Up / Log in
                 </button>
               </Link>
