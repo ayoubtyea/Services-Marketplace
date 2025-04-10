@@ -1,11 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const { signup, login } = require('../controllers/auth');
+const { clientSignup, login, providerSignup, adminLogin } = require('../controllers/auth');
+const { validateLogin, validateClientSignup, validateProviderSignup } = require('../middleware/validation');
 
-// POST /api/auth/signup
-router.post('/signup', signup);
+// POST /api/auth/client/signup
+router.post('/client/signup', validateClientSignup, clientSignup);
 
-// POST /api/auth/login
-router.post('/login', login);
+// POST /api/auth/provider/signup
+router.post('/provider/signup', validateProviderSignup, providerSignup);
+
+// POST /api/auth/login (for all users)
+router.post('/login', validateLogin, login);
+
+// POST /api/auth/admin/login (specific for admin)
+router.post('/admin/login', validateLogin, adminLogin);
 
 module.exports = router;

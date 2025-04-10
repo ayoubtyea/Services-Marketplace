@@ -1,91 +1,173 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const validator = require('validator');
+const User = require('../models/User'); // Assuming User, Provider, Admin are models
+const Provider = require('../models/Provider');
+const Admin = require('../models/Admin');
 
-// Signup controller
-exports.signup = async (req, res) => {
-    try {
-      console.log("Incoming request body:", req.body);
-      
-      const { fullName, email, phoneNumber, password } = req.body;
-      
-      // More validation
-      if (!validator.isEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-      }
-  
-      console.log("Checking for existing user...");
-      const existingUser = await User.findOne({ email });
-      
-      if (existingUser) {
-        console.log("User already exists with email:", email);
-        return res.status(409).json({ message: 'Email already in use' });
-      }
-  
-      console.log("Hashing password...");
-      const hashedPassword = await bcrypt.hash(password, 12);
-  
-      console.log("Creating user...");
-      const user = await User.create({
-        fullName,
-        email,
-        phoneNumber,
-        password: hashedPassword
-      });
-  
-      console.log("Generating token...");
-      const token = jwt.sign(
-        { userId: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
-  
-      console.log("Signup successful for:", email);
-      res.status(201).json({ 
-        token,
-        user: {
-          id: user._id,
-          fullName: user.fullName,
-          email: user.email
-        }
-      });
-  
-    } catch (error) {
-      console.error("❗ SIGNUP ERROR:", error);
-      res.status(500).json({ 
-        message: error.message || 'Registration failed',
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      });
+const generateAuthToken = (user, role) => {
+  return jwt.sign(
+    { id: user._id, email: user.email, role: role },
+    process.env.JWT_SECRET, // Ensure JWT_SECRET is set in your .env
+    { expiresIn: '1h' }
+  );
+};
+
+const createAuthResponse = (user, role) => {
+  return {
+    success: true,
+    token: generateAuthToken(user, role),
+    user: {
+      id: user._id,
+      email: user.email,
+      fullName: user.fullName || '',
+      role: role,
+      phoneNumber: user.phoneNumber || '',
     }
   };
+};
 
-// Login controller
+// Client Signup
+exports.clientSignup = async (req, res) => {
+  try {
+    const { fullName, email, phoneNumber, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ 
+        success: false,
+        message: 'Email already in use' 
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = await User.create({
+      fullName,
+      email,
+      phoneNumber,
+      password: hashedPassword,
+      role: 'client' // Explicitly set role
+    });
+
+    res.status(201).json(createAuthResponse(user, 'client'));
+
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: error.message || 'Client registration failed' 
+    });
+  }
+};
+
+// General Login
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
-    const user = await User.findOne({ email });
+    console.log('Received login request:', email, password);  // Log the input data
+
+    let user = await User.findOne({ email }) || 
+               await Provider.findOne({ email }) || 
+               await Admin.findOne({ email });
+
+    console.log('User found:', user);  // Log user data if found
+
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid credentials' 
+      });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid credentials' 
+      });
     }
 
-    // Create token
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    let role;
+    if (user instanceof User) role = 'client';
+    if (user instanceof Provider) role = 'provider';
+    if (user instanceof Admin) role = 'admin';
 
-    res.status(200).json({ token, user });
+    const token = generateAuthToken(user, role);  // Generate token
+    const userData = {
+      id: user._id,
+      email: user.email,
+      role: role
+    };
+
+    res.status(200).json({
+      success: true,
+      token: token,
+      user: userData
+    });
+
   } catch (error) {
-    res.status(500).json({ message: 'Something went wrong' });
+    console.error('Error during login:', error);  // Log error in backend
+    res.status(500).json({ 
+      success: false,
+      message: 'Login failed' 
+    });
+  }
+};
+
+
+
+// Provider Signup
+exports.providerSignup = async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+
+    const provider = await Provider.create({
+      ...req.body,
+      password: hashedPassword,
+      status: 'pending_approval',
+      role: 'provider' // Explicitly set role
+    });
+
+    const response = createAuthResponse(provider, 'provider');
+    response.message = "Provider account pending approval";
+
+    res.status(201).json(response);
+
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: 'Provider registration failed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Admin Login
+exports.adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid admin credentials' 
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid admin credentials' 
+      });
+    }
+
+    res.status(200).json(createAuthResponse(admin, 'admin'));
+
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: 'Admin login failed' 
+    });
   }
 };
