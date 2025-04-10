@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = `${import.meta.env.VITE_API_URL}/auth`; 
+
+
+
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,7 +19,7 @@ const AuthPage = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
   const [isAdminLogin, setIsAdminLogin] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Add this state
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -24,7 +27,7 @@ const AuthPage = () => {
     phoneNumber: "",
     password: "",
     confirmPassword: "",
-    role: "client" // Default role is client
+    role: "client"
   });
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -52,7 +55,7 @@ const AuthPage = () => {
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-      role: "client" // Reset to client role
+      role: prev.role
     }));
   };
 
@@ -72,6 +75,10 @@ const AuthPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleRoleChange = (e) => {
+    setFormData(prev => ({ ...prev, role: e.target.value }));
+  };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -81,157 +88,82 @@ const AuthPage = () => {
       setError("Please enter a valid email address");
       return false;
     }
-
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters");
       return false;
     }
-
-    if (!isLogin && !isAdminLogin) {
+    if (!isLogin) {
       if (!formData.fullName.trim()) {
         setError("Full name is required");
         return false;
       }
-      
       if (!formData.phoneNumber.trim()) {
         setError("Phone number is required");
         return false;
       }
-
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords don't match");
         return false;
       }
     }
-
     return true;
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
 
-    if (!validateForm()) {
-      setLoading(false);
-      return;
+// In your handleFormSubmit function
+const handleFormSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
+
+  try {
+    let endpoint = '/login';  // Default endpoint for login
+    let payload = {
+      email: formData.email.trim(),
+      password: formData.password.trim()
+    };
+
+    console.log('Payload being sent:', payload);  // Log the payload to check values
+
+    if (!isLogin) {
+      endpoint = formData.role === 'provider' 
+        ? '/provider/signup' 
+        : '/client/signup';
+
+      payload = {
+        ...formData,
+        password: formData.password.trim()
+      };
     }
 
-    try {
-      const endpoint = isAdminLogin ? '/admin-login' : '/login';
-      const response = await axios.post(
-        `${API_URL}${endpoint}`,
-        {
-          email: formData.email.trim(),
-          password: formData.password.trim()
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
+    const response = await axios.post(
+      `${API_URL}${endpoint}`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json'
         }
-      );
-
-      // Store the authentication data
-      localStorage.setItem('authToken', response.data.token);
-      localStorage.setItem('userData', JSON.stringify(response.data.user));
-
-      // Redirect based on role
-      const role = response.data.user.role.toLowerCase();
-      if (role === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (role === 'client') {
-        navigate('/client/dashboard');
-      } else {
-        // If somehow a provider logs in (shouldn't happen with our changes)
-        setError('Unauthorized access');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
       }
+    );
 
-    } catch (error) {
-      setLoading(false);
-      
-      if (error.response) {
-        console.error('Login error response:', error.response.data);
-        
-        switch(error.response.status) {
-          case 401:
-            setError('Invalid email or password');
-            break;
-          case 403:
-            setError('Unauthorized access');
-            break;
-          default:
-            setError(error.response.data.message || 'Login failed');
-        }
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-        setError('Network error. Please try again.');
-      } else {
-        console.error('Request setup error:', error.message);
-        setError('An error occurred. Please try again.');
-      }
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Authentication failed');
     }
-  };
 
-  const handleSignUpSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-  
-    if (!validateForm()) {
-      setLoading(false);
-      return;
-    }
-  
-    try {
-      const response = await axios.post(
-        `${API_URL}/client/signup`, // Updated to match your backend route
-        {
-          fullName: formData.fullName.trim(),
-          email: formData.email.trim(),
-          phoneNumber: formData.phoneNumber.trim(),
-          password: formData.password.trim()
-          // Removed explicit role since your backend handles this
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-  
-      // Handle successful registration
-      if (response.data.token && response.data.user) {
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('userData', JSON.stringify(response.data.user));
-        navigate('/client/dashboard');
-      } else {
-        throw new Error('Registration successful but no token received');
-      }
-  
-    } catch (error) {
-      setLoading(false);
-      console.error('Registration error:', error);
-      
-      if (error.response) {
-        // Handle different HTTP status codes
-        if (error.response.status === 400) {
-          setError(error.response.data.message || 'Validation failed');
-        } else if (error.response.status === 409) {
-          setError('Email already exists');
-        } else {
-          setError(error.response.data.message || 'Registration failed');
-        }
-      } else if (error.request) {
-        setError('Network error. Please check your connection');
-      } else {
-        setError('An unexpected error occurred');
-      }
-    }
-  };
+    localStorage.setItem('authToken', response.data.token);
+    localStorage.setItem('userData', JSON.stringify(response.data.user));
+
+    navigate('/');  // Redirect to home after signup
+
+  } catch (error) {
+    console.error("Error during form submission:", error);  // Log any error in the frontend
+    setError(error.response?.data?.message || error.message || 'Authentication failed');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
@@ -265,17 +197,9 @@ const AuthPage = () => {
         localStorage.setItem("userData", JSON.stringify(response.data.user));
         setResetSuccess(true);
         
-        // Redirect based on role
-        const role = response.data.user.role.toLowerCase();
-        if (role === 'admin') {
-          setTimeout(() => navigate('/admin/dashboard'), 2000);
-        } else if (role === 'client') {
-          setTimeout(() => navigate('/client/dashboard'), 2000);
-        } else {
-          setError('Unauthorized access');
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('userData');
-        }
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Password reset failed');
@@ -283,6 +207,8 @@ const AuthPage = () => {
       setIsLoading(false);
     }
   };
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center" style={{
@@ -298,24 +224,23 @@ const AuthPage = () => {
         </div>
 
         {!showForm ? (
-          <div className="space-y-3 sm:space-y-4 text-center">
+            <div className="space-y-3 sm:space-y-4 text-center">
             <button
               onClick={() => handleButtonClick(false)}
               className="cursor-pointer w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] rounded-full text-white text-sm sm:text-base transition duration-200"
             >
-               Sign Up
+              Sign Up
             </button>
             <button
               onClick={() => handleButtonClick(true)}
               className="cursor-pointer w-full py-2.5 sm:py-3 bg-[#076870] hover:bg-[#065d64] text-white rounded-full text-sm sm:text-base transition duration-200"
             >
-               Log In
+              Log In
             </button>
             <a
               onClick={() => {
                 setIsAdminLogin(true);
                 setShowForm(true);
-                setIsLogin(true);
               }}
               className="cursor-pointer hover:text-[#05484fce] text-[#05484f] rounded-full text-base sm:text-base transition duration-200"
             >
@@ -399,8 +324,8 @@ const AuthPage = () => {
         ) : (
           <>
             <h1 className="text-2xl sm:text-3xl font-light mb-3 sm:mb-4 text-center">
-              {isAdminLogin ? "Admin Login" : isLogin ? "Client Login" : "Client Sign Up"}
-            </h1>
+  {isAdminLogin ? "Admin Login" : isLogin ? "Log In" : "Sign Up"}
+</h1>
 
             {error && (
               <div className="mb-3 sm:mb-4 p-2 text-sm bg-red-100 text-red-700 rounded-md">
@@ -408,41 +333,45 @@ const AuthPage = () => {
               </div>
             )}
 
-            <form onSubmit={isLogin ? handleFormSubmit : handleSignUpSubmit} className="space-y-3 sm:space-y-4">
-              {/* Hide these fields for admin login */}
-              {!isLogin && !isAdminLogin && (
-                <>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    placeholder="Full Name"
-                    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                    required
-                  />
-                  
-                  <input
-                    type="tel"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    placeholder="Phone Number"
-                    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                    required
-                  />
-                </>
-              )}
+<form onSubmit={handleFormSubmit} className="space-y-3 sm:space-y-4">
+  {/* Hide these fields for admin login */}
+  {!isLogin && !isAdminLogin && (
+    <>
+      <input
+        type="text"
+        name="fullName"
+        value={formData.fullName}
+        onChange={handleChange}
+        placeholder="Full Name"
+        className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+        required
+      />
+      
+      
 
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email Address"
-                className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
-                required
-              />
+      <input
+        type="tel"
+        name="phoneNumber"
+        value={formData.phoneNumber}
+        onChange={handleChange}
+        placeholder="Phone Number"
+        className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+        required
+      />
+    </>
+  )}
+
+  {/* Keep these fields for all login types */}
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    placeholder="Email Address"
+    className="w-full p-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#076870]"
+    required
+  />
+
 
               <div className="relative">
                 <input
@@ -479,21 +408,21 @@ const AuthPage = () => {
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white text-sm sm:text-base rounded-lg transition duration-200 cursor-pointer disabled:opacity-70"
-                disabled={loading}
-              >
-                {loading ? (
-                  <span className="inline-flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </span>
-                ) : isAdminLogin ? "Login as Admin" : isLogin ? "Log In" : "Create Account"}
-              </button>
+<button
+  type="submit"
+  className="w-full py-2 bg-[#076870] hover:bg-[#065d64] text-white text-sm sm:text-base rounded-lg transition duration-200 cursor-pointer disabled:opacity-70"
+  disabled={isLoading}
+>
+  {isLoading ? (
+    <span className="inline-flex items-center justify-center">
+      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Processing...
+    </span>
+  ) : isAdminLogin ? "Login as Admin" : isLogin ? "Log In" : "Create Account"}
+</button>
 
               {isLogin && (
                 <div className="text-right">
@@ -517,15 +446,15 @@ const AuthPage = () => {
               </p>
             )}
 
-            <button
-              onClick={() => {
-                setShowForm(false);
-                setIsAdminLogin(false);
-              }}
-              className="text-[#076870] hover:text-[#065d64] text-sm transition duration-200 cursor-pointer mt-3 sm:mt-4"
-            >
-              Go Back
-            </button>
+<button
+  onClick={() => {
+    setShowForm(false);
+    setIsAdminLogin(false);
+  }}
+  className="text-[#076870] hover:text-[#065d64] text-sm transition duration-200 cursor-pointer mt-3 sm:mt-4"
+>
+  Go Back
+</button>
           </>
         )}
       </div>
