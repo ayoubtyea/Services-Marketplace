@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Outlet, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -45,14 +45,54 @@ const PublicLayout = () => (
   </>
 );
 
+// Layout component for private routes with navbar and footer
+const PrivateLayout = () => (
+  <>
+    <Navbar />
+    <Outlet />
+  </>
+);
+
 const App = () => {
+  const [authState, setAuthState] = useState({
+    isAuthenticated: false,
+    userRole: null,
+    userData: null,
+  });
+
+  useEffect(() => {
+    // Check if user is logged in and retrieve the role
+    const token = localStorage.getItem("authToken");
+    const userData = JSON.parse(localStorage.getItem("userData") || "null");
+
+    setAuthState({
+      isAuthenticated: !!token,
+      userRole: userData?.role || null,
+      userData: userData,
+    });
+  }, []);
+
+  // Check if the user is an admin and redirect accordingly
+  const redirectToDashboard = () => {
+    if (authState.isAuthenticated) {
+      if (authState.userRole === 'admin') {
+        return <Navigate to="/admin-dashboard" />;
+      } else if (authState.userRole === 'provider') {
+        return <Navigate to="/provider-dashboard" />;
+      } else if (authState.userRole === 'client') {
+        return <Navigate to="/client-dashboard" />;
+      }
+    }
+    return <Home />; // Default route if no authentication
+  };
+
   return (
     <AuthProvider>
       <Router>
         <Routes>
           {/* Auth route without navbar/footer */}
           <Route path="/auth" element={<AuthPage />} />
-          
+
           {/* Dashboard routes */}
           <Route path="/client-dashboard" element={
             <ProtectedRoute allowedRoles={['client']}>
@@ -65,7 +105,7 @@ const App = () => {
             <Route path="profile" element={<ProfileSettings />} />
             <Route path="help" element={<HelpAndSupport />} />
           </Route>
-          
+
           <Route path="/provider-dashboard" element={
             <ProtectedRoute allowedRoles={['provider']}>
               <ProviderDashboard />
@@ -74,7 +114,7 @@ const App = () => {
             <Route index element={<ProviderDashboardHome />} />
             <Route path="bookings" element={<ProviderBookings />} />
           </Route>
-          
+
           <Route path="/admin-dashboard" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboard />
@@ -83,10 +123,10 @@ const App = () => {
             <Route index element={<div>Admin Dashboard Home</div>} />
             <Route path="bookings" element={<AdminBookings />} />
           </Route>
-          
+
           {/* Public routes with navbar and footer */}
           <Route element={<PublicLayout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={redirectToDashboard()} />
             <Route path="/services" element={<Services />} />
             <Route path="/service-details/:id" element={<ServiceDetailsPage />} />
             <Route path="/taskers/:id" element={<TaskerDetailsPage />} />
@@ -95,11 +135,11 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/ready-to-join" element={<ReadyToJoin />} />
-              {/* 404 Page - Optional */}
-          <Route path="/NotFound" element={<NotFound />} />
-           {/* Catch-all for other public routes */}
-           <Route path="*" element={<NotFound />} />
+            <Route path="/NotFound" element={<NotFound />} />
+            {/* Catch-all for other public routes */}
+            <Route path="*" element={<NotFound />} />
           </Route>
+
         </Routes>
       </Router>
     </AuthProvider>

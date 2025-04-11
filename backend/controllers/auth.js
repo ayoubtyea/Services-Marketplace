@@ -1,9 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Assuming User, Provider, Admin are models
+const User = require('../models/User'); 
 const Provider = require('../models/Provider');
 const Admin = require('../models/Admin');
 
+// Function to generate JWT token
 const generateAuthToken = (user, role) => {
   return jwt.sign(
     { id: user._id, email: user.email, role: role },
@@ -12,6 +13,7 @@ const generateAuthToken = (user, role) => {
   );
 };
 
+// Function to create authentication response
 const createAuthResponse = (user, role) => {
   return {
     success: true,
@@ -58,18 +60,14 @@ exports.clientSignup = async (req, res) => {
   }
 };
 
-// General Login
+// General Login for client, provider, and admin
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log('Received login request:', email, password);  // Log the input data
-
     let user = await User.findOne({ email }) || 
                await Provider.findOne({ email }) || 
                await Admin.findOne({ email });
-
-    console.log('User found:', user);  // Log user data if found
 
     if (!user) {
       return res.status(401).json({ 
@@ -91,7 +89,7 @@ exports.login = async (req, res) => {
     if (user instanceof Provider) role = 'provider';
     if (user instanceof Admin) role = 'admin';
 
-    const token = generateAuthToken(user, role);  // Generate token
+    const token = generateAuthToken(user, role);
     const userData = {
       id: user._id,
       email: user.email,
@@ -105,15 +103,13 @@ exports.login = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error during login:', error);  // Log error in backend
+    console.error('Error during login:', error);
     res.status(500).json({ 
       success: false,
       message: 'Login failed' 
     });
   }
 };
-
-
 
 // Provider Signup
 exports.providerSignup = async (req, res) => {
@@ -137,6 +133,42 @@ exports.providerSignup = async (req, res) => {
       success: false,
       message: 'Provider registration failed',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Admin Signup
+exports.adminSignup = async (req, res) => {
+  try {
+    const { fullName, email, phoneNumber, password } = req.body;
+
+    // Check if the admin already exists
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(409).json({
+        success: false,
+        message: 'Email already in use'
+      });
+    }
+
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const admin = await Admin.create({
+      fullName,
+      email,
+      phoneNumber,
+      password: hashedPassword,
+      role: 'admin',
+      isVerified: true, // Admins are typically verified by default
+    });
+
+    res.status(201).json(createAuthResponse(admin, 'admin'));
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Admin registration failed'
     });
   }
 };

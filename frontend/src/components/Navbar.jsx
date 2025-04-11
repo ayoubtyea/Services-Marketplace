@@ -26,7 +26,7 @@ const Navbar = () => {
       setAuthState({
         isAuthenticated: false, 
         userRole: null, 
-        userData: null
+        userData: null 
       });
     }
   };

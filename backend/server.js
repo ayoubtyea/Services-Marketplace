@@ -3,7 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-const providerRoutes = require('./routes/providerRoutes'); // Make sure this exists
+const providerRoutes = require('./routes/providerRoutes');
+const createAdminIfNotExists = require('./utils/adminSeeder'); // Import the seeder function
 
 const app = express();
 
@@ -11,7 +12,6 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
-  // Add production domains here
 ];
 
 app.use(cors({
@@ -39,7 +39,11 @@ mongoose.connect(process.env.MONGO_URI, {
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 30000
 })
-.then(() => console.log('✅ Connected to MongoDB'))
+.then(() => {
+  console.log('✅ Connected to MongoDB');
+  // Create admin if not exists
+  createAdminIfNotExists(); // Call the function to create admin after the database connection
+})
 .catch(err => {
   console.error('❌ MongoDB connection error:', err);
   process.exit(1);
