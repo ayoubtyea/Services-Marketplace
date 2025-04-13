@@ -106,62 +106,56 @@ const AuthPage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
-
+    setError("");
+  
     try {
-      let endpoint = '/login';  // Default endpoint for login
+      let endpoint = "/login"; // Default endpoint for login
       let payload = {
         email: formData.email.trim(),
-        password: formData.password.trim()
+        password: formData.password.trim(),
       };
-
-      // Handle admin login
-      if (isAdminLogin) {
-        endpoint = '/admin/login';  // Admin login endpoint
-      } else if (!isLogin) {
-        endpoint = formData.role === 'provider' 
-          ? '/provider/signup' 
-          : formData.role === 'admin' 
-          ? '/admin/signup' 
-          : '/client/signup';
-
+  
+      if (!isLogin) {
+        // Signup logic
+        endpoint = formData.role === "admin"
+          ? "/admin/signup"
+          : formData.role === "provider"
+          ? "/provider/signup"
+          : "/client/signup";
+  
         payload = {
           ...formData,
-          password: formData.password.trim()
+          password: formData.password.trim(),
         };
       }
-
-      const response = await axios.post(
-        `${API_URL}${endpoint}`,
-        payload,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
+  
+      const response = await axios.post(`${API_URL}${endpoint}`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
       if (!response.data.success) {
-        throw new Error(response.data.message || 'Authentication failed');
+        throw new Error(response.data.message || "Authentication failed");
       }
-
-      localStorage.setItem('authToken', response.data.token);
-      localStorage.setItem('userData', JSON.stringify(response.data.user));
-
-      // Redirect to the admin dashboard if admin login
-      if (isAdminLogin) {
-        navigate('/');  // Redirect to admin dashboard after admin login
-      } else {
-        navigate('/');  // Redirect to home after signup/login
-      }
-
+  
+      // Store auth token and user data in localStorage
+      localStorage.setItem("authToken", response.data.token);
+      localStorage.setItem("userData", JSON.stringify(response.data.user));
+  
+      // Redirect to homepage
+      navigate("/"); // Redirect to the homepage after signup
+  
     } catch (error) {
-      console.error("Error during form submission:", error);  // Log any error in the frontend
-      setError(error.response?.data?.message || error.message || 'Authentication failed');
+      console.error("Error during form submission:", error);
+      setError(error.response?.data?.message || error.message || "Authentication failed");
     } finally {
       setIsLoading(false);
     }
   };
+  
+  
+  
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();

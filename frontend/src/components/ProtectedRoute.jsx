@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
@@ -8,8 +8,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/auth" replace />;
   }
 
-  if (!allowedRoles.includes(userData.role)) {
-    // Redirect to home if wrong role
+  if (!userData?.role || !allowedRoles.includes(userData.role)) {
+
     return <Navigate to="/" replace />;
   }
 

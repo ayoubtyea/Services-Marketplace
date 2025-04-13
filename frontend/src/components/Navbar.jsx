@@ -10,7 +10,6 @@ const Navbar = () => {
   });
   const navigate = useNavigate();
 
-  // Check if the user is authenticated
   const checkAuth = () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -33,7 +32,7 @@ const Navbar = () => {
 
   useEffect(() => {
     checkAuth();
-    window.addEventListener('storage', checkAuth);  // Recheck when localStorage changes
+    window.addEventListener('storage', checkAuth);  
     return () => window.removeEventListener('storage', checkAuth);
   }, []);
 
@@ -125,3 +124,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
