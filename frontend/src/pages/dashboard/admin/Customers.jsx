@@ -3,7 +3,7 @@ import {
   FiUsers, FiCalendar, FiAlertCircle, FiStar,
   FiSearch, FiFilter, FiMail, FiTrash2,
   FiChevronDown, FiEye, FiEdit, FiPlus,
-  FiPhone, FiCheck, FiX
+  FiPhone, FiCheck, FiX, FiMapPin, FiClock
 } from 'react-icons/fi';
 
 const CustomerManagement = () => {
@@ -13,6 +13,7 @@ const CustomerManagement = () => {
   const [selectedCustomers, setSelectedCustomers] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [viewedCustomer, setViewedCustomer] = useState(null);
   const [customers, setCustomers] = useState([
     {
       id: 1,
@@ -336,7 +337,10 @@ const CustomerManagement = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button className="text-[#276e76] hover:text-[#1e565d] mr-3">
+                      <button 
+                        className="text-[#276e76] hover:text-[#1e565d] mr-3"
+                        onClick={() => setViewedCustomer(customer)}
+                      >
                         <FiEye className="inline mr-1" /> View
                       </button>
                       <button className="text-gray-600 hover:text-gray-900">
@@ -443,6 +447,122 @@ const CustomerManagement = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Customer Details Modal */}
+      {viewedCustomer && (
+       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+       <div className="bg-white rounded-xl max-w-4xl w-full">
+         <div className="p-6">
+           <div className="flex justify-between items-center mb-6">
+             <h3 className="text-xl font-semibold text-gray-800">Customer Details</h3>
+             <button
+               onClick={() => setViewedCustomer(null)}
+               className="text-gray-500 hover:text-gray-700"
+             >
+               <FiX size={20} />
+             </button>
+           </div>
+     
+           <div className="flex flex-col lg:flex-row gap-6">
+             {/* Profile Section */}
+             <div className="w-full lg:w-1/3 space-y-4">
+               <div className="flex flex-col items-center">
+                 <div className="h-16 w-16 rounded-full bg-[#276e76] bg-opacity-10 flex items-center justify-center text-[#276e76] text-2xl font-medium mb-3">
+                   {viewedCustomer.name.charAt(0)}
+                 </div>
+                 <h4 className="text-lg font-medium text-gray-800">{viewedCustomer.name}</h4>
+                 <span className="text-xs text-gray-500">ID: {viewedCustomer.id}</span>
+                 <span className={`mt-1 px-2 py-0.5 text-xs font-medium rounded-full ${
+                   viewedCustomer.status === 'active' 
+                     ? 'bg-green-100 text-green-800' 
+                     : 'bg-red-100 text-red-800'
+                 }`}>
+                   {viewedCustomer.status.charAt(0).toUpperCase() + viewedCustomer.status.slice(1)}
+                 </span>
+               </div>
+     
+               <div className="space-y-3">
+                 <div className="flex items-start">
+                   <FiMail className="text-gray-500 mt-0.5 mr-2 flex-shrink-0" size={16} />
+                   <div>
+                     <p className="text-xs text-gray-500">Email</p>
+                     <p className="text-sm text-gray-800">{viewedCustomer.email}</p>
+                   </div>
+                 </div>
+                 <div className="flex items-start">
+                   <FiPhone className="text-gray-500 mt-0.5 mr-2 flex-shrink-0" size={16} />
+                   <div>
+                     <p className="text-xs text-gray-500">Phone</p>
+                     <p className="text-sm text-gray-800">{viewedCustomer.phone}</p>
+                   </div>
+                 </div>
+                 <div className="flex items-start">
+                   <FiCalendar className="text-gray-500 mt-0.5 mr-2 flex-shrink-0" size={16} />
+                   <div>
+                     <p className="text-xs text-gray-500">Joined</p>
+                     <p className="text-sm text-gray-800">{viewedCustomer.joinDate}</p>
+                   </div>
+                 </div>
+                 <div className="flex items-start">
+                   <FiClock className="text-gray-500 mt-0.5 mr-2 flex-shrink-0" size={16} />
+                   <div>
+                     <p className="text-xs text-gray-500">Last Active</p>
+                     <p className="text-sm text-gray-800">{viewedCustomer.lastActive}</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
+     
+             {/* Recent Bookings Section */}
+             <div className="w-full lg:w-2/3">
+               <div className="border border-gray-200 rounded-lg overflow-hidden">
+                 <div className="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                   <h4 className="text-sm font-medium text-gray-800">Recent Bookings ({viewedCustomer.bookings})</h4>
+                 </div>
+                 
+                 {viewedCustomer.bookings > 0 ? (
+                   <div className="divide-y divide-gray-200">
+                     {Array.from({ length: Math.min(viewedCustomer.bookings, 3) }).map((_, index) => (
+                       <div key={index} className="px-4 py-3 hover:bg-gray-50">
+                         <div className="flex justify-between items-start">
+                           <div>
+                             <p className="text-sm font-medium text-gray-800">Service #{index + 1}</p>
+                             <p className="text-xs text-gray-500">May {15 + index}, 2023 · 10:00 AM</p>
+                           </div>
+                           <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                             index % 2 === 0 ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                           }`}>
+                             {index % 2 === 0 ? 'Completed' : 'Confirmed'}
+                           </span>
+                         </div>
+                         <div className="mt-1 flex items-center text-xs text-gray-600">
+                           <span className="mr-3">$45.00</span>
+                           <span>2 hours</span>
+                         </div>
+                       </div>
+                     ))}
+                     
+                     {viewedCustomer.bookings > 3 && (
+                       <div className="px-4 py-3 text-center text-xs text-[#276e76] hover:bg-gray-50">
+                         <button className="font-medium">
+                           View all {viewedCustomer.bookings} bookings
+                         </button>
+                       </div>
+                     )}
+                   </div>
+                 ) : (
+                   <div className="px-4 py-8 text-center">
+                     <FiCalendar className="mx-auto text-gray-400" size={24} />
+                     <p className="mt-2 text-xs text-gray-500">No bookings yet</p>
+                   </div>
+                 )}
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
       )}
     </div>
   );
