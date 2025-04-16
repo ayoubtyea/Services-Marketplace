@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FiUsers, FiUserPlus, FiUserX, FiClock, FiSearch, FiFilter, FiChevronDown, FiChevronRight, FiEdit2, FiEye } from 'react-icons/fi';
-import { motion } from 'framer-motion';
+import { FiUsers,FiMail, FiUserPlus, FiUserX, FiClock, FiSearch, FiFilter, FiChevronDown, FiChevronRight, FiEdit2, FiEye,FiX,FiPhone,FiMapPin,FiCalendar,FiCheckCircle,FiFileText,FiStar } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaCheck, FaUser, FaTools, FaCalendarAlt, FaFileSignature,
   FaArrowRight, FaPaperPlane, FaIdCard, FaCamera, FaUserCircle,
@@ -52,77 +52,198 @@ const CircularProgress = ({ value, maxValue, size = 60, strokeWidth = 6 }) => {
 const ProviderCardModal = ({ tasker, onClose }) => {
   if (!tasker) return null;
 
+  // Mock data for services, reviews, and documents
+  const servicesOffered = [
+    { name: "Home Cleaning", category: "Cleaning", price: "120 MAD/h" },
+    { name: "Furniture Assembly", category: "Handyman", price: "80 MAD/h" },
+    { name: "Moving Help", category: "Moving", price: "150 MAD/h" }
+  ];
+
+  const reviews = [
+    { user: "Ahmed K.", rating: 5, comment: "Excellent service, very professional!", date: "2 weeks ago" },
+    { user: "Fatima Z.", rating: 4, comment: "Did a great job cleaning my apartment", date: "1 month ago" }
+  ];
+
+  const documents = [
+    { type: "ID Card", verified: true, date: "2023-05-15" },
+    { type: "Background Check", verified: true, date: "2023-05-20" },
+    { type: "Professional License", verified: false, date: "Pending" }
+  ];
+
+  const profileCompletion = 85; // Example completion percentage
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex justify-between items-start">
-            <h3 className="text-xl font-bold text-gray-800">Provider Details</h3>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-              <FiX size={24} />
-            </button>
-          </div>
-          
-          <div className="mt-6 space-y-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex-shrink-0 h-16 w-16 bg-[#276e76] bg-opacity-10 rounded-full flex items-center justify-center text-[#276e76] font-medium text-2xl">
-                {tasker.name.split(' ').map(n => n[0]).join('')}
-              </div>
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      >
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 20, opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 400 }}
+          className="bg-white rounded-xl max-w-4xl w-full border border-gray-200 shadow-lg overflow-hidden max-h-[90vh] overflow-y-auto"
+        >
+          <div className="p-6">
+            {/* Header with close button */}
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h4 className="text-lg font-semibold text-gray-900">{tasker.name}</h4>
+                <h3 className="text-2xl font-bold text-gray-800">Provider Details</h3>
                 <p className="text-sm text-gray-500">ID: {tasker.id}</p>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-xs text-gray-500">Status</p>
-                <p className={`mt-1 text-sm font-medium ${
-                  tasker.status === 'approved' ? 'text-green-600' :
-                  tasker.status === 'pending' ? 'text-amber-600' :
-                  'text-red-600'
-                }`}>
-                  {tasker.status.charAt(0).toUpperCase() + tasker.status.slice(1)}
-                </p>
-              </div>
-              
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-xs text-gray-500">Join Date</p>
-                <p className="mt-1 text-sm font-medium text-gray-900">
-                  {new Date(tasker.joinDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                </p>
-              </div>
-              
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-xs text-gray-500">Tasks Completed</p>
-                <p className="mt-1 text-sm font-medium text-gray-900">{tasker.tasksCompleted}</p>
-              </div>
-              
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-xs text-gray-500">Rating</p>
-                <p className="mt-1 text-sm font-medium text-gray-900">
-                  {tasker.rating ? `${tasker.rating.toFixed(1)}/5` : 'N/A'}
-                </p>
-              </div>
-            </div>
-            
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <p className="text-xs text-gray-500">Last Active</p>
-              <p className="mt-1 text-sm font-medium text-gray-900">{tasker.lastActive}</p>
-            </div>
-            
-            <div className="pt-4 border-t border-gray-200 flex space-x-3">
-              <button className="flex-1 bg-[#276e76] text-white py-2 rounded-lg hover:bg-[#1e565d] transition-colors">
-                Edit Profile
+              <button 
+                onClick={onClose} 
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+              >
+                <FiX size={24} />
               </button>
-              <button className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition-colors">
-                Message
+            </div>
+
+            {/* Main content divided into two columns */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Profile Info */}
+              <div className="lg:col-span-1 space-y-6">
+                {/* Profile Picture and Basic Info */}
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <div className="flex flex-col items-center">
+                    <div className="relative mb-4">
+                      <img 
+                        src={tasker.profilePic || "https://randomuser.me/api/portraits/men/32.jpg"} 
+                        alt={tasker.name}
+                        className="w-32 h-32 rounded-full object-cover border-4 border-[#276e76]"
+                      />
+                      <span className={`absolute bottom-0 right-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        tasker.status === 'approved' ? 'bg-green-100 text-green-800' :
+                        tasker.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {tasker.status.charAt(0).toUpperCase() + tasker.status.slice(1)}
+                      </span>
+                    </div>
+                    <h4 className="text-xl font-semibold text-gray-900">{tasker.name}</h4>
+                    <p className="text-sm text-gray-500">Joined {new Date(tasker.joinDate).toLocaleDateString()}</p>
+                  </div>
+
+                  {/* Profile Completion */}
+                  <div className="mt-4">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-gray-600">Profile Completion</span>
+                      <span className="font-medium text-[#276e76]">{profileCompletion}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-[#276e76] to-[#1e565d] h-2 rounded-full" 
+                        style={{ width: `${profileCompletion}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <h5 className="font-medium text-gray-800 mb-3 flex items-center">
+                    <FiMail className="mr-2 text-[#276e76]" /> Contact Information
+                  </h5>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <FiMail className="mr-2 text-gray-500" />
+                      <span className="text-gray-700">{tasker.email || "provider@example.com"}</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <FiPhone className="mr-2 text-gray-500" />
+                      <span className="text-gray-700">{tasker.phone || "+212 6XX-XXXXXX"}</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <FiMapPin className="mr-2 text-gray-500" />
+                      <span className="text-gray-700">{tasker.location || "Casablanca, Morocco"}</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <FiCalendar className="mr-2 text-gray-500" />
+                      <span className="text-gray-700">Member since {new Date(tasker.joinDate).getFullYear()}</span>
+                    </div>
+                  </div>
+                </div>
+
+               
+              </div>
+
+              {/* Right Column - Services and Reviews */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Services Offered */}
+               
+
+                {/* Ratings and Reviews */}
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <div className="flex justify-between items-center mb-3">
+                    <h5 className="font-medium text-gray-800">Ratings & Reviews</h5>
+                    <div className="flex items-center">
+                      <FiStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">{tasker.rating ? tasker.rating.toFixed(1) : 'N/A'}</span>
+                      <span className="text-gray-500 text-sm ml-1">({reviews.length} reviews)</span>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {reviews.map((review, index) => (
+                      <div key={index} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                        <div className="flex justify-between">
+                          <p className="font-medium text-gray-800">{review.user}</p>
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <FiStar 
+                                key={i} 
+                                className={`${i < review.rating ? 'text-yellow-400' : 'text-gray-300'} w-4 h-4`} 
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">{review.comment}</p>
+                        <p className="text-xs text-gray-400 mt-2">{review.date}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Verification Documents */}
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <h5 className="font-medium text-gray-800 mb-3 flex items-center">
+                    <FiCheckCircle className="mr-2 text-[#276e76]" /> Verification
+                  </h5>
+                  <div className="space-y-3">
+                    {documents.map((doc, index) => (
+                      <div key={index} className="flex justify-between items-center text-sm">
+                        <div className="flex items-center">
+                          <FiFileText className="mr-2 text-gray-500" />
+                          <span className="text-gray-700">{doc.type}</span>
+                        </div>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          doc.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {doc.verified ? 'Verified' : 'Pending'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer with Action Buttons */}
+            <div className="mt-6 pt-4 border-t border-gray-200 flex space-x-3">
+            
+              <button
+                onClick={onClose}
+                className="flex-1 border border-gray-300 text-gray-800 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Close
               </button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
@@ -804,6 +925,115 @@ const AddTaskerModal = ({ isOpen, onClose, onAddTasker }) => {
         )}
       </motion.div>
     </div>
+  );
+};
+const TaskerCardModal = ({ tasker, onClose }) => {
+  if (!tasker) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      >
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 20, opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 400 }}
+          className="bg-white bg-opacity-90 backdrop-blur-sm rounded-xl max-w-md w-full border border-gray-200 shadow-lg overflow-hidden"
+        >
+          <div className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800">Tasker Details</h3>
+                <p className="text-sm text-gray-500">ID: {tasker.id}</p>
+              </div>
+              <button 
+                onClick={onClose} 
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <FiX size={24} />
+              </button>
+            </div>
+            
+            <div className="mt-6 space-y-5">
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0 h-16 w-16 rounded-full bg-gradient-to-br from-[#276e76] to-[#1e565d] flex items-center justify-center text-white font-medium text-2xl">
+                  {tasker.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900">{tasker.name}</h4>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                    tasker.status === 'approved' ? 'bg-green-100 text-green-800' :
+                    tasker.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {tasker.status.charAt(0).toUpperCase() + tasker.status.slice(1)}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white bg-opacity-70 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500">Join Date</p>
+                  <p className="mt-1 text-sm font-medium text-gray-900">
+                    {new Date(tasker.joinDate).toLocaleDateString()}
+                  </p>
+                </div>
+                
+                <div className="bg-white bg-opacity-70 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500">Last Active</p>
+                  <p className="mt-1 text-sm font-medium text-gray-900">
+                    {tasker.lastActive}
+                  </p>
+                </div>
+                
+                <div className="bg-white bg-opacity-70 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500">Tasks Completed</p>
+                  <p className="mt-1 text-sm font-medium text-gray-900">
+                    {tasker.tasksCompleted}
+                  </p>
+                </div>
+                
+                <div className="bg-white bg-opacity-70 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500">Rating</p>
+                  <p className="mt-1 text-sm font-medium text-gray-900">
+                    {tasker.rating ? `${tasker.rating.toFixed(1)}/5` : 'N/A'}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="bg-white bg-opacity-70 p-3 rounded-lg border border-gray-100">
+                <p className="text-xs text-gray-500">Activity Progress</p>
+                <div className="mt-2 flex items-center space-x-2">
+                  <div className="flex-1 bg-gray-100 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-[#276e76] to-[#1e565d] h-2 rounded-full" 
+                      style={{ width: `${Math.min((tasker.tasksCompleted / 50) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {Math.min(tasker.tasksCompleted, 50)}/50 tasks
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3 pt-2">
+                <button className="flex-1 bg-gradient-to-r from-[#276e76] to-[#1e565d] text-white py-2 rounded-lg hover:opacity-90 transition-opacity">
+                  Edit Profile
+                </button>
+                <button className="flex-1 bg-white border border-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  Send Message
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
