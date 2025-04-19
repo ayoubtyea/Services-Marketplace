@@ -1086,135 +1086,89 @@ const TaskersManagement = () => {
     <div className="bg-gray-50 min-h-screen p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Taskers Management</h1>
-            <p className="text-sm text-gray-500 mt-1">Monitor and manage your service providers</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            <div className="relative flex-grow">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search taskers..."
-                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg w-full focus:border-[#276e76] focus:ring-1 focus:ring-[#276e76]"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <button 
-              className="bg-[#276e76] text-white px-4 py-2 rounded-lg hover:bg-[#1e565d] transition-colors flex items-center justify-center gap-2"
-              onClick={() => setIsAddModalOpen(true)}
-            >
-              <FiUserPlus /> Add Tasker
-            </button>
-          </div>
-        </div>
+      
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Total Taskers */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Taskers</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{taskerStats.total}</p>
-                <div className="flex items-center mt-3">
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                    +{taskerStats.newThisWeek} this week
-                  </span>
-                </div>
-              </div>
-              <div className="bg-[#276e76] bg-opacity-10 p-3 rounded-full">
-                <FiUsers className="text-xl text-[#276e76]" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <CircularProgress value={taskerStats.total} maxValue={taskerStats.monthlyTarget} size={80} />
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                {Math.round((taskerStats.total / taskerStats.monthlyTarget) * 100)}% of monthly target
-              </p>
-            </div>
-          </div>
-
-          {/* Pending Approvals */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Pending Approval</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{taskerStats.pending}</p>
-                <div className="flex items-center mt-3">
-                  <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">
-                    Needs review
-                  </span>
-                </div>
-              </div>
-              <div className="bg-amber-100 p-3 rounded-full">
-                <FiClock className="text-xl text-amber-600" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <button 
-                className="w-full bg-amber-50 text-amber-700 py-2 rounded-lg text-sm font-medium hover:bg-amber-100 transition-colors"
-                onClick={() => setActiveTab('pending')}
-              >
-                Review Applications
-              </button>
-            </div>
-          </div>
-
-          {/* Approved Taskers */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Approved</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{taskerStats.approved}</p>
-                <div className="flex items-center mt-3">
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                    Active
-                  </span>
-                </div>
-              </div>
-              <div className="bg-green-100 p-3 rounded-full">
-                <FiUsers className="text-xl text-green-600" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <button 
-                className="w-full bg-green-50 text-green-700 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
-                onClick={() => setActiveTab('approved')}
-              >
-                View All
-              </button>
-            </div>
-          </div>
-
-          {/* Suspended Taskers */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Suspended</p>
-                <p className="text-3xl font-bold text-gray-800 mt-1">{taskerStats.suspended}</p>
-                <div className="flex items-center mt-3">
-                  <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
-                    Inactive
-                  </span>
-                </div>
-              </div>
-              <div className="bg-red-100 p-3 rounded-full">
-                <FiUserX className="text-xl text-red-600" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <button 
-                className="w-full bg-red-50 text-red-700 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
-                onClick={() => setActiveTab('suspended')}
-              >
-                Manage Suspensions
-              </button>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  {/* Total Taskers */}
+  <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+    <div className="flex justify-between items-start">
+      <div>
+        <div className="flex items-center space-x-2">
+          <FiUsers className="text-blue-500" size={20} />
+          <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Taskers</p>
         </div>
+        <p className="text-3xl font-bold text-gray-800 mt-1">{taskerStats.total}</p>
+        <div className="flex items-center mt-3">
+          <span className="text-xs text-green-500">
+            +{taskerStats.newThisWeek}% from last week
+          </span>
+        </div>
+      </div>
+      <div className="bg-[#276e76] bg-opacity-10 p-3 rounded-full">
+        <FiUsers className="text-xl text-[#276e76]" />
+      </div>
+    </div>
+    <div className="mt-4">
+      <CircularProgress value={taskerStats.total} maxValue={taskerStats.monthlyTarget} size={80} />
+      <p className="text-xs text-gray-500 mt-2 text-center">
+        {Math.round((taskerStats.total / taskerStats.monthlyTarget) * 100)}% of monthly target
+      </p>
+    </div>
+  </div>  
+
+  {/* Pending Approvals */}
+  <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Pending Approval</p>
+        <p className="text-3xl font-bold text-gray-800 mt-1">{taskerStats.pending}</p>
+        <div className="flex items-center mt-3">
+          <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">
+            Needs review
+          </span>
+        </div>
+      </div>
+      <div className="bg-amber-100 p-3 rounded-full">
+        <FiClock className="text-xl text-amber-600" />
+      </div>
+    </div>
+    <div className="mt-4">
+      <button 
+        className="w-full bg-amber-50 text-amber-700 py-2 rounded-lg text-sm font-medium hover:bg-amber-100 transition-colors"
+        onClick={() => setActiveTab('pending')}
+      >
+        Review Applications
+      </button>
+    </div>
+  </div>
+
+  {/* Suspended Taskers */}
+  <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Suspended</p>
+        <p className="text-3xl font-bold text-gray-800 mt-1">{taskerStats.suspended}</p>
+        <div className="flex items-center mt-3">
+          <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+            Inactive
+          </span>
+        </div>
+      </div>
+      <div className="bg-red-100 p-3 rounded-full">
+        <FiUserX className="text-xl text-red-600" />
+      </div>
+    </div>
+    <div className="mt-4">
+      <button 
+        className="w-full bg-red-50 text-red-700 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+        onClick={() => setActiveTab('suspended')}
+      >
+        Manage Suspensions
+      </button>
+    </div>
+  </div>
+</div>
 
         {/* Taskers Table Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
