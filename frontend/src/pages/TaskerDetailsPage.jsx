@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 import ReadyToJoin from '../components/ReadyToJoin';
+
 // Icons for skills
 const SkillIcons = {
   Wiring: '🔌',
@@ -100,19 +101,28 @@ const exampleTopRatedTaskers = [
 const TaskerDetailsPage = () => {
   const { id } = useParams(); // Get the tasker ID from the URL
   const navigate = useNavigate();
-  
-  const tasker = taskersData.find((tasker) => tasker.id === parseInt(id));
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
 
+  const tasker = taskersData.find((tasker) => tasker.id === parseInt(id));
 
   if (!tasker) {
     return <div>Tasker not found!</div>;
   }
 
   const handleBookService = () => {
-    navigate(`/book/${id}`); // Navigate to the booking page with the tasker ID
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      setShowSignupPrompt(true);
+      // Auto-hide the prompt after 5 seconds
+      setTimeout(() => setShowSignupPrompt(false), 5000);
+    } else {
+      navigate(`/book/${id}`);
+    }
   };
 
-
+  const handleSignupClick = () => {
+    navigate('/auth', { state: { from: `/book/${id}` } });
+  };
   // Use hardcoded example top-rated taskers for now
   const topRatedTaskers = exampleTopRatedTaskers;
 
@@ -187,17 +197,39 @@ const TaskerDetailsPage = () => {
               <p className="text-gray-600">Phone: {tasker.phone}</p>
 
               {/* Buttons */}
-              <div className="mt-6 flex gap-4">
-              <button
-                  onClick={handleBookService} // Add onClick handler
-                  className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300"
-                >
-                  Book a Service
-                </button>
-                <button className="px-6 py-3 cursor-pointer bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
-                  Message Provider
-                </button>
-              </div>
+              <div className="mt-6 flex flex-col gap-4">
+    <div className="flex gap-4">
+      <button
+        onClick={handleBookService}
+        className="px-6 py-3 cursor-pointer bg-[#076870] text-white rounded-lg hover:bg-[#065f57] transition duration-300"
+      >
+        Book a Service
+      </button>
+      <button className="px-6 py-3 cursor-pointer bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
+        Message Provider
+      </button>
+    </div>
+    
+    {/* Signup Prompt */}
+    {showSignupPrompt && (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3 }}
+        className="bg-[#EAF4F4] p-3 rounded-lg border-l-4 border-[#076870]"
+      >
+        <p className="text-sm text-gray-700">
+          Please <span 
+            className="text-[#076870] font-medium cursor-pointer hover:underline"
+            onClick={handleSignupClick}
+          >
+            sign up
+          </span> or log in to book this service.
+        </p>
+      </motion.div>
+    )}
+  </div>
             </div>
           </div>
 
