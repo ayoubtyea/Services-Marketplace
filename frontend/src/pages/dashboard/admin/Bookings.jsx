@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  FiCalendar, FiClock, FiCheckCircle, FiXCircle,
+  FiCalendar, FiClock, FiCheckCircle, FiXCircle, FiX,
   FiSearch, FiFilter, FiEdit, FiDollarSign,
   FiChevronDown, FiEye, FiAlertTriangle, FiUser,
   FiTool, FiHome, FiMail, FiPhone, FiStar,
@@ -240,6 +240,14 @@ const BookingManagement = () => {
       </span>
     );
   };
+
+  // Detail item component for the modal
+  const DetailItem = ({ label, value }) => (
+    <div>
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-sm font-medium text-gray-800 mt-1">{value}</p>
+    </div>
+  );
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -496,318 +504,260 @@ const BookingManagement = () => {
 
       {/* Secondary Sections */}
       
-       {/* Disputes Section */}
-       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-            <div>
-              <h2 className="text-lg font-semibold text-[#1e565d]">Handle Disputes Between Taskers & Customers</h2>
-            </div>
-            <div className="flex items-center">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                {stats.pendingDisputes} Pending
-              </span>
-            </div>
+      {/* Disputes Section */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <div>
+            <h2 className="text-lg font-semibold text-[#1e565d]">Handle Disputes Between Taskers & Customers</h2>
           </div>
-          
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Dispute ID
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Booking
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Issue
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {disputes.length > 0 ? (
-                  disputes.map(dispute => (
-                    <tr key={dispute.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{dispute.id}</div>
-                        <div className="text-xs text-gray-500">{dispute.date}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">{dispute.bookingId}</div>
-                        <div className="text-xs text-gray-500">{dispute.service}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 line-clamp-1">{dispute.issue}</div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          Severity: <span className="font-medium">{dispute.severity}</span>
+          <div className="flex items-center">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              {stats.pendingDisputes} Pending
+            </span>
+          </div>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Dispute ID
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Booking
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Issue
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {disputes.length > 0 ? (
+                disputes.map(dispute => (
+                  <tr key={dispute.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{dispute.id}</div>
+                      <div className="text-xs text-gray-500">{dispute.date}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900">{dispute.bookingId}</div>
+                      <div className="text-xs text-gray-500">{dispute.service}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900 line-clamp-1">{dispute.issue}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Severity: <span className="font-medium">{dispute.severity}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <StatusBadge status={dispute.status} />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      {dispute.status === 'Pending' ? (
+                        <div className="flex justify-end space-x-2">
+                          <button
+                            className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                            onClick={() => handleDisputeResolution(dispute.id, 'Rejected')}
+                          >
+                            Reject
+                          </button>
+                          <button
+                            className="px-3 py-1 text-xs bg-[#276e76] text-white rounded-lg hover:bg-[#1e565d] transition-colors"
+                            onClick={() => handleDisputeResolution(dispute.id, 'Resolved')}
+                          >
+                            Resolve
+                          </button>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <StatusBadge status={dispute.status} />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {dispute.status === 'Pending' ? (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                              onClick={() => handleDisputeResolution(dispute.id, 'Rejected')}
-                            >
-                              Reject
-                            </button>
-                            <button
-                              className="px-3 py-1 text-xs bg-[#276e76] text-white rounded-lg hover:bg-[#1e565d] transition-colors"
-                              onClick={() => handleDisputeResolution(dispute.id, 'Resolved')}
-                            >
-                              Resolve
-                            </button>
-                          </div>
-                        ) : (
-                          <button 
-                            className="text-[#276e76] hover:text-[#1e565d] text-sm flex items-center"
-                            onClick={() => setViewedDispute(dispute)}
-                          >
-                            Details <FiArrowRight className="ml-1" size={14} />
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-8 text-center">
-                      <FiAlertTriangle className="mx-auto h-12 w-12 text-gray-400" />
-                      <h3 className="mt-2 text-sm font-medium text-gray-900">No disputes found</h3>
-                      <p className="mt-1 text-sm text-gray-500">All disputes have been resolved</p>
+                      ) : (
+                        <button 
+                          className="text-[#276e76] hover:text-[#1e565d] text-sm flex items-center"
+                          onClick={() => setViewedDispute(dispute)}
+                        >
+                          Details <FiArrowRight className="ml-1" size={14} />
+                        </button>
+                      )}
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-     {/* Cancellations Section */}
-     <div className="bg-white mt-5 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-            <div>
-              <h2 className="text-lg font-semibold text-[#1e565d]">Manage Cancellations & Refund Requests</h2>
-            </div>
-            <div className="flex items-center">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                {stats.pendingCancellations} Pending
-              </span>
-            </div>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+                ))
+              ) : (
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Request ID
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Booking
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Reason
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Refund
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <td colSpan="5" className="px-6 py-8 text-center">
+                    <FiAlertTriangle className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-2 text-sm font-medium text-gray-900">No disputes found</h3>
+                    <p className="mt-1 text-sm text-gray-500">All disputes have been resolved</p>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {cancellations.length > 0 ? (
-                  cancellations.map(cancellation => (
-                    <tr key={cancellation.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{cancellation.id}</div>
-                        <div className="text-xs text-gray-500">{cancellation.date}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">{cancellation.bookingId}</div>
-                        <div className="text-xs text-gray-500">{cancellation.service}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 line-clamp-1">{cancellation.reason}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {cancellation.refundRequested ? (
-                          <div className="text-sm font-medium text-green-600">${cancellation.amount}</div>
-                        ) : (
-                          <div className="text-sm text-gray-500">None</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <StatusBadge status={cancellation.status} />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {cancellation.status === 'Pending' ? (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                              onClick={() => handleCancellationResolution(cancellation.id, 'Rejected')}
-                            >
-                              Reject
-                            </button>
-                            <button
-                              className="px-3 py-1 text-xs bg-[#276e76] text-white rounded-lg hover:bg-[#1e565d] transition-colors"
-                              onClick={() => handleCancellationResolution(cancellation.id, 'Approved')}
-                            >
-                              Approve
-                            </button>
-                          </div>
-                        ) : (
-                          <button 
-                            className="text-[#276e76] hover:text-[#1e565d] text-sm flex items-center"
-                            onClick={() => setViewedCancellation(cancellation)}
-                          >
-                            Details <FiArrowRight className="ml-1" size={14} />
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="px-6 py-8 text-center">
-                      <FiInfo className="mx-auto h-12 w-12 text-gray-400" />
-                      <h3 className="mt-2 text-sm font-medium text-gray-900">No cancellation requests</h3>
-                      <p className="mt-1 text-sm text-gray-500">All cancellation requests have been processed</p>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      {/* Cancellations Section */}
+      <div className="bg-white mt-5 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <div>
+            <h2 className="text-lg font-semibold text-[#1e565d]">Manage Cancellations & Refund Requests</h2>
+          </div>
+          <div className="flex items-center">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              {stats.pendingCancellations} Pending
+            </span>
           </div>
         </div>
+        
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Request ID
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Booking
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reason
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Refund
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {cancellations.length > 0 ? (
+                cancellations.map(cancellation => (
+                  <tr key={cancellation.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{cancellation.id}</div>
+                      <div className="text-xs text-gray-500">{cancellation.date}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900">{cancellation.bookingId}</div>
+                      <div className="text-xs text-gray-500">{cancellation.service}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900 line-clamp-1">{cancellation.reason}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {cancellation.refundRequested ? (
+                        <div className="text-sm font-medium text-green-600">${cancellation.amount}</div>
+                      ) : (
+                        <div className="text-sm text-gray-500">None</div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <StatusBadge status={cancellation.status} />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      {cancellation.status === 'Pending' ? (
+                        <div className="flex justify-end space-x-2">
+                          <button
+                            className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                            onClick={() => handleCancellationResolution(cancellation.id, 'Rejected')}
+                          >
+                            Reject
+                          </button>
+                          <button
+                            className="px-3 py-1 text-xs bg-[#276e76] text-white rounded-lg hover:bg-[#1e565d] transition-colors"
+                            onClick={() => handleCancellationResolution(cancellation.id, 'Approved')}
+                          >
+                            Approve
+                          </button>
+                        </div>
+                      ) : (
+                        <button 
+                          className="text-[#276e76] hover:text-[#1e565d] text-sm flex items-center"
+                          onClick={() => setViewedCancellation(cancellation)}
+                        >
+                          Details <FiArrowRight className="ml-1" size={14} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-8 text-center">
+                    <FiInfo className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-2 text-sm font-medium text-gray-900">No cancellation requests</h3>
+                    <p className="mt-1 text-sm text-gray-500">All cancellation requests have been processed</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Modals */}
       {/* Booking Details Modal */}
       {viewedBooking && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-transparent bg-opacity-30 flex items-center justify-center z-50 p-4">
+          <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-xl max-w-2xl w-full border border-gray-200 shadow-lg">
             <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-xl font-bold text-gray-800">Booking Details</h2>
-                  <p className="text-sm text-gray-500">ID: {viewedBooking.id}</p>
+                  <p className="text-sm text-gray-600">ID: {viewedBooking.id}</p>
                 </div>
                 <button
                   onClick={() => setViewedBooking(null)}
-                  className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                  className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors"
                 >
-                  <FiX size={24} />
+                  <FiX size={20} />
                 </button>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {/* Content Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Booking Info */}
+                <div className="space-y-3">
+                  <DetailItem label="Status" value={viewedBooking.status} />
+                  <DetailItem label="Service" value={viewedBooking.service} />
+                  <DetailItem label="Tasker" value={viewedBooking.tasker} />
+                </div>
+
                 {/* Customer Info */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-sm font-medium text-gray-500 mb-3">CUSTOMER INFORMATION</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs text-gray-500">Name</p>
-                      <p className="text-sm font-medium text-gray-800">{viewedBooking.customer}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Contact</p>
-                      <p className="text-sm text-gray-800 flex items-center">
-                        <FiPhone className="mr-2" size={14} />
-                        {viewedBooking.contact}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Address</p>
-                      <p className="text-sm text-gray-800 flex items-center">
-                        <FiHome className="mr-2" size={14} />
-                        {viewedBooking.address}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Service Info */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-sm font-medium text-gray-500 mb-3">SERVICE DETAILS</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs text-gray-500">Tasker</p>
-                      <p className="text-sm font-medium text-gray-800">{viewedBooking.tasker}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Service</p>
-                      <p className="text-sm text-gray-800">{viewedBooking.service}</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-xs text-gray-500">Date & Time</p>
-                        <p className="text-sm text-gray-800">{viewedBooking.date} at {viewedBooking.time}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Duration</p>
-                        <p className="text-sm text-gray-800">{viewedBooking.duration}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Price</p>
-                      <p className="text-sm font-medium text-gray-800 flex items-center">
-                        <FiDollarSign className="mr-1" size={14} />
-                        {viewedBooking.price}
-                      </p>
-                    </div>
-                  </div>
+                <div className="space-y-3">
+                  <DetailItem label="Customer" value={viewedBooking.customer} />
+                  <DetailItem label="Contact" value={viewedBooking.contact} />
+                  <DetailItem label="Date & Time" value={`${viewedBooking.date} at ${viewedBooking.time}`} />
+
                 </div>
               </div>
-              
-              {/* Status Control */}
-              <div className="mt-6 bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-500 mb-3">BOOKING STATUS</h3>
-                <div className="flex items-center justify-between">
-                  <StatusBadge status={viewedBooking.status} />
-                  <div className="flex space-x-3">
-                    <select
-                      value={viewedBooking.status}
-                      onChange={(e) => {
-                        handleBookingStatusChange(viewedBooking.id, e.target.value);
-                        setViewedBooking({...viewedBooking, status: e.target.value});
-                      }}
-                      className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#276e76] focus:border-[#276e76] sm:text-sm rounded-md"
-                    >
-                      <option value="Upcoming">Upcoming</option>
-                      <option value="Ongoing">Ongoing</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Cancelled">Cancelled</option>
-                    </select>
-                    <button className="px-4 py-2 bg-[#276e76] text-white rounded-md hover:bg-[#1e565d] transition-colors">
-                      Save Changes
-                    </button>
-                  </div>
-                </div>
+
+              {/* Additional Details */}
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <DetailItem label="Address" value={viewedBooking.address} />
+                <DetailItem label="Special Instructions" value="None provided" />
+                <DetailItem label="Booking Created" value="2023-06-01 14:30" />
               </div>
-              
+
               {/* Actions */}
               <div className="mt-6 flex justify-end space-x-3">
                 <button
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                   onClick={() => setViewedBooking(null)}
                 >
                   Close
                 </button>
-                <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
-                  Cancel Booking
+                <button className="px-4 py-2 bg-[#276e76] text-white rounded-lg hover:bg-[#1e565d] transition-colors">
+                  Edit Booking
                 </button>
               </div>
             </div>
