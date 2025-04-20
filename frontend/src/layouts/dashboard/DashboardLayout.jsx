@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FiHome, FiCalendar, FiUser, FiSettings, FiBell, FiHelpCircle, FiLogOut, FiFileText, FiMenu, FiSearch,FiUsers } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FiHome, FiCalendar, FiUser, FiSettings, FiBell, FiHelpCircle, FiLogOut, FiFileText, FiMenu, FiSearch, FiUsers } from 'react-icons/fi';
 import { useAuth } from '../../../src/context/AuthContext';
 import { Outlet } from 'react-router-dom';
 
@@ -8,24 +8,24 @@ const DashboardLayout = ({ userAvatar = '' }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true); 
   const [activePath, setActivePath] = useState('');
   const [searchQuery, setSearchQuery] = useState(''); 
-  const [userRole, setUserRole] = useState('client'); // State for userRole
+  const [userRole, setUserRole] = useState('client'); 
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // Update active path when location changes
+  // Set active path when location changes
   useEffect(() => {
     setActivePath(location.pathname);
   }, [location]);
 
-  // Set the userRole from localStorage on component mount
+  // Set user role from localStorage
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('userData'));
-    const role = userData?.role || 'client';  // Set default to 'client' if no role
+    const role = userData?.role || 'client';  
     setUserRole(role);
   }, []);
 
-  // Define different nav items based on userRole (admin, client, provider)
+  // Define nav items based on user role
   const clientNavItems = [
     { name: 'Dashboard', icon: <FiHome />, path: '/client-dashboard', exact: true },
     { name: 'My Bookings', icon: <FiCalendar />, path: '/client-dashboard/bookings' },
@@ -56,7 +56,7 @@ const DashboardLayout = ({ userAvatar = '' }) => {
                    userRole === 'provider' ? providerNavItems :
                    clientNavItems;
 
-  // Check if current path matches nav item
+  // Check if the current path matches the nav item
   const isActive = (item) => {
     if (item.exact) {
       return activePath === item.path;
@@ -67,18 +67,22 @@ const DashboardLayout = ({ userAvatar = '' }) => {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await logout(); // Call your logout function
-      navigate('/'); // Redirect to login page after logout
+      await logout();
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }
+  };
+
+  // Navigate directly to notifications page
+  const handleNotificationsClick = () => {
+    navigate('/client-dashboard/notifications');
   };
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <aside className={`hidden lg:flex flex-col bg-[#076870] text-white fixed h-full z-10 transition-all duration-300 ease-in-out ${sidebarOpen ? 'w-64' : 'w-20'}`}>
-        {/* Logo and Sidebar Content */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           {sidebarOpen ? (
             <div className="flex items-center">
@@ -95,7 +99,11 @@ const DashboardLayout = ({ userAvatar = '' }) => {
           <ul className="space-y-1 px-2">
             {navItems.map((item, index) => (
               <li key={index}>
-                <Link to={item.path} className={`flex items-center p-3 rounded-lg transition-all duration-200 ${isActive(item) ? 'bg-white/10' : 'hover:bg-white/10'} ${sidebarOpen ? 'justify-start' : 'justify-center'}`}>
+                <Link
+                  to={item.path}
+                  onClick={item.name === 'Notifications' ? handleNotificationsClick : null}
+                  className={`flex items-center p-3 rounded-lg transition-all duration-200 ${isActive(item) ? 'bg-white/10' : 'hover:bg-white/10'} ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
+                >
                   <span className="text-lg relative">
                     {item.icon}
                     {item.badge && (
@@ -145,7 +153,7 @@ const DashboardLayout = ({ userAvatar = '' }) => {
 
             <div className="relative">
               <img
-                src={userAvatar || "https://www.w3schools.com/w3images/avatar2.png"} // Fallback to default avatar if no image is provided
+                src={userAvatar || "https://www.w3schools.com/w3images/avatar2.png"} 
                 alt="Profile"
                 className="w-8 h-8 rounded-full border-2 border-white"
               />
