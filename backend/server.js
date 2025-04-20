@@ -41,8 +41,7 @@ mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => {
   console.log('✅ Connected to MongoDB');
-  // Create admin if not exists
-  createAdminIfNotExists(); // Call the function to create admin after the database connection
+  createAdminIfNotExists(); 
 })
 .catch(err => {
   console.error('❌ MongoDB connection error:', err);
