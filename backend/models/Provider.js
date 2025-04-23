@@ -1,37 +1,29 @@
-// models/Provider.js
+// Model Provider :
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
-const ProviderSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+const providerSchema = new mongoose.Schema({
+  firstName: String,
+  lastName: String,
+  email: { type: String, required: true },
   password: { type: String, required: true },
-  phone: { type: String, required: true },
-  dob: { type: Date, required: true },
-  address: { type: String, required: true },
-  city: { type: String, required: true },
-  zip: { type: String, required: true },
-  idPhoto: { type: String },
-  selfiePhoto: { type: String },
-  profilePhoto: { type: String },
-  services: { type: Array, required: true },
-  otherSkills: { type: String },
-  experience: { type: String, required: true },
-  availability: { type: String, required: true },
-  serviceAreas: { type: Array, required: true },
-  bio: { type: String, required: true },
+  phone: String,
+  dob: Date,
+  address: String,
+  city: String,
+  zip: String,
+  idPhoto: String,
+  selfiePhoto: String,
+  profilePhoto: String,
+  services: [String],
+  otherSkills: String,
+  experience: String,
+  availability: String,
+  serviceAreas: [String],
+  bio: String,
   terms: { type: Boolean, required: true },
-  communications: { type: Boolean, required: true },
-  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
-  createdAt: { type: Date, default: Date.now }
+  communications: { type: [String], required: false }  // Change required to false
 });
 
-// Hash password before saving
-ProviderSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+const Provider = mongoose.model('Provider', providerSchema);
 
-module.exports = mongoose.model('Provider', ProviderSchema);
+module.exports = Provider;
