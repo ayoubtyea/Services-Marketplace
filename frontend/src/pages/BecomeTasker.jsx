@@ -169,7 +169,7 @@ const BecomeTasker = () => {
                   <p className="text-gray-600 text-sm border-t border-gray-200 pt-4">
                     Already have an account?{' '}
                     <Link to="/auth" className="text-[#076870] font-medium hover:underline">
-                      Sign In
+                      Login
                     </Link>
                   </p>
                 </div>

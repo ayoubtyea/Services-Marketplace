@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiHome, FiCalendar, FiUser, FiSettings, FiBell, FiHelpCircle, FiLogOut, FiFileText, FiMenu, FiSearch, FiUsers } from 'react-icons/fi';
+import { FiHome, FiCalendar, FiUser, FiSettings, FiBell, FiHelpCircle, FiLogOut, FiFileText, FiMenu, FiSearch, FiUsers,FiDollarSign,FiStar, FiClock, FiTool, FiMapPin, FiMessageCircle, } from 'react-icons/fi';
 import { useAuth } from '../../../src/context/AuthContext';
 import { Outlet } from 'react-router-dom';
 
@@ -36,10 +36,12 @@ const DashboardLayout = ({ userAvatar = '' }) => {
 
   const providerNavItems = [
     { name: 'Dashboard', icon: <FiHome />, path: '/provider-dashboard', exact: true },
-    { name: 'My Services', icon: <FiFileText />, path: '/provider-dashboard/services' },
-    { name: 'Bookings', icon: <FiCalendar />, path: '/provider-dashboard/bookings' },
+    { name: 'My Bookings', icon: <FiCalendar />, path: '/provider-dashboard/bookings' },
+    { name: "My Messages", icon: <FiMessageCircle />, path: '/provider-dashboard/messages', badge: 3 },
     { name: 'Notifications', icon: <FiBell />, path: '/provider-dashboard/notifications', badge: 5 },
     { name: 'Profile & Settings', icon: <FiUser />, path: '/provider-dashboard/profile' },
+    {name: 'Manage Services', icon: <FiTool />, path: '/provider-dashboard/manage-services'},
+    {name: 'help & support', icon: <FiHelpCircle />, path: '/provider-dashboard/help'},
   ];
 
   const adminNavItems = [

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   FaCheck, FaUser, FaTools, FaCalendarAlt, FaFileSignature,
   FaArrowRight, FaPaperPlane, FaIdCard, FaCamera, FaUserCircle,
-  FaInfoCircle
+  FaInfoCircle, FaLock
 } from 'react-icons/fa';
 import { MdVerifiedUser } from 'react-icons/md';
 
@@ -23,6 +23,8 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
     firstName: '',
     lastName: '',
     email: '',
+    password: '',
+    confirmPassword: '',
     phone: '',
     dob: '',
     address: '',
@@ -83,18 +85,55 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return {
+      isValid: password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars,
+      minLength,
+      hasUpperCase,
+      hasLowerCase,
+      hasNumbers,
+      hasSpecialChars
+    };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
   
+    // Validate password
+    if (!formData.password) {
+      alert('Password is required');
+      setIsSubmitting(false);
+      return;
+    }
+  
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      setIsSubmitting(false);
+      return;
+    }
+  
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      alert('Password must be at least 8 characters and contain uppercase, lowercase, numbers, and special characters');
+      setIsSubmitting(false);
+      return;
+    }
+  
     try {
-      // Fallback to a default API URL if environment variable is not set
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth';
-      
       const formDataToSend = new FormData();
       
-      // Add all form fields to FormData
+      // Add all form fields except confirmPassword
       Object.entries(formData).forEach(([key, value]) => {
+        if (key === 'confirmPassword') return;
+        
         if (value instanceof File) {
           formDataToSend.append(key, value);
         } else if (Array.isArray(value)) {
@@ -112,12 +151,7 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
       });
   
       if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch (jsonError) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const errorData = await response.json();
         throw new Error(errorData.message || 'Registration failed');
       }
   
@@ -132,9 +166,11 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
         status: data.provider.status
       }));
       
-      onClose();
-      navigate('/');
+      setFormData(prev => ({ ...prev, isSubmitted: true }));
       
+      // Redirect to Auth Page (login page)
+      navigate('/auth', { replace: true }); // Or use '/login' if your auth page is at '/login'
+  
     } catch (error) {
       console.error('Registration error:', error);
       alert(error.message || 'Registration failed. Please try again.');
@@ -142,6 +178,7 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
       setIsSubmitting(false);
     }
   };
+  
 
   if (!isOpen) return null;
 
@@ -241,6 +278,37 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
                         required
                         placeholder="Email*"
                       />
+
+                      <div className="mt-2">
+                        <div className="flex items-center mb-1">
+                          <FaLock className="text-[#076870] mr-1 text-xs" />
+                          <label className="text-xs font-medium text-gray-600">Password*</label>
+                        </div>
+                        <input
+                          type="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#076870] focus:border-[#076870] outline-none transition text-xs"
+                          required
+                          placeholder="Create a password"
+                        />
+                        <p className="text-[10px] text-gray-500 mt-1">
+                          Must be at least 8 characters with uppercase, lowercase, numbers, and special characters
+                        </p>
+                      </div>
+
+                      <div className="mt-2">
+                        <input
+                          type="password"
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                          className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#076870] focus:border-[#076870] outline-none transition text-xs"
+                          required
+                          placeholder="Confirm Password*"
+                        />
+                      </div>
 
                       <div className="grid grid-cols-2 gap-2 mt-2">
                         <input

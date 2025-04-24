@@ -24,22 +24,37 @@ import Contact from './pages/Contact';
 
 
 
-// Dashboard Pages
+// Dashboard Client
+
 import ClientBookings from './pages/dashboard/client/Bookings';
-import ProviderBookings from './pages/dashboard/provider/Bookings';
-import AdminBookings from './pages/dashboard/admin/Bookings';
 import ClientDashboardHome from './pages/dashboard/client/DashboardHome';
 import Notifications from './pages/dashboard/client/Notifications';
 import ProfileSettings from './pages/dashboard/client/Profile';
 import HelpAndSupport from './pages/dashboard/client/Help';
+
+// Dashboard Provider
 import ProviderDashboardHome from './pages/dashboard/provider/DashboardHome';
-import NotFound from './pages/NotFound';
+import ProviderBookings from './pages/dashboard/provider/Bookings';
+import MyMessages from './pages/dashboard/provider/MyMessages';
+import Earnings from './pages/dashboard/provider/Earnings';
+import MyTasks from './pages/dashboard/provider/MyTasks';
+import Settings from './pages/dashboard/provider/Settings';
+import Profile from './pages/dashboard/provider/Profile';
+import ProviderNotifications from './pages/dashboard/provider/Notifications';
+import ProviderHelp from './pages/dashboard/provider/Help'; 
+import ManageServices from './pages/dashboard/provider/ManageServices';
+
+// Dashboard Admin
+import AdminBookings from './pages/dashboard/admin/Bookings';
 import AdminDashboardHome from './pages/dashboard/admin/DashboardHome';
 import AdminCutomers from './pages/dashboard/admin/Customers';
 import AdminNotifications from './pages/dashboard/admin/Notifications';
 import AdminTaskers from './pages/dashboard/admin/Taskers';
 import AdminServices from './pages/dashboard/admin/Services';
 import AdminSettings from './pages/dashboard/admin/Settings';
+
+import NotFound from './pages/NotFound';
+
 
 
 // Components
@@ -126,6 +141,14 @@ const App = () => {
           >
             <Route index element={<ProviderDashboardHome />} />
             <Route path="bookings" element={<ProviderBookings />} />
+            <Route path="messages" element={<MyMessages />} />
+            <Route path="notifications" element={<ProviderNotifications />} />
+            <Route path="earnings" element={<Earnings />} />
+            <Route path="tasks" element={<MyTasks />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="help" element={<ProviderHelp />} />
+            <Route path="manage-services" element={<ManageServices />} />
           </Route>
 
           <Route 

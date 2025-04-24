@@ -77,14 +77,19 @@ const AuthPage = () => {
   };
 
   const validateForm = () => {
+    // Email validation
     if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setError("Please enter a valid email address");
       return false;
     }
+    
+    // Password validation
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters");
       return false;
     }
+    
+    // Additional signup validations
     if (!isLogin) {
       if (!formData.fullName.trim()) {
         setError("Full name is required");
@@ -99,6 +104,7 @@ const AuthPage = () => {
         return false;
       }
     }
+    
     return true;
   };
 
