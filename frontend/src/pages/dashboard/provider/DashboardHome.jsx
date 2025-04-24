@@ -60,8 +60,8 @@ const sampleUpcomingJobs = [
     date: "2023-06-15",
     time: "10:00 AM",
     duration: "2 hours",
-    address: "123 Main St, Apt 4B",
-    serviceType: "Home Cleaning",
+    address: "123 Main St, Apt 4B, New York, NY 10001",
+    serviceType: "Regular Cleaning",
     clientImage: "https://randomuser.me/api/portraits/women/44.jpg",
     rating: 4
   },
@@ -72,7 +72,7 @@ const sampleUpcomingJobs = [
     date: "2023-06-18",
     time: "2:30 PM",
     duration: "1.5 hours",
-    address: "456 Oak Ave, Unit 12",
+    address: "456 Oak Ave, Unit 12, Brooklyn, NY 11201",
     serviceType: "Appliance Repair",
     clientImage: "https://randomuser.me/api/portraits/men/32.jpg",
     rating: 5
@@ -98,7 +98,40 @@ const sampleProviderFeedback = {
       rating: 4,
       comment: "Good work but arrived 15 minutes late.",
       date: "2023-04-15"
-    }
+    },
+    {
+      id: 3,
+      client: "Ayoub Brown",
+      service: "Electrical Wiring",
+      rating: 4,
+      comment: "Good work but arrived 15 minutes late.",
+      date: "2023-04-15"
+    },
+    {
+      id: 4,
+      client: "Michael Brown",
+      service: "Electrical Wiring",
+      rating: 4,
+      comment: "Good work but arrived 15 minutes late.",
+      date: "2023-04-15"
+    },
+    {
+      id: 5,
+      client: "Michael Brown",
+      service: "Electrical Wiring",
+      rating: 4,
+      comment: "Good work but arrived 15 minutes late.",
+      date: "2023-04-15"
+    },
+    {
+      id: 6,
+      client: "Boob Brown",
+      service: "Electrical Wiring",
+      rating: 4,
+      comment: "Good work but arrived 15 minutes late.",
+      date: "2023-04-15"
+    },
+    
   ]
 };
 
@@ -390,12 +423,11 @@ const DashboardHome = () => {
             
             <div className="bg-white">
               {sampleUpcomingJobs.map(job => (
-                <div key={job.id} className="p-5 hover:bg-gray-50 transition-colors">
-                  
-                  {/* Client Info */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                <div key={job.id} className="p-5 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors">
+                  {/* Client Profile and Confirmed Button */}
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 mr-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#076870]/20 mr-3">
                         <img 
                           src={job.clientImage} 
                           alt="Client" 
@@ -403,7 +435,7 @@ const DashboardHome = () => {
                         />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-800 text-sm">{job.client}</p>
+                        <p className="font-medium text-gray-800">{job.client}</p>
                         <div className="flex items-center">
                           {[...Array(5)].map((_, i) => (
                             <FiStar
@@ -415,68 +447,96 @@ const DashboardHome = () => {
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs font-medium bg-[#DCFCE7] text-[#076870] py-1 px-3 rounded-full">
-                      Confirmed
-                    </span>
+                    <button className="bg-[#DCFCE7] text-[#166534] text-xs font-medium py-1 px-3 rounded-full flex items-center">
+                      <FiCheckCircle className="mr-1" size={12} /> Confirmed
+                    </button>
                   </div>
 
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-lg text-[#076870]">{job.service}</h3>
-                   
+                  {/* Service Details */}
+                  <div className="mb-4">
+                    <h3 className="font-bold text-lg text-[#076870] mb-3">{job.service}</h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <JobDetailRow 
+                        icon={FiCalendar} 
+                        label="Date" 
+                        value={new Date(job.date).toLocaleDateString()} 
+                      />
+                      <JobDetailRow 
+                        icon={FiClock} 
+                        label="Time" 
+                        value={job.time} 
+                      />
+                      <JobDetailRow 
+                        icon={FiWatch} 
+                        label="Duration" 
+                        value={job.duration} 
+                      />
+                      <JobDetailRow 
+                        icon={FiAward} 
+                        label="Service Type" 
+                        value={job.serviceType} 
+                      />
+                      <div className="sm:col-span-2">
+                        <JobDetailRow 
+                          icon={FiMapPin} 
+                          label="Address" 
+                          value={job.address} 
+                        />
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <JobDetailRow 
-                      icon={FiCalendar} 
-                      label="Date & Time" 
-                      value={`${new Date(job.date).toLocaleDateString()} at ${job.time}`} 
-                    />
-                    <JobDetailRow 
-                      icon={FiWatch} 
-                      label="Duration" 
-                      value={job.duration} 
-                    />
-                    <JobDetailRow 
-                      icon={FiMapPin} 
-                      label="Address" 
-                      value={job.address} 
-                    />
-                    <JobDetailRow 
-                      icon={FiAward} 
-                      label="Service Type" 
-                      value={job.serviceType} 
-                    />
+
+                  <div className="mb-4">
+                    <h3 className="font-bold text-lg text-[#076870] mb-3">{job.service}</h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <JobDetailRow 
+                        icon={FiCalendar} 
+                        label="Date" 
+                        value={new Date(job.date).toLocaleDateString()} 
+                      />
+                      <JobDetailRow 
+                        icon={FiClock} 
+                        label="Time" 
+                        value={job.time} 
+                      />
+                      <JobDetailRow 
+                        icon={FiWatch} 
+                        label="Duration" 
+                        value={job.duration} 
+                      />
+                      <JobDetailRow 
+                        icon={FiAward} 
+                        label="Service Type" 
+                        value={job.serviceType} 
+                      />
+                      <div className="sm:col-span-2">
+                        <JobDetailRow 
+                          icon={FiMapPin} 
+                          label="Address" 
+                          value={job.address} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex justify-end space-x-3 pt-3 border-t border-gray-200">
+                    <button className="text-[#076870] border border-[#076870] hover:bg-[#076870]/10 text-sm font-medium py-2 px-4 rounded-lg transition-colors flex items-center">
+                      <FiEye className="mr-2" size={14} /> View Details
+                    </button>
+                    <button className="bg-[#076870] text-white hover:bg-[#054b52] text-sm font-medium py-2 px-4 rounded-lg transition-colors flex items-center">
+                      <FiCalendar className="mr-2" size={14} /> Reschedule
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
+            
           </div>
           
-          <div className="grid grid-cols-2 gap-10">
-            {/* Recent Activities */}
-            <div className="bg-[#E0F2F1] rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-              <div className="p-5 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-[#076870]">Recent Activity</h2>
-              </div>
-              <div className="bg-white p-4 space-y-2">
-                {sampleRecentActivities.map(activity => (
-                  <ActivityItem key={activity.id} {...activity} />
-                ))}
-              </div>
-            </div>
-
-            {/* Support Requests */}
-            <div className="bg-[#E0F2F1] rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-              <div className="p-5 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-[#076870]">Customer Requests</h2>
-              </div>
-              <div className="p-4 space-y-2 bg-white">
-                {sampleOngoingSupportRequests.map(request => (
-                  <SupportRequestItem key={request.id} {...request} />
-                ))}
-              </div>
-            </div>
-          </div>
+         
         </div>        
 
         {/* Right Column - 1/3 width */}
