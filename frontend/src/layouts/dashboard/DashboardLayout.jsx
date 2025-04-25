@@ -39,7 +39,7 @@ const DashboardLayout = ({ userAvatar = '' }) => {
     { name: 'My Bookings', icon: <FiCalendar />, path: '/provider-dashboard/bookings' },
     { name: "My Messages", icon: <FiMessageCircle />, path: '/provider-dashboard/messages', badge: 3 },
     { name: 'Notifications', icon: <FiBell />, path: '/provider-dashboard/notifications', badge: 5 },
-    { name: 'Profile & Settings', icon: <FiUser />, path: '/provider-dashboard/profile' },
+    { name: 'Profile & Settings', icon: <FiUser />, path: '/provider-dashboard/Settings' },
     {name: 'Manage Services', icon: <FiTool />, path: '/provider-dashboard/manage-services'},
     {name: 'help & support', icon: <FiHelpCircle />, path: '/provider-dashboard/help'},
   ];
