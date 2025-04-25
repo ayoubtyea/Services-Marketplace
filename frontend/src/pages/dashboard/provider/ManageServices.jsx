@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   FiPlus, FiEdit2, FiTrash2, FiClock, FiCheck, FiX,
-  FiUser, FiTools, FiCalendar, FiFileText, FiMapPin
+  FiUser, FiCalendar, FiFileText, FiMapPin, FiTool
 } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
@@ -159,7 +159,7 @@ const ManageServices = () => {
             className={`py-3 px-4 font-medium text-sm flex items-center whitespace-nowrap transition-colors ${activeTab === 'manage' ? 'text-[#076870] border-b-2 border-[#076870]' : 'text-gray-500 hover:text-gray-700'}`}
             onClick={() => setActiveTab('manage')}
           >
-            <FiTools className="mr-2" />
+            <FiTool className="mr-2" />
             Manage Services
             {services.length > 0 && (
               <span className="ml-2 bg-[#076870] text-white text-xs font-medium px-2 py-0.5 rounded-full">
@@ -305,7 +305,7 @@ const ManageServices = () => {
           >
             <div className="p-6">
               <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                <FiTools className="mr-2" /> Your Services
+                <FiTool className="mr-2" /> Your Services
               </h2>
               
               {services.length > 0 ? (
@@ -345,7 +345,7 @@ const ManageServices = () => {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <FiTools className="mx-auto text-gray-400 text-4xl mb-3" />
+                  <FiTool className="mx-auto text-gray-400 text-4xl mb-3" />
                   <h3 className="text-lg font-medium text-gray-700 mb-1">No Services Added</h3>
                   <p className="text-gray-500">Add your first service to start receiving bookings</p>
                   <button

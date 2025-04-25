@@ -10,14 +10,17 @@ import {
   FiMessageCircle,
   FiPhone,
   FiBookOpen,
-  FiChevronRight
+  FiChevronRight,
+  FiTool,
+  FiUser
 } from 'react-icons/fi';
+import { FaMedium } from 'react-icons/fa';
 
 const Help = () => {
   const [activeFaq, setActiveFaq] = useState(null);
-  const [activeTab, setActiveTab] = useState('faqs'); // 'faqs' or 'ticket'
+  const [activeTab, setActiveTab] = useState('faqs');
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('Account');
+  const [activeCategory, setActiveCategory] = useState('General');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,22 +29,115 @@ const Help = () => {
     priority: 'medium'
   });
 
-  // FAQ data remains the same as before
   const faqs = [
     {
       id: 1,
-      category: 'Account',
+      category: 'General',
       icon: <FiHelpCircle className="text-[#076870] mr-2" />,
+      questions: [
+        {
+          id: 'general-1',
+          question: 'What is TaskRabbit and how does it work?',
+          answer: 'TaskRabbit is a platform that connects you with skilled Taskers to help with everyday tasks. Simply post a task, receive bids from Taskers, choose who you want to work with, and get your task done.'
+        },
+        {
+          id: 'general-2',
+          question: 'How do I create an account?',
+          answer: 'Click on "Sign Up" at the top right corner of the page. You can sign up using your email address or through your Google or Facebook account.'
+        },
+        {
+          id: 'general-3',
+          question: 'Is there a mobile app available?',
+          answer: 'Yes! You can download our mobile app from the Apple App Store or Google Play Store. The app provides all the functionality of our website with added convenience.'
+        },
+        {
+          id: 'general-4',
+          question: 'What payment methods do you accept?',
+          answer: 'We accept all major credit cards (Visa, MasterCard, American Express, Discover) as well as PayPal. All payments are processed securely through our platform.'
+        }
+      ]
+    },
+    {
+      id: 2,
+      category: 'Account',
+      icon: <FiUser className="text-[#076870] mr-2" />,
       questions: [
         {
           id: 'account-1',
           question: 'How do I reset my password?',
           answer: 'You can reset your password by clicking on "Forgot Password" on the login page. We\'ll send you an email with instructions to create a new password.'
         },
-        // ... other questions
+        {
+          id: 'account-2',
+          question: 'How do I update my profile information?',
+          answer: 'Navigate to "My Account" and click on "Profile Settings". From there you can update your personal information, profile picture, and notification preferences.'
+        },
+        {
+          id: 'account-3',
+          question: 'How do I delete my account?',
+          answer: 'Account deletion can be requested through the "Account Settings" page. Please note that this action is irreversible and will permanently remove all your data from our system.'
+        },
+        {
+          id: 'account-4',
+          question: 'Why am I not receiving email notifications?',
+          answer: 'First, check your spam folder. If the emails aren\'t there, go to your account settings to verify your notification preferences. You may also need to whitelist our email address.'
+        }
       ]
     },
-    // ... other categories
+    {
+      id: 3,
+      category: 'Services',
+      icon: <FiTool className="text-[#076870] mr-2" />,
+      questions: [
+        {
+          id: 'services-1',
+          question: 'What services can I find on TaskRabbit?',
+          answer: 'We offer a wide range of services including cleaning, moving help, furniture assembly, handyman services, delivery help, personal assistance, and much more.'
+        },
+        {
+          id: 'services-2',
+          question: 'How are Taskers vetted?',
+          answer: 'All Taskers go through an identity verification process and background check. We also review their profiles, skills, and customer ratings before they can join our platform.'
+        },
+        {
+          id: 'services-3',
+          question: 'Can I request a specific Tasker?',
+          answer: 'Absolutely! If you\'ve worked with a Tasker before and had a good experience, you can request them specifically for your next task.'
+        },
+        {
+          id: 'services-4',
+          question: 'What if I\'m not satisfied with the service?',
+          answer: 'We have a Happiness Pledge that guarantees your satisfaction. If you\'re not happy with the work, contact our support team within 48 hours and we\'ll help resolve the issue.'
+        }
+      ]
+    },
+    {
+      id: 4,
+      category: 'Payments',
+      icon: <FiCheckCircle className="text-[#076870] mr-2" />,
+      questions: [
+        {
+          id: 'payments-1',
+          question: 'When am I charged for a task?',
+          answer: 'Your payment method is authorized when you book a task, but you\'re only charged after the task is successfully completed and you\'ve approved the work.'
+        },
+        {
+          id: 'payments-2',
+          question: 'How do I get a receipt?',
+          answer: 'Receipts are automatically emailed to you after payment is processed. You can also access all your receipts in the "Payment History" section of your account.'
+        },
+        {
+          id: 'payments-3',
+          question: 'What is your cancellation policy?',
+          answer: 'You can cancel free of charge up to 24 hours before the scheduled task. Cancellations within 24 hours may incur a fee depending on the Tasker\'s cancellation policy.'
+        },
+        {
+          id: 'payments-4',
+          question: 'How do tips work?',
+          answer: 'Tipping is optional but appreciated. You can add a tip when approving the task completion or up to 24 hours afterward through the app or website.'
+        }
+      ]
+    }
   ];
 
   const toggleFaq = (id) => {
@@ -74,16 +170,8 @@ const Help = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
-      {/* Hero Section */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#076870]/10 to-[#076870]/5 rounded-full mb-6 shadow-sm">
-          <FiHelpCircle className="text-[#076870] text-4xl" />
-        </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">Help Center</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Get instant answers to your questions or reach out to our dedicated support team.
-        </p>
-      </div>
+      {/* Hero Section with Logo */}
+    
 
       {/* Navigation Tabs */}
       <div className="flex border-b border-gray-200 mb-8">
@@ -103,7 +191,7 @@ const Help = () => {
         </button>
       </div>
 
-      {/* FAQs Section - Only shown when activeTab is 'faqs' */}
+      {/* FAQs Section */}
       {activeTab === 'faqs' && (
         <div className="mb-16">
           {/* Search Bar */}
@@ -122,24 +210,12 @@ const Help = () => {
             </div>
           </div>
 
-          {/* Mobile Category Selector */}
-          <div className="md:hidden mb-6">
-            <select
-              onChange={(e) => setActiveCategory(e.target.value)}
-              value={activeCategory}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#076870] focus:border-[#076870] transition-colors"
-            >
-              {faqs.map((category) => (
-                <option key={category.id} value={category.category}>{category.category}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* FAQ Categories Grid */}
+          <div className="grid grid-cols-1 gap-8">
             {faqs.map((category) => (
               <div 
                 key={category.id} 
-                className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md ${activeCategory !== category.category ? 'hidden md:block' : ''}`}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md"
               >
                 <div className="bg-gradient-to-r from-[#076870] to-[#065a60] p-5 flex items-center">
                   {category.icon}
@@ -176,11 +252,12 @@ const Help = () => {
         </div>
       )}
 
-      {/* Submit Ticket Section - Only shown when activeTab is 'ticket' */}
+      {/* Submit Ticket Section */}
       {activeTab === 'ticket' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-16">
           <div className="bg-gradient-to-r from-[#076870] to-[#065a60] p-6">
             <h2 className="text-xl font-bold text-white">Submit a Support Ticket</h2>
+            <p className="text-[#076870]/80 mt-1">We typically respond within 2-4 business hours</p>
           </div>
 
           {ticketSubmitted ? (
@@ -281,54 +358,6 @@ const Help = () => {
           )}
         </div>
       )}
-
-      {/* Additional Help Options - Shown on both tabs */}
-      <div className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Other Ways to Get Help</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center hover:shadow-md transition-shadow">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#076870]/10 rounded-full mb-4 mx-auto">
-              <FiMessageCircle className="text-[#076870] text-2xl" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Live Chat</h3>
-            <p className="text-gray-600 mb-4">Chat instantly with our support agents during business hours</p>
-            <button className="text-[#076870] hover:text-[#065a60] font-medium flex items-center justify-center mx-auto">
-              Start Chat <FiChevronRight className="ml-1" />
-            </button>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center hover:shadow-md transition-shadow">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#076870]/10 rounded-full mb-4 mx-auto">
-              <FiPhone className="text-[#076870] text-2xl" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Phone Support</h3>
-            <p className="text-gray-600 mb-4">Call us at <span className="font-medium">(800) 123-4567</span> Mon-Fri, 9am-5pm EST</p>
-            <button className="text-[#076870] hover:text-[#065a60] font-medium flex items-center justify-center mx-auto">
-              Call Now <FiChevronRight className="ml-1" />
-            </button>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center hover:shadow-md transition-shadow">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#076870]/10 rounded-full mb-4 mx-auto">
-              <FiBookOpen className="text-[#076870] text-2xl" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Knowledge Base</h3>
-            <p className="text-gray-600 mb-4">Browse our comprehensive guides and tutorials</p>
-            <button className="text-[#076870] hover:text-[#065a60] font-medium flex items-center justify-center mx-auto">
-              Explore Articles <FiChevronRight className="ml-1" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Status Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start">
-        <div className="bg-blue-100 p-2 rounded-full mr-4">
-          <FiClock className="text-blue-600" />
-        </div>
-        <div>
-          <h4 className="font-medium text-blue-900 mb-1">System Status</h4>
-          <p className="text-blue-700 text-sm">All systems operational. <a href="#" className="underline">View status history</a></p>
-        </div>
-      </div>
     </div>
   );
 };
