@@ -13,7 +13,6 @@ const fs = require('fs');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = 'uploads/providers/';
-    // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -50,6 +49,15 @@ router.post('/register',
   ]),
   async (req, res) => {
     try {
+      // First validate required fields
+      const requiredFields = ['firstName', 'lastName', 'email', 'password', 'phone', 'terms'];
+      for (const field of requiredFields) {
+        if (!req.body[field]) {
+          return res.status(400).json({ message: `${field} is required` });
+        }
+      }
+
+      // Destructure after validation
       const {
         firstName,
         lastName,
@@ -60,15 +68,25 @@ router.post('/register',
         address,
         city,
         zip,
-        services,
-        otherSkills,
-        experience,
-        availability,
-        serviceAreas,
-        bio,
+        services = '[]',
+        otherSkills = '',
+        experience = '',
+        availability = '',
+        serviceAreas = '[]',
+        bio = '',
         terms,
         communications
       } = req.body;
+
+      // Validate email format
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ message: 'Invalid email format' });
+      }
+
+      // Validate password strength
+      if (password.length < 8) {
+        return res.status(400).json({ message: 'Password must be at least 8 characters' });
+      }
 
       // Check if provider already exists
       const existingProvider = await Provider.findOne({ email });
@@ -76,8 +94,24 @@ router.post('/register',
         return res.status(400).json({ message: 'Provider already exists with this email' });
       }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 12);
+      // Hash password (with error handling)
+      let hashedPassword;
+      try {
+        hashedPassword = await bcrypt.hash(password, 12);
+      } catch (hashError) {
+        console.error('Password hashing error:', hashError);
+        return res.status(500).json({ message: 'Error processing password' });
+      }
+
+      // Parse JSON fields safely
+      let parsedServices, parsedServiceAreas;
+      try {
+        parsedServices = JSON.parse(services);
+        parsedServiceAreas = JSON.parse(serviceAreas);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        return res.status(400).json({ message: 'Invalid services or service areas format' });
+      }
 
       // Create new provider
       const provider = new Provider({
@@ -90,15 +124,15 @@ router.post('/register',
         address,
         city,
         zip,
-        services: JSON.parse(services),
+        services: parsedServices,
         otherSkills,
         experience,
         availability,
-        serviceAreas: JSON.parse(serviceAreas),
+        serviceAreas: parsedServiceAreas,
         bio,
-        terms,
+        terms: terms === 'true' || terms === true,
         communications: communications ? ['email', 'sms'] : [],
-        status: 'pending' // Initial status
+        status: 'pending'
       });
 
       // Handle file uploads
@@ -163,7 +197,6 @@ router.post('/register',
     }
   }
 );
-
 // Get provider profile
 router.get('/:id', async (req, res) => {
   try {
