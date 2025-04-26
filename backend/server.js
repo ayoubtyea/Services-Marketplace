@@ -5,16 +5,17 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const providerRoutes = require('./routes/provider');
 const createAdminIfNotExists = require('./utils/adminSeeder'); // Import the seeder function
-const provider = require('./routes/provider');
-
 
 const app = express();
+
+// Log MongoDB URI for debugging
+console.log("Mongo URI:", process.env.MONGO_URI);  // Log to check if URI is loaded correctly
 
 // CORS Configuration
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
-  process.env.FRONTEND_URL,  // Add this line for production
+  process.env.FRONTEND_URL,  // Use this for production URL
 ];
 
 app.use(cors({
@@ -63,8 +64,6 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/providers', providerRoutes);
-app.use('/api/provider', provider);
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {
