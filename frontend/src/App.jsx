@@ -23,7 +23,6 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 
 
-
 // Dashboard Client
 
 import ClientBookings from './pages/dashboard/client/Bookings';

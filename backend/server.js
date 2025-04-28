@@ -3,7 +3,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-const providerRoutes = require('./routes/provider');
+const profileRouter = require('./routes/profileRoutes');
+const serviceRouter = require('./routes/serviceRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
+const earningsRouter = require('./routes/earningsRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const providerRoutes = require('./routes/providerRoutes');
 const createAdminIfNotExists = require('./utils/adminSeeder'); // Import the seeder function
 
 const app = express();
@@ -63,7 +68,14 @@ app.get('/health', (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/providers', providerRoutes);
+app.use('/api/provider', providerRoutes); 
+app.use('/api/profile', profileRouter);
+app.use('/api/services', serviceRouter);
+app.use('/api/bookings', bookingRouter);
+app.use('/api/earnings', earningsRouter);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/auth', providerRoutes);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

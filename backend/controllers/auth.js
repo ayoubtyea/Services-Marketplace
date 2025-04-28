@@ -111,23 +111,10 @@ exports.login = async (req, res) => {
   }
 };
 
-// Provider Signup
 exports.providerSignup = async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 12);
-
-    const provider = await Provider.create({
-      ...req.body,
-      password: hashedPassword,
-      status: 'pending_approval',
-      role: 'provider' // Explicitly set role
-    });
-
-    const response = createAuthResponse(provider, 'provider');
-    response.message = "Provider account pending approval";
-
-    res.status(201).json(response);
-
+    const providerRoutes = require('./routes/provider');
+    return providerRoutes._router.handle(req, res);
   } catch (error) {
     res.status(500).json({ 
       success: false,

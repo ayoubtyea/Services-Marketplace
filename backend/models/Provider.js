@@ -1,27 +1,34 @@
-// Model Provider :
 const mongoose = require('mongoose');
 
 const providerSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  phone: String,
-  dob: Date,
-  address: String,
-  city: String,
-  zip: String,
-  idPhoto: String,
-  selfiePhoto: String,
-  profilePhoto: String,
-  services: [String],
+  phone: { type: String, required: true },
+  dob: { type: Date, required: true },
+  address: { type: String, required: true },
+  city: { type: String, required: true },
+  zip: { type: String, required: true },
+  idPhoto: { type: String, required: true },
+  selfiePhoto: { type: String, required: true },
+  profilePhoto: { type: String, required: true },
+  services: { type: [String], required: true },
   otherSkills: String,
-  experience: String,
-  availability: String,
-  serviceAreas: [String],
-  bio: String,
-  terms: { type: Boolean, required: true },
-  communications: { type: [String], required: false }  // Change required to false
+  experience: { type: String, required: true },
+  availability: { type: String, required: true },
+  serviceAreas: { type: [String], required: true },
+  bio: { type: String, required: true },
+  terms: { type: Boolean, required: true, default: false },
+  communications: { type: Boolean, required: true, default: false },
+  status: { 
+    type: String, 
+    required: true, 
+    enum: ['pending', 'approved', 'rejected'], 
+    default: 'pending' 
+  },
+  backgroundCheck: { type: Boolean, required: true, default: false },
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Provider = mongoose.model('Provider', providerSchema);

@@ -106,9 +106,9 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setIsSubmitting(true);
   
-    // Validate password
-    if (!formData.password) {
-      alert('Password is required');
+    // Validate required fields
+    if (!formData.password || !formData.confirmPassword) {
+      alert('Password and confirmation are required');
       setIsSubmitting(false);
       return;
     }
@@ -126,33 +126,51 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
       return;
     }
   
+    // Check if all required files are uploaded
+    if (!formData.idPhoto || !formData.selfiePhoto || !formData.profilePhoto) {
+      alert('Please upload all required photos (ID, Selfie, and Profile Photo)');
+      setIsSubmitting(false);
+      return;
+    }
+  
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const formDataToSend = new FormData();
       
-      // Add all form fields except confirmPassword
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'confirmPassword') return;
-        
-        if (value instanceof File) {
-          formDataToSend.append(key, value);
-        } else if (Array.isArray(value)) {
-          formDataToSend.append(key, JSON.stringify(value));
-        } else if (typeof value === 'object' && value !== null) {
-          formDataToSend.append(key, JSON.stringify(value));
-        } else if (value !== null && value !== undefined) {
-          formDataToSend.append(key, value);
-        }
-      });
+      // Append all form data
+      formDataToSend.append('firstName', formData.firstName);
+      formDataToSend.append('lastName', formData.lastName);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('password', formData.password);
+      formDataToSend.append('phone', formData.phone);
+      formDataToSend.append('dob', formData.dob);
+      formDataToSend.append('address', formData.address);
+      formDataToSend.append('city', formData.city);
+      formDataToSend.append('zip', formData.zip);
+      formDataToSend.append('services', JSON.stringify(formData.services));
+      formDataToSend.append('otherSkills', formData.otherSkills || '');
+      formDataToSend.append('experience', formData.experience);
+      formDataToSend.append('availability', formData.availability);
+      formDataToSend.append('serviceAreas', JSON.stringify(formData.serviceAreas));
+      formDataToSend.append('bio', formData.bio);
+      formDataToSend.append('terms', formData.terms.toString());
+      formDataToSend.append('communications', formData.communications.toString());
+      formDataToSend.append('backgroundCheck', formData.backgroundCheck.toString());
+  
+      // Append files
+      formDataToSend.append('idPhoto', formData.idPhoto);
+      formDataToSend.append('selfiePhoto', formData.selfiePhoto);
+      formDataToSend.append('profilePhoto', formData.profilePhoto);
   
       const response = await fetch(`${API_BASE_URL}/provider/register`, {
         method: 'POST',
         body: formDataToSend,
+        // Don't set Content-Type header - the browser will set it automatically with the correct boundary
       });
   
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+        throw new Error(errorData.error || errorData.message || 'Registration failed');
       }
   
       const data = await response.json();
@@ -162,14 +180,19 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
       localStorage.setItem('userData', JSON.stringify({
         id: data.provider.id,
         email: data.provider.email,
+        firstName: data.provider.firstName,
+        lastName: data.provider.lastName,
         role: 'provider',
-        status: data.provider.status
+        status: data.provider.status,
+        profilePhoto: data.provider.profilePhoto
       }));
       
       setFormData(prev => ({ ...prev, isSubmitted: true }));
       
-      // Redirect to Auth Page (login page)
-      navigate('/auth', { replace: true }); // Or use '/login' if your auth page is at '/login'
+      // Redirect to dashboard or appropriate page
+      setTimeout(() => {
+        navigate('/provider/dashboard', { replace: true });
+      }, 2000);
   
     } catch (error) {
       console.error('Registration error:', error);
