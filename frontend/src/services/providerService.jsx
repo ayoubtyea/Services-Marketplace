@@ -1,39 +1,230 @@
+// src/services/providerService.jsx
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';  // Ensure to set this to your backend URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-// Fetch provider data
-export const fetchProviderData = async () => {
-  const token = localStorage.getItem('authToken');
-  const response = await axios.get(`${API_BASE_URL}/provider/dashboard`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data.provider;
+// Get provider profile
+export const getProviderProfile = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.get(`${API_URL}/providers/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, profile: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to fetch provider profile'
+    };
+  }
 };
 
-// Fetch dashboard stats
-export const fetchDashboardStats = async () => {
-  const token = localStorage.getItem('authToken');
-  const response = await axios.get(`${API_BASE_URL}/provider/dashboard`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data.stats;
+// Update provider profile
+export const updateProviderProfile = async (profileData) => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.put(`${API_URL}/providers/profile`, profileData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    // Update stored provider data
+    localStorage.setItem('providerData', JSON.stringify(response.data));
+    
+    return { success: true, profile: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to update profile'
+    };
+  }
 };
 
-// Fetch upcoming jobs
-export const fetchUpcomingJobs = async () => {
-  const token = localStorage.getItem('authToken');
-  const response = await axios.get(`${API_BASE_URL}/provider/dashboard/upcomingJobs`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data.upcomingJobs;
+// Get provider services
+export const getProviderServices = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.get(`${API_URL}/providers/services`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, services: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to fetch services'
+    };
+  }
 };
 
-// Fetch provider feedback
-export const fetchProviderFeedback = async () => {
-  const token = localStorage.getItem('authToken');
-  const response = await axios.get(`${API_BASE_URL}/provider/dashboard/reviews`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data.feedback;
+// Add a new service
+export const addService = async (serviceData) => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.post(`${API_URL}/providers/services`, serviceData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, service: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to add service'
+    };
+  }
+};
+
+// Update a service
+export const updateService = async (serviceId, serviceData) => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.put(`${API_URL}/providers/services/${serviceId}`, serviceData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, service: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to update service'
+    };
+  }
+};
+
+// Delete a service
+export const deleteService = async (serviceId) => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    await axios.delete(`${API_URL}/providers/services/${serviceId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to delete service'
+    };
+  }
+};
+
+// Get provider earnings
+export const getProviderEarnings = async (period = 'month') => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.get(`${API_URL}/providers/earnings?period=${period}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, earnings: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to fetch earnings'
+    };
+  }
+};
+
+// Get provider reviews
+export const getProviderReviews = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.get(`${API_URL}/providers/reviews`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, reviews: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to fetch reviews'
+    };
+  }
+};
+
+// Update availability schedule
+export const updateAvailability = async (availabilityData) => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.put(`${API_URL}/providers/availability`, availabilityData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, availability: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to update availability'
+    };
+  }
+};
+
+// Get dashboard statistics
+export const getProviderStats = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      return { success: false, error: 'Authentication required' };
+    }
+    
+    const response = await axios.get(`${API_URL}/providers/stats`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, stats: response.data };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error.response?.data?.message || 'Failed to fetch statistics'
+    };
+  }
+};
+
+export default {
+  getProviderProfile,
+  updateProviderProfile,
+  getProviderServices,
+  addService,
+  updateService,
+  deleteService,
+  getProviderEarnings,
+  getProviderReviews,
+  updateAvailability,
+  getProviderStats
 };

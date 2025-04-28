@@ -1,11 +1,12 @@
+// src/pages/dashboard/provider/Bookings.jsx
 import React, { useState, useEffect } from 'react';
 import {
   FiClock, FiCheckCircle, FiXCircle, FiCalendar,
   FiMapPin, FiUser, FiMail, FiPhone, FiAlertCircle,
   FiHome, FiTool, FiTrash2, FiCheck, FiX, FiChevronDown, FiChevronUp
 } from 'react-icons/fi';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { Link } from 'react-router-dom';
+import { getUserBookings, updateBookingStatus, completeBooking } from '../../../services/bookingService';
 import axios from 'axios';
 
 const getServiceIcon = (serviceType) => {
@@ -20,28 +21,34 @@ const getServiceIcon = (serviceType) => {
 
 const getStatusBadge = (status) => {
   switch(status) {
+    case "pending":
     case "Pending":
       return (
         <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
           <FiClock className="mr-1" size={12} /> Pending
         </span>
       );
+    case "confirmed":
     case "Confirmed":
       return (
         <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
           <FiCheckCircle className="mr-1" size={12} /> Confirmed
         </span>
       );
+    case "completed":
     case "Completed":
       return (
         <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
           <FiCheckCircle className="mr-1" size={12} /> Completed
         </span>
       );
+    case "rejected":
     case "Rejected":
+    case "cancelled":
+    case "Cancelled":
       return (
         <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
-          <FiXCircle className="mr-1" size={12} /> Rejected
+          <FiXCircle className="mr-1" size={12} /> {status.charAt(0).toUpperCase() + status.slice(1)}
         </span>
       );
     default:
@@ -53,9 +60,26 @@ const getStatusBadge = (status) => {
   }
 };
 
-const BookingCard = ({ booking, onAccept, onReject }) => {
-  const [showMap, setShowMap] = useState(false);
+const BookingCard = ({ booking, onAccept, onReject, onComplete }) => {
   const [showDetails, setShowDetails] = useState(false);
+
+  // Format booking object from API for display
+  const formattedBooking = {
+    id: booking._id || booking.id,
+    service: booking.service || 'Service',
+    serviceType: booking.serviceType || 'Service',
+    status: booking.status || 'pending',
+    date: booking.date || new Date().toISOString(),
+    time: booking.time || '12:00 PM',
+    duration: booking.duration || '1 hour',
+    address: booking.address || 'No address provided',
+    client: {
+      name: booking.client?.name || booking.clientName || 'Client',
+      email: booking.client?.email || booking.clientEmail || 'client@example.com',
+      phone: booking.client?.phone || booking.clientPhone || 'No phone provided'
+    },
+    description: booking.description || booking.notes || ''
+  };
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full transition-all duration-200 hover:shadow-md">
@@ -64,12 +88,12 @@ const BookingCard = ({ booking, onAccept, onReject }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-start space-x-3">
             <div className="p-2 bg-gray-50 rounded-lg">
-              {getServiceIcon(booking.serviceType)}
+              {getServiceIcon(formattedBooking.serviceType)}
             </div>
-            <h3 className="font-bold text-white truncate">{booking.service}</h3>
+            <h3 className="font-bold text-white truncate">{formattedBooking.service}</h3>
           </div>
           <div className="bg-white/20 backdrop-blur-sm rounded-full">
-            {getStatusBadge(booking.status)}
+            {getStatusBadge(formattedBooking.status)}
           </div>
         </div>
       </div>
@@ -78,15 +102,15 @@ const BookingCard = ({ booking, onAccept, onReject }) => {
       <div className="p-4 border-b border-gray-200 space-y-2">
         <div className="flex items-center">
           <FiUser className="text-gray-400 mr-2 flex-shrink-0" />
-          <span className="font-medium text-gray-800 truncate">{booking.client.name}</span>
+          <span className="font-medium text-gray-800 truncate">{formattedBooking.client.name}</span>
         </div>
         <div className="flex items-center">
           <FiMail className="text-gray-400 mr-2 flex-shrink-0" />
-          <span className="text-gray-600 truncate">{booking.client.email}</span>
+          <span className="text-gray-600 truncate">{formattedBooking.client.email}</span>
         </div>
         <div className="flex items-center">
           <FiPhone className="text-gray-400 mr-2 flex-shrink-0" />
-          <span className="text-gray-600 truncate">{booking.client.phone}</span>
+          <span className="text-gray-600 truncate">{formattedBooking.client.phone}</span>
         </div>
       </div>
 
@@ -98,7 +122,7 @@ const BookingCard = ({ booking, onAccept, onReject }) => {
             <div>
               <p className="text-xs text-gray-500">Date</p>
               <p className="text-sm font-medium text-gray-800">
-                {new Date(booking.date).toLocaleDateString('en-US', { 
+                {new Date(formattedBooking.date).toLocaleDateString('en-US', { 
                   year: 'numeric', 
                   month: 'short', 
                   day: 'numeric' 
@@ -110,26 +134,23 @@ const BookingCard = ({ booking, onAccept, onReject }) => {
             <FiClock className="text-gray-400 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs text-gray-500">Time</p>
-              <p className="text-sm font-medium text-gray-800">{booking.time}</p>
+              <p className="text-sm font-medium text-gray-800">{formattedBooking.time}</p>
             </div>
           </div>
           <div className="flex items-start space-x-2">
             <FiClock className="text-gray-400 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs text-gray-500">Duration</p>
-              <p className="text-sm font-medium text-gray-800">{booking.duration}</p>
+              <p className="text-sm font-medium text-gray-800">{formattedBooking.duration}</p>
             </div>
           </div>
           <div className="flex items-start space-x-2">
             <FiMapPin className="text-gray-400 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs text-gray-500">Location</p>
-              <button 
-                onClick={() => setShowMap(!showMap)}
-                className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                {showMap ? 'Hide Map' : 'View Map'}
-              </button>
+              <p className="text-sm font-medium text-gray-800 truncate">
+                {formattedBooking.address}
+              </p>
             </div>
           </div>
         </div>
@@ -141,48 +162,51 @@ const BookingCard = ({ booking, onAccept, onReject }) => {
           {/* Description */}
           <div className="p-4">
             <h4 className="text-xs font-medium text-gray-500 mb-1">Description</h4>
-            <p className="text-sm text-gray-600">{booking.description}</p>
+            <p className="text-sm text-gray-600">
+              {formattedBooking.description || "No additional details provided."}
+            </p>
           </div>
-
-          {/* Map */}
-          {showMap && (
-            <div className="p-4 pt-0">
-              <div className="h-48 rounded-lg overflow-hidden border border-gray-200">
-                <MapContainer 
-                  center={booking.location.coordinates} 
-                  zoom={15} 
-                  style={{ height: '100%', width: '100%' }}
-                  scrollWheelZoom={false}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
-                  <Marker position={booking.location.coordinates}>
-                    <Popup>{booking.address}</Popup>
-                  </Marker>
-                </MapContainer>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
       {/* Action Buttons */}
       <div className="p-4 mt-auto">
-        {booking.status === "Pending" ? (
+        {(formattedBooking.status === "pending" || formattedBooking.status === "Pending") ? (
           <div className="grid grid-cols-2 gap-3">
             <button 
-              onClick={() => onReject(booking._id)}
+              onClick={() => onReject(formattedBooking.id)}
               className="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center justify-center transition-colors"
             >
               <FiX className="mr-1" /> Reject
             </button>
             <button 
-              onClick={() => onAccept(booking._id)}
+              onClick={() => onAccept(formattedBooking.id)}
               className="bg-green-50 text-green-600 hover:bg-green-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center justify-center transition-colors"
             >
               <FiCheck className="mr-1" /> Accept
+            </button>
+          </div>
+        ) : formattedBooking.status === "confirmed" || formattedBooking.status === "Confirmed" ? (
+          <div className="flex justify-between items-center">
+            <button 
+              onClick={() => setShowDetails(!showDetails)}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center transition-colors"
+            >
+              {showDetails ? (
+                <>
+                  <FiChevronUp className="mr-1" /> Hide Details
+                </>
+              ) : (
+                <>
+                  <FiChevronDown className="mr-1" /> View Details
+                </>
+              )}
+            </button>
+            <button 
+              onClick={() => onComplete(formattedBooking.id)} 
+              className="bg-green-50 text-green-600 hover:bg-green-100 px-3 py-2 rounded-lg font-medium text-sm flex items-center justify-center transition-colors"
+            >
+              <FiCheckCircle className="mr-1" /> Mark Complete
             </button>
           </div>
         ) : (
@@ -201,11 +225,13 @@ const BookingCard = ({ booking, onAccept, onReject }) => {
                 </>
               )}
             </button>
-            {booking.status === "Confirmed" && (
-              <button className="text-gray-600 hover:text-gray-800 text-sm font-medium flex items-center transition-colors">
-                Reschedule
-              </button>
-            )}
+            
+            <Link 
+              to={`/provider-dashboard/bookings/${formattedBooking.id}`}
+              className="text-gray-600 hover:text-gray-800 text-sm font-medium flex items-center transition-colors"
+            >
+              View Details
+            </Link>
           </div>
         )}
       </div>
@@ -222,31 +248,43 @@ const Bookings = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const response = await axios.get('/api/bookings', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
         
-        // Organize bookings by status
-        const bookingsArray = response.data.bookings || [];
-
-        const organizedBookings = {
-          pending: bookingsArray.filter(b => b.status === 'Pending'),
-          upcoming: bookingsArray.filter(b => b.status === 'Confirmed'),
-          completed: bookingsArray.filter(b => b.status === 'Completed')
-        };
+        // Fetch all bookings
+        const result = await getUserBookings();
         
-        setBookings(organizedBookings);
+        if (result.success) {
+          // Organize bookings by status
+          const bookingsData = result.bookings || [];
+          
+          const organized = {
+            pending: bookingsData.filter(b => b.status === 'pending' || b.status === 'Pending'),
+            upcoming: bookingsData.filter(b => b.status === 'confirmed' || b.status === 'Confirmed'),
+            completed: bookingsData.filter(b => b.status === 'completed' || b.status === 'Completed')
+          };
+          
+          setBookings(organized);
+        } else {
+          throw new Error(result.error || 'Failed to fetch bookings');
+        }
+        
         setLoading(false);
       } catch (err) {
-        setError(err.message);
+        console.error('Error fetching bookings:', err);
+        setError(err.message || 'Failed to load bookings. Please try again later.');
+        
+        // Set empty arrays as fallback
+        setBookings({
+          pending: [],
+          upcoming: [],
+          completed: []
+        });
+        
         setLoading(false);
       }
     };
@@ -256,76 +294,94 @@ const Bookings = () => {
 
   const handleAccept = async (bookingId) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`/api/bookings/${bookingId}`, 
-        { status: 'Confirmed' },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      const result = await updateBookingStatus(bookingId, 'confirmed');
       
-      // Update local state
-      const updatedBookings = {...bookings};
-      const bookingIndex = updatedBookings.pending.findIndex(b => b._id === bookingId);
-      if (bookingIndex !== -1) {
-        const acceptedBooking = {...updatedBookings.pending[bookingIndex], status: "Confirmed"};
-        updatedBookings.pending.splice(bookingIndex, 1);
-        updatedBookings.upcoming.unshift(acceptedBooking);
-        setBookings(updatedBookings);
+      if (result.success) {
+        // Update local state by moving the booking from pending to upcoming
+        setBookings(prev => {
+          const updatedBooking = prev.pending.find(b => b._id === bookingId || b.id === bookingId);
+          if (!updatedBooking) return prev;
+          
+          updatedBooking.status = 'confirmed';
+          
+          return {
+            pending: prev.pending.filter(b => b._id !== bookingId && b.id !== bookingId),
+            upcoming: [...prev.upcoming, updatedBooking],
+            completed: prev.completed
+          };
+        });
+        
+        setSuccessMessage('Booking accepted successfully!');
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        throw new Error(result.error || 'Failed to accept booking');
       }
     } catch (err) {
-      setError(err.message);
+      console.error('Error accepting booking:', err);
+      setError(err.message || 'Failed to accept booking. Please try again.');
+      setTimeout(() => setError(null), 3000);
     }
   };
 
   const handleReject = async (bookingId) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`/api/bookings/${bookingId}`, 
-        { status: 'Rejected' },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      const result = await updateBookingStatus(bookingId, 'rejected');
       
-      // Update local state
-      const updatedBookings = {...bookings};
-      updatedBookings.pending = updatedBookings.pending.filter(b => b._id !== bookingId);
-      setBookings(updatedBookings);
+      if (result.success) {
+        // Update local state by removing the booking from pending
+        setBookings(prev => ({
+          pending: prev.pending.filter(b => b._id !== bookingId && b.id !== bookingId),
+          upcoming: prev.upcoming,
+          completed: prev.completed
+        }));
+        
+        setSuccessMessage('Booking rejected successfully!');
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        throw new Error(result.error || 'Failed to reject booking');
+      }
     } catch (err) {
-      setError(err.message);
+      console.error('Error rejecting booking:', err);
+      setError(err.message || 'Failed to reject booking. Please try again.');
+      setTimeout(() => setError(null), 3000);
+    }
+  };
+
+  const handleComplete = async (bookingId) => {
+    try {
+      const result = await completeBooking(bookingId);
+      
+      if (result.success) {
+        // Update local state by moving the booking from upcoming to completed
+        setBookings(prev => {
+          const updatedBooking = prev.upcoming.find(b => b._id === bookingId || b.id === bookingId);
+          if (!updatedBooking) return prev;
+          
+          updatedBooking.status = 'completed';
+          
+          return {
+            pending: prev.pending,
+            upcoming: prev.upcoming.filter(b => b._id !== bookingId && b.id !== bookingId),
+            completed: [...prev.completed, updatedBooking]
+          };
+        });
+        
+        setSuccessMessage('Booking marked as completed!');
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } else {
+        throw new Error(result.error || 'Failed to complete booking');
+      }
+    } catch (err) {
+      console.error('Error completing booking:', err);
+      setError(err.message || 'Failed to complete booking. Please try again.');
+      setTimeout(() => setError(null), 3000);
     }
   };
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#076870]"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="bg-red-50 border-l-4 border-red-500 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <FiAlertCircle className="h-5 w-5 text-red-500" />
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">
-                Error loading bookings: {error}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#076870]"></div>
       </div>
     );
   }
@@ -339,9 +395,20 @@ const Bookings = () => {
               <FiAlertCircle className="h-5 w-5 text-red-500" />
             </div>
             <div className="ml-3">
-              <p className="text-sm text-red-700">
-                {error}
-              </p>
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {successMessage && (
+        <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <FiCheckCircle className="h-5 w-5 text-green-500" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-green-700">{successMessage}</p>
             </div>
           </div>
         </div>
@@ -395,7 +462,7 @@ const Bookings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bookings.pending.map(booking => (
                   <BookingCard 
-                    key={booking._id} 
+                    key={booking._id || booking.id} 
                     booking={booking} 
                     onAccept={handleAccept}
                     onReject={handleReject}
@@ -418,10 +485,9 @@ const Bookings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bookings.upcoming.map(booking => (
                   <BookingCard 
-                    key={booking._id} 
+                    key={booking._id || booking.id} 
                     booking={booking} 
-                    onAccept={handleAccept}
-                    onReject={handleReject}
+                    onComplete={handleComplete}
                   />
                 ))}
               </div>
@@ -441,10 +507,8 @@ const Bookings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bookings.completed.map(booking => (
                   <BookingCard 
-                    key={booking._id} 
-                    booking={booking} 
-                    onAccept={handleAccept}
-                    onReject={handleReject}
+                    key={booking._id || booking.id} 
+                    booking={booking}
                   />
                 ))}
               </div>

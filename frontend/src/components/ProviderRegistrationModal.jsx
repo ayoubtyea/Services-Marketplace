@@ -618,22 +618,23 @@ const ProviderRegistrationModal = ({ isOpen, onClose }) => {
 
                       <div className="mb-2">
                         <label className="block text-xs font-medium text-gray-600 mb-1">Service Areas*</label>
-                        <select
-                          multiple
-                          name="serviceAreas"
-                          value={formData.serviceAreas}
-                          onChange={(e) => {
-                            const options = [...e.target.selectedOptions];
-                            const values = options.map(option => option.value);
-                            setFormData(prev => ({ ...prev, serviceAreas: values }));
-                          }}
-                          className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#076870] focus:border-[#076870] outline-none transition text-xs h-[80px]"
-                          required
-                        >
-                          {moroccanCities.map(city => (
-                            <option key={city} value={city}>{city}</option>
-                          ))}
-                        </select>
+                        // Current code (with issues)
+<select
+  multiple
+  name="serviceAreas"
+  value={formData.serviceAreas}
+  onChange={(e) => {
+    const options = [...e.target.selectedOptions];
+    const values = options.map(option => option.value);
+    setFormData(prev => ({ ...prev, serviceAreas: values }));
+  }}
+  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#076870] focus:border-[#076870] outline-none transition text-xs h-[80px]"
+  required
+>
+  {moroccanCities.map(city => (
+    <option key={city} value={city}>{city}</option>
+  ))}
+</select>
                         <p className="text-[10px] text-gray-500 mt-0.5">Hold Ctrl/Cmd to select multiple cities</p>
                       </div>
                     </div>

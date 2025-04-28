@@ -1,11 +1,19 @@
-import React from 'react';
+// src/pages/dashboard/client/DashboardHome.jsx
+import React, { useState, useEffect } from 'react';
 import { 
   FiPlus, FiClock, FiStar, FiCheckCircle, 
   FiUser, FiMail, FiPhone, FiMapPin, 
   FiCalendar, FiWatch, FiAward, FiAlertCircle, 
-  FiDollarSign, FiEye, FiChevronRight 
+  FiDollarSign, FiEye, FiChevronRight, FiLoader
 } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
+import { getUserBookings } from '../../../services/bookingService';
+import { updateProfile } from '../../../services/authService';
+import { useBooking } from '../../../context/BookingContext';
+import { useAuth } from '../../../context/AuthContext';
+import { getBookingStats } from '../../../services/bookingService';
+import { getProviderReviews } from '../../../services/providerService';
 
 // Constants
 const PROFILE_COMPLETION_WEIGHTS = {
@@ -15,34 +23,7 @@ const PROFILE_COMPLETION_WEIGHTS = {
   password: 30
 };
 
-// Sample Data
-const sampleUpcomingBookings = [
-  {
-    id: 1,
-    service: "Deep Cleaning",
-    date: "2023-06-15",
-    time: "10:00 AM",
-    duration: "2 hours",
-    address: "123 Main St, Apt 4B",
-    serviceType: "Home Cleaning",
-    providerName: "CleanPro Team",
-    providerImage: "https://randomuser.me/api/portraits/women/44.jpg",
-    rating: 4
-  },
-  {
-    id: 2,
-    service: "AC Maintenance",
-    date: "2023-06-18",
-    time: "2:30 PM",
-    duration: "1.5 hours",
-    address: "123 Main St, Apt 4B",
-    serviceType: "Appliance Repair",
-    providerName: "CoolAir Experts",
-    providerImage: "https://randomuser.me/api/portraits/men/32.jpg",
-    rating: 5
-  }
-];
-
+// Sample data for fallback
 const sampleClientFeedback = {
   rating: 4.8,
   totalReviews: 12,
@@ -85,7 +66,6 @@ const sampleRecentActivities = [
     service: "Furniture Assembly",
     date: "2023-06-07",
     time: "9:15 AM"
-    
   }
 ];
 
@@ -215,17 +195,128 @@ const SupportRequestItem = ({ type, service, status, dateOpened }) => (
 );
 
 const DashboardHome = () => {
-  const userData = JSON.parse(localStorage.getItem('userData')) || {};
+  const { user } = useAuth();
+  const { bookings, loading: bookingsLoading } = useBooking();
   
+  const [userProfile, setUserProfile] = useState(null);
+  const [clientFeedback, setClientFeedback] = useState({
+    rating: 0,
+    totalReviews: 0,
+    recentReviews: []
+  });
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [supportRequests, setSupportRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        
+        // Get user profile from auth context or localStorage as fallback
+        const profile = user || JSON.parse(localStorage.getItem('userData')) || {};
+        setUserProfile(profile);
+        
+        // Try to fetch booking statistics
+        try {
+          const statsResult = await getBookingStats();
+          if (statsResult.success) {
+            // Transform stats data to recent activities
+            const activities = statsResult.stats.recentActivities || [];
+            setRecentActivities(activities.length > 0 ? activities : sampleRecentActivities);
+            
+            // Get support requests if available
+            setSupportRequests(statsResult.stats.supportRequests || sampleOngoingSupportRequests);
+          } else {
+            // Fall back to sample data if API call wasn't successful
+            setRecentActivities(sampleRecentActivities);
+            setSupportRequests(sampleOngoingSupportRequests);
+          }
+        } catch (error) {
+          console.error('Error fetching booking stats:', error);
+          // Fallback to sample data
+          setRecentActivities(sampleRecentActivities);
+          setSupportRequests(sampleOngoingSupportRequests);
+        }
+        
+        // Fetch reviews if client role
+        if (profile.role === 'client') {
+          try {
+            const reviewsResult = await getProviderReviews();
+            if (reviewsResult.success) {
+              setClientFeedback({
+                rating: reviewsResult.reviews.averageRating || 0,
+                totalReviews: reviewsResult.reviews.total || 0,
+                recentReviews: reviewsResult.reviews.items || []
+              });
+            } else {
+              // Fall back to sample data
+              setClientFeedback(sampleClientFeedback);
+            }
+          } catch (error) {
+            console.error('Error fetching reviews:', error);
+            // Set default values if API fails
+            setClientFeedback(sampleClientFeedback);
+          }
+        } else {
+          setClientFeedback(sampleClientFeedback);
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err.message || 'Failed to load dashboard data');
+        
+        // Set fallback data
+        setRecentActivities(sampleRecentActivities);
+        setSupportRequests(sampleOngoingSupportRequests);
+        setClientFeedback(sampleClientFeedback);
+        
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user]);
+
   const calculateProfileCompletion = () => {
+    if (!userProfile) return 0;
+    
     let completion = 0;
     Object.entries(PROFILE_COMPLETION_WEIGHTS).forEach(([key, value]) => {
-      if (userData[key]) completion += value;
+      if (userProfile[key]) completion += value;
     });
     return Math.min(completion, 100);
   };
 
   const profileCompletion = calculateProfileCompletion();
+
+  if (loading || bookingsLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#076870]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border-l-4 border-red-500 p-4 my-6">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <FiAlertCircle className="h-5 w-5 text-red-500" />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get upcoming bookings from context or use empty array if not available
+  const upcomingBookings = bookings?.upcoming ? bookings.upcoming.slice(0, 2) : [];
 
   return (
     <>
@@ -238,11 +329,11 @@ const DashboardHome = () => {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold text-white">
-                  Welcome Back, {userData.fullName || 'Client'}!
+                  Welcome Back, {userProfile?.fullName || 'Client'}!
                 </h2>
                 <p className="text-white/90 mt-1 text-sm md:text-base">
-                  {userData.createdAt 
-                    ? `Member since ${new Date(userData.createdAt).toLocaleDateString()}`
+                  {userProfile?.createdAt 
+                    ? `Member since ${new Date(userProfile.createdAt).toLocaleDateString()}`
                     : "Welcome to your dashboard"}
                 </p>
                 
@@ -263,11 +354,11 @@ const DashboardHome = () => {
                 </div>
               </div>
               
-              {userData.avatar && (
+              {userProfile?.avatar && (
                 <div className="hidden md:block">
                   <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/50">
                     <img 
-                      src={userData.avatar} 
+                      src={userProfile.avatar} 
                       alt="User" 
                       className="w-full h-full object-cover"
                     />
@@ -283,13 +374,13 @@ const DashboardHome = () => {
               <h2 className="text-xl font-semibold text-gray-800">Your Information</h2>
             </div>
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ProfileInfoItem icon={FiUser} label="Full Name" value={userData.fullName} />
-              <ProfileInfoItem icon={FiMail} label="Email" value={userData.email} />
-              <ProfileInfoItem icon={FiPhone} label="Phone Number" value={userData.phoneNumber} />
+              <ProfileInfoItem icon={FiUser} label="Full Name" value={userProfile?.fullName} />
+              <ProfileInfoItem icon={FiMail} label="Email" value={userProfile?.email} />
+              <ProfileInfoItem icon={FiPhone} label="Phone Number" value={userProfile?.phoneNumber || userProfile?.phone} />
               <ProfileInfoItem 
                 icon={FiUser} 
                 label="Account Type" 
-                value={userData.role || 'client'} 
+                value={userProfile?.role || 'client'} 
                 isRole 
               />
             </div>
@@ -302,8 +393,8 @@ const DashboardHome = () => {
             </div>
             <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <QuickActionButton icon={FiPlus} label="Book Service" href="/services" />
-              <QuickActionButton icon={FiClock} label="Reschedule" href="/bookings" />
-              <QuickActionButton icon={FiStar} label="Rate Service" href="/reviews" />
+              <QuickActionButton icon={FiClock} label="Reschedule" href="/client-dashboard/bookings" />
+              <QuickActionButton icon={FiStar} label="Rate Service" href="/client-dashboard/bookings?tab=past" />
             </div>
           </div>
         </div>       
@@ -317,87 +408,124 @@ const DashboardHome = () => {
           <div className="bg-[#E0F2F1] rounded-xl border border-gray-200 overflow-hidden shadow-sm">
             <div className="p-5 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-xl font-semibold text-[#076870]">Upcoming Bookings</h2>
-              <button className="text-[#076870] text-sm font-medium flex items-center hover:text-[#054b52] transition-colors">
+              <Link 
+                to="/client-dashboard/bookings"
+                className="text-[#076870] text-sm font-medium flex items-center hover:text-[#054b52] transition-colors"
+              >
                 View All <FiChevronRight className="ml-1" size={16} />
-              </button>
+              </Link>
             </div>
             
             <div className="bg-white">
-              {sampleUpcomingBookings.map(booking => (
-                <div key={booking.id} className="p-5 hover:bg-gray-50 transition-colors">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-lg text-[#076870]">{booking.service}</h3>
-                    <span className="text-xs font-medium bg-[#DCFCE7] text-[#076870] py-1 px-3 rounded-full">
-                      Confirmed
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <BookingDetailRow 
-                      icon={FiCalendar} 
-                      label="Date & Time" 
-                      value={`${new Date(booking.date).toLocaleDateString()} at ${booking.time}`} 
-                    />
-                    <BookingDetailRow 
-                      icon={FiWatch} 
-                      label="Duration" 
-                      value={booking.duration} 
-                    />
-                    <BookingDetailRow 
-                      icon={FiMapPin} 
-                      label="Address" 
-                      value={booking.address} 
-                    />
-                    <BookingDetailRow 
-                      icon={FiAward} 
-                      label="Service Type" 
-                      value={booking.serviceType} 
-                    />
-                  </div>
-                  
-                  {/* Provider Info */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 mr-3">
-                        <img 
-                          src={booking.providerImage} 
-                          alt="Provider" 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800 text-sm">{booking.providerName}</p>
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <FiStar
-                              key={i}
-                              size={14}
-                              className={`${i < booking.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} mx-0.5`}
+              {upcomingBookings.length > 0 ? (
+                upcomingBookings.map(booking => (
+                  <div key={booking._id || booking.id} className="p-5 hover:bg-gray-50 transition-colors">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-bold text-lg text-[#076870]">{booking.service}</h3>
+                      <span className="text-xs font-medium bg-[#DCFCE7] text-[#076870] py-1 px-3 rounded-full">
+                        Confirmed
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <BookingDetailRow 
+                        icon={FiCalendar} 
+                        label="Date & Time" 
+                        value={`${new Date(booking.date).toLocaleDateString()} at ${booking.time}`} 
+                      />
+                      <BookingDetailRow 
+                        icon={FiWatch} 
+                        label="Duration" 
+                        value={booking.duration || '1 hour'} 
+                      />
+                      <BookingDetailRow 
+                        icon={FiMapPin} 
+                        label="Address" 
+                        value={booking.address || 'Not specified'} 
+                      />
+                      <BookingDetailRow 
+                        icon={FiAward} 
+                        label="Service Type" 
+                        value={booking.serviceType || booking.service} 
+                      />
+                    </div>
+                    
+                    {/* Provider Info */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 mr-3 bg-gray-200 flex items-center justify-center">
+                          {booking.provider?.image ? (
+                            <img 
+                              src={booking.provider.image} 
+                              alt="Provider" 
+                              className="w-full h-full object-cover"
                             />
-                          ))}
-                          <span className="text-xs text-gray-500 ml-1">({sampleClientFeedback.totalReviews})</span>
+                          ) : (
+                            <FiUser className="text-gray-500" size={20} />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-800 text-sm">
+                            {booking.provider?.name || booking.providerName || 'Provider'}
+                          </p>
+                          {booking.provider?.rating && (
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <FiStar
+                                  key={i}
+                                  size={14}
+                                  className={`${i < booking.provider.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} mx-0.5`}
+                                />
+                              ))}
+                              <span className="text-xs text-gray-500 ml-1">
+                                ({booking.provider.reviews || 0})
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
+                      <Link 
+                        to={`/client-dashboard/bookings/${booking._id || booking.id}`}
+                        className="text-sm text-[#076870] font-medium hover:text-[#054b52] transition-colors"
+                      >
+                        View Details
+                      </Link>
                     </div>
-                    <button className="text-sm text-[#076870] font-medium hover:text-[#054b52] transition-colors">
-                      View Details
-                    </button>
                   </div>
+                ))
+              ) : (
+                <div className="p-8 text-center">
+                  <FiCalendar className="mx-auto mb-4 text-gray-300" size={40} />
+                  <h3 className="text-lg font-medium text-gray-700 mb-1">No Upcoming Bookings</h3>
+                  <p className="text-gray-500 mb-4">You don't have any upcoming services scheduled.</p>
+                  <Link 
+                    to="/services" 
+                    className="px-4 py-2 bg-[#076870] text-white rounded-lg inline-block hover:bg-[#054b52] transition-colors"
+                  >
+                    Book a Service
+                  </Link>
                 </div>
-              ))}
+              )}
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Recent Activities */}
             <div className="bg-[#E0F2F1] rounded-xl border border-gray-200 overflow-hidden shadow-sm">
               <div className="p-5 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-[#076870]">Recent Activity</h2>
               </div>
               <div className="bg-white p-4 space-y-2">
-                {sampleRecentActivities.map(activity => (
-                  <ActivityItem key={activity.id} {...activity} />
-                ))}
+                {recentActivities.length > 0 ? (
+                  recentActivities.map(activity => (
+                    <ActivityItem key={activity.id} {...activity} />
+                  ))
+                ) : (
+                  <div className="p-6 text-center">
+                    <FiClock className="mx-auto mb-3 text-gray-300" size={30} />
+                    <p className="text-gray-500">No recent activities</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -407,9 +535,19 @@ const DashboardHome = () => {
                 <h2 className="text-xl font-semibold text-[#076870]">Support Requests</h2>
               </div>
               <div className="p-4 space-y-2 bg-white">
-                {sampleOngoingSupportRequests.map(request => (
-                  <SupportRequestItem key={request.id} {...request} />
-                ))}
+                {supportRequests.length > 0 ? (
+                  supportRequests.map(request => (
+                    <SupportRequestItem key={request.id} {...request} />
+                  ))
+                ) : (
+                  <div className="p-6 text-center">
+                    <FiAlertCircle className="mx-auto mb-3 text-gray-300" size={30} />
+                    <p className="text-gray-500">No active support requests</p>
+                    <button className="mt-4 text-[#076870] font-medium hover:underline">
+                      Need help? Create a ticket
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -424,28 +562,39 @@ const DashboardHome = () => {
             </div>
             <div className="p-5">
               <div className="bg-gradient-to-r from-[#076870] to-[#0a7c85] rounded-xl p-5 text-center mb-4">
-                <div className="text-4xl font-bold text-white">{sampleClientFeedback.rating}</div>
+                <div className="text-4xl font-bold text-white">
+                  {clientFeedback.rating ? clientFeedback.rating.toFixed(1) : '0.0'}
+                </div>
                 <div className="flex justify-center my-2">
                   {[...Array(5)].map((_, i) => (
                     <FiStar 
                       key={i} 
                       size={20}
-                      className={`mx-0.5 ${i < Math.floor(sampleClientFeedback.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                      className={`mx-0.5 ${i < Math.floor(clientFeedback.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
                     />
                   ))}
                 </div>
-                <p className="text-sm text-white/90">{sampleClientFeedback.totalReviews} reviews</p>
+                <p className="text-sm text-white/90">{clientFeedback.totalReviews} reviews</p>
               </div>
 
               <div className="space-y-3">
-                {sampleClientFeedback.recentReviews.map(review => (
-                  <ReviewItem key={review.id} {...review} />
-                ))}
+                {clientFeedback.recentReviews && clientFeedback.recentReviews.length > 0 ? (
+                  clientFeedback.recentReviews.map(review => (
+                    <ReviewItem key={review.id} {...review} />
+                  ))
+                ) : (
+                  <div className="p-4 text-center bg-white rounded-lg">
+                    <FiStar className="mx-auto mb-2 text-gray-300" size={24} />
+                    <p className="text-gray-500">No feedback yet</p>
+                  </div>
+                )}
               </div>
               
-              <button className="w-full mt-4 text-[#076870] text-sm font-medium flex items-center justify-center hover:text-[#054b52] transition-colors">
-                View All Reviews <FiChevronRight className="ml-1" size={16} />
-              </button>
+              {clientFeedback.totalReviews > 0 && (
+                <button className="w-full mt-4 text-[#076870] text-sm font-medium flex items-center justify-center hover:text-[#054b52] transition-colors">
+                  View All Reviews <FiChevronRight className="ml-1" size={16} />
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext'; 
-import { ProviderProvider } from './context/ProviderContext'; // Use ProviderProvider
+import { ProviderProvider } from './context/ProviderContext'; 
+import { BookingProvider } from './context/BookingContext'; // Add this import
 import ProtectedRoute from './components/ProtectedRoute';
 import { Outlet } from 'react-router-dom';
 
@@ -113,7 +114,9 @@ const App = () => {
             path="/client-dashboard" 
             element={
               <ProtectedRoute allowedRoles={['client']}>
-                <ClientDashboard userRole={authState.userRole} />
+                <BookingProvider> {/* Add BookingProvider here */}
+                  <ClientDashboard userRole={authState.userRole} />
+                </BookingProvider>
               </ProtectedRoute>
             }
           >
@@ -130,7 +133,9 @@ const App = () => {
             element={
               <ProtectedRoute allowedRoles={['provider']}>
                 <ProviderProvider>
-                  <ProviderDashboard userRole={authState.userRole} />
+                  <BookingProvider> {/* Provider might also need bookings */}
+                    <ProviderDashboard userRole={authState.userRole} />
+                  </BookingProvider>
                 </ProviderProvider>
               </ProtectedRoute>
             }
@@ -151,7 +156,9 @@ const App = () => {
             path="/admin-dashboard" 
             element={
               <ProtectedRoute allowedRoles={['admin']}>
-                <AdminDashboard userRole={authState.userRole} />
+                <BookingProvider> {/* Admin might need bookings too */}
+                  <AdminDashboard userRole={authState.userRole} />
+                </BookingProvider>
               </ProtectedRoute>
             }
           >
