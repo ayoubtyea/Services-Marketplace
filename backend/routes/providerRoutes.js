@@ -1,26 +1,24 @@
-// routes/providerRoutes.js
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const providerController = require('../controllers/providerController');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+const providerController = require('../controllers/providerController');
+const { protect } = require('../middleware/auth');
 
-// Configure multer storage
+// Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, '../uploads/providers');
-    if (!fs.existsSync(uploadDir)) {e
+    if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
-    const filename = `${uuidv4()}${ext}`;
-    cb(null, filename);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
   }
 });
 
@@ -40,36 +38,68 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
+// Error handling middleware for file uploads
+const handleFileUploadErrors = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  } else if (err) {
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  }
+  next();
+};
+
 // Public routes (no authentication required)
-router.post('/register',
+// Provider Registration Route
+router.post('/register', 
   upload.fields([
     { name: 'idPhoto', maxCount: 1 },
     { name: 'selfiePhoto', maxCount: 1 },
     { name: 'profilePhoto', maxCount: 1 }
   ]),
+  handleFileUploadErrors,
   providerController.registerProvider
 );
 
-// Apply auth middleware to all routes below this point
-router.use(auth.protect);
+// Protected routes (authentication required)
+router.use(protect);
 
-// Dashboard data
+// Get provider dashboard data
 router.get('/dashboard', providerController.getDashboardData);
-router.get('/dashboard/stats', providerController.getDashboardStats);
-router.get('/bookings/upcoming', providerController.getUpcomingBookings);
-router.get('/reviews', providerController.getProviderReviews);
 
-// Other routes
+// Get provider profile
+router.get('/profile', providerController.getProfile);
+
+// Update provider profile
+router.patch('/profile', 
+  upload.fields([
+    { name: 'profilePhoto', maxCount: 1 }
+  ]), 
+  providerController.updateProfile
+);
+
+// Get provider bookings
 router.get('/bookings', providerController.getBookings);
-router.put('/bookings/:bookingId/status', providerController.updateBookingStatus);
-router.get('/services', providerController.getServices);
-router.post('/services', providerController.addService);
-router.put('/services/:serviceId', providerController.updateService);
-router.delete('/services/:serviceId', providerController.deleteService);
-router.get('/notifications', providerController.getNotifications);
-router.put('/notifications/read', providerController.markNotificationsAsRead);
-router.get('/earnings', providerController.getEarnings);
-router.get('/profile', providerController.getDashboardData); // Reuse dashboard data for profile
-router.put('/profile', providerController.updateProfile);
 
+// Update booking status
+router.patch('/bookings/:bookingId/status', providerController.updateBookingStatus);
+
+// Get provider services
+router.get('/services', providerController.getServices);
+
+// Get provider notifications
+router.get('/notifications', providerController.getNotifications);
+
+// Mark notifications as read
+router.patch('/notifications/read', providerController.markNotificationsAsRead);
+
+// Get provider earnings - Comment out if not implemented yet
+// router.get('/earnings', providerController.getEarnings);
+
+// Export the router
 module.exports = router;

@@ -60,14 +60,44 @@ exports.clientSignup = async (req, res) => {
   }
 };
 
+// Provider Signup - Fixed to directly handle signup instead of calling another router
+exports.providerSignup = async (req, res) => {
+  try {
+    // This should be handled by the providerController.registerProvider
+    // with proper middleware for file uploads
+    res.status(400).json({ 
+      success: false,
+      message: 'Please use the /api/provider/register endpoint for provider registration'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      message: 'Provider registration failed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 // General Login for client, provider, and admin
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    let user = await User.findOne({ email }) || 
-               await Provider.findOne({ email }) || 
-               await Admin.findOne({ email });
+    // First check User collection
+    let user = await User.findOne({ email });
+    let role = 'client';
+    
+    // If not found, check Provider
+    if (!user) {
+      user = await Provider.findOne({ email });
+      role = 'provider';
+    }
+    
+    // If still not found, check Admin
+    if (!user) {
+      user = await Admin.findOne({ email });
+      role = 'admin';
+    }
 
     if (!user) {
       return res.status(401).json({ 
@@ -84,17 +114,30 @@ exports.login = async (req, res) => {
       });
     }
 
-    let role;
-    if (user instanceof User) role = 'client';
-    if (user instanceof Provider) role = 'provider';
-    if (user instanceof Admin) role = 'admin';
+    // For provider, check if they're approved
+    if (role === 'provider' && user.status !== 'approved') {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account is pending approval'
+      });
+    }
 
     const token = generateAuthToken(user, role);
+    
+    // Add relevant user info based on role
     const userData = {
       id: user._id,
       email: user.email,
       role: role
     };
+    
+    // Add name based on the model structure
+    if (role === 'client' || role === 'admin') {
+      userData.fullName = user.fullName;
+    } else if (role === 'provider') {
+      userData.fullName = `${user.firstName} ${user.lastName}`;
+      userData.status = user.status;
+    }
 
     res.status(200).json({
       success: true,
@@ -107,19 +150,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ 
       success: false,
       message: 'Login failed' 
-    });
-  }
-};
-
-exports.providerSignup = async (req, res) => {
-  try {
-    const providerRoutes = require('./routes/provider');
-    return providerRoutes._router.handle(req, res);
-  } catch (error) {
-    res.status(500).json({ 
-      success: false,
-      message: 'Provider registration failed',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
@@ -160,33 +190,6 @@ exports.adminSignup = async (req, res) => {
   }
 };
 
-// Admin Login
-exports.adminLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const admin = await Admin.findOne({ email });
-    if (!admin) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Invalid admin credentials' 
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Invalid admin credentials' 
-      });
-    }
-
-    res.status(200).json(createAuthResponse(admin, 'admin'));
-
-  } catch (error) {
-    res.status(500).json({ 
-      success: false,
-      message: 'Admin login failed' 
-    });
-  }
-};
+// Export the utility functions for other controllers
+exports.generateAuthToken = generateAuthToken;
+exports.createAuthResponse = createAuthResponse;

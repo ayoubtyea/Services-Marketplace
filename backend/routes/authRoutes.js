@@ -1,21 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const { clientSignup, login, providerSignup, adminLogin, adminSignup } = require('../controllers/auth');
+const authController = require('../controllers/auth');
 const { validateLogin, validateClientSignup, validateProviderSignup } = require('../middleware/validation');
 
 // POST /api/auth/client/signup
-router.post('/client/signup', validateClientSignup, clientSignup);
-
-// POST /api/auth/provider/signup
-router.post('/provider/signup', validateProviderSignup, providerSignup);
+router.post('/client/signup', validateClientSignup, authController.clientSignup);
 
 // POST /api/auth/login (for all users)
-router.post('/login', validateLogin, login);
+router.post('/login', validateLogin, authController.login);
 
 // POST /api/auth/admin/signup (for admin)
-router.post('/admin/signup', adminSignup);
+router.post('/admin/signup', authController.adminSignup);
 
-// POST /api/auth/admin/login (specific for admin)
-router.post('/admin/login', validateLogin, adminLogin);
+// Don't use the providerSignup route from auth controller
+// Use the dedicated provider registration endpoint instead
+router.post('/provider/register', (req, res) => {
+  res.status(307).redirect('/api/provider/register');
+});
+
+// Instead of using a potentially undefined adminLogin function, 
+// let's use the general login function which handles all user types
+router.post('/admin/login', validateLogin, authController.login);
 
 module.exports = router;

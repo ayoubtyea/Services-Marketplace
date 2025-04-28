@@ -1,103 +1,105 @@
-// models/Booking.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const bookingSchema = new mongoose.Schema({
-  clientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+const BookingSchema = new mongoose.Schema({
+  customerId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User", 
+    required: true 
   },
-  providerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Provider',
-    required: true
+  serviceId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Service", 
+    required: true 
+  },
+  providerId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Provider", 
+    required: true 
   },
   serviceName: {
     type: String,
-    required: true
-  },
-  serviceId: {
-    type: String,
-    required: true
-  },
-  date: {
-    type: Date,
-    required: true
-  },
-  time: {
-    type: String,
-    required: true
-  },
-  duration: {
-    type: Number,
     required: true
   },
   price: {
     type: Number,
     required: true
   },
-  location: {
+  date: { 
+    type: Date, 
+    required: true 
+  },
+  time: {
     type: String,
     required: true
   },
-  status: {
-    type: String,
-    enum: ['pending', 'confirmed', 'completed', 'cancelled'],
-    default: 'pending'
+  duration: {
+    type: Number, // in minutes
+    required: true
   },
-  paymentStatus: {
-    type: String,
-    enum: ['pending', 'paid', 'refunded'],
-    default: 'pending'
+  location: {
+    address: String,
+    city: String,
+    zip: String,
+    coordinates: {
+      lat: Number,
+      lng: Number
+    }
   },
   notes: {
     type: String
   },
+  status: { 
+    type: String, 
+    enum: ["pending", "confirmed", "completed", "cancelled", "rejected"], 
+    default: "pending" 
+  },
+  paymentStatus: {
+    type: String,
+    enum: ["pending", "paid", "refunded", "failed"],
+    default: "pending"
+  },
   completedAt: {
     type: Date
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
   }
 });
 
-const Booking = mongoose.model('Booking', bookingSchema);
-
-module.exports = Booking;
-
-const reviewSchema = new mongoose.Schema({
-  bookingId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Booking',
-    required: true
-  },
-  clientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  providerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Provider',
-    required: true
-  },
-  rating: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
-  },
-  comment: {
-    type: String,
-    required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
+// Set completedAt when status changes to completed
+BookingSchema.pre('findOneAndUpdate', async function(next) {
+  const update = this.getUpdate();
+  if (update && update.status === 'completed') {
+    this.set({ completedAt: new Date() });
   }
+  next();
 });
 
-const Review = mongoose.model('Review', reviewSchema);
+// Ensure bookings can be populated with related data
+BookingSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: 'customerId',
+    select: 'fullName email phoneNumber'
+  });
+  
+  // Only populate service if requested in query options
+  if (this._mongooseOptions.populateService) {
+    this.populate({
+      path: 'serviceId',
+      select: 'title description price category'
+    });
+  }
+  
+  // Only populate provider if requested in query options
+  if (this._mongooseOptions.populateProvider) {
+    this.populate({
+      path: 'providerId',
+      select: 'firstName lastName email phone profilePhoto'
+    });
+  }
+  
+  next();
+});
 
-module.exports = mongoose.models.Booking || mongoose.model('Booking', bookingSchema);
+module.exports = mongoose.model("Booking", BookingSchema);

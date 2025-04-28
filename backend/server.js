@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
+
+// Import routes
 const authRoutes = require('./routes/authRoutes');
 const profileRouter = require('./routes/profileRoutes');
 const serviceRouter = require('./routes/serviceRoutes');
@@ -9,8 +12,10 @@ const bookingRouter = require('./routes/bookingRoutes');
 const earningsRouter = require('./routes/earningsRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const providerRoutes = require('./routes/providerRoutes');
-const createAdminIfNotExists = require('./utils/adminSeeder'); // Import the seeder function
+const dashboardRoutes = require('./routes/dashboardRoutes'); // New dashboard routes
 
+// Import utilities
+const createAdminIfNotExists = require('./utils/adminSeeder');
 
 const app = express();
 
@@ -35,7 +40,7 @@ app.use(cors({
     }
     return callback(null, true);
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   preflightContinue: false,
@@ -62,33 +67,63 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'UP' });
+  res.status(200).json({ status: 'UP', time: new Date().toISOString() });
 });
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/provider', providerRoutes);  // Correct path for provider routes
+app.use('/api/provider', providerRoutes); 
 app.use('/api/profile', profileRouter);
 app.use('/api/services', serviceRouter);
 app.use('/api/bookings', bookingRouter);
 app.use('/api/earnings', earningsRouter);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/dashboard', dashboardRoutes); // Added dashboard routes
+app.use('/api/admin', require('./routes/adminRoutes')); // Added admin routes
 
-// Error handling middleware
+// Global error handling middleware
 app.use((err, req, res, next) => {
   console.error('🚨 Error:', err.stack);
-  res.status(500).json({ error: 'Internal Server Error' });
+  
+  const statusCode = err.statusCode || 500;
+  const status = err.status || 'error';
+  
+  res.status(statusCode).json({
+    status: status,
+    message: err.message || 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err : undefined
+  });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Endpoint not found' });
+  res.status(404).json({ 
+    status: 'fail',
+    message: 'Endpoint not found - The requested resource does not exist' 
+  });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🔗 http://localhost:${PORT}`);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.error(err);
+  process.exit(1);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.error(err);
+  process.exit(1);
 });
